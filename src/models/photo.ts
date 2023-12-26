@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 import { serverBaseUrl } from "../utils/app-config"
-import { Tag, TagApiSchema } from "./tag"
+import { Tag } from "./tag"
 
 export const examplePhotoResponse = {
   id: 121,
@@ -23,6 +23,10 @@ export const examplePhotoResponse = {
     },
   ],
 }
+const PhotoTagSchema = z.object({
+  id: z.number(),
+  tag: z.string(),
+})
 
 export const PhotoApiSchema = z.object({
   id: z.number(),
@@ -35,7 +39,7 @@ export const PhotoApiSchema = z.object({
   player_id: z.number().nullish(),
   created_by: z.string(),
   last_update: z.coerce.date(),
-  tags: z.array(TagApiSchema).nullish(),
+  tags: z.array(PhotoTagSchema).nullish(),
 })
 
 export type PhotoData = z.infer<typeof PhotoApiSchema>
@@ -62,7 +66,7 @@ export class Photo {
     this.playerId = data.player_id ?? 0
     this.createdBy = data.created_by
     this.lastUpdate = data.last_update
-    this.tags = data.tags?.map((t) => new Tag(t)) ?? []
+    this.tags = data.tags?.map((t) => new Tag({ id: t.id, name: t.tag })) ?? []
   }
 
   static getPagedPhotosUrl(tag: string) {
