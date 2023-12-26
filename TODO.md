@@ -1,0 +1,31 @@
+- [x] Support returning member only registration.
+- [ ] Priority sign up one hour before regular sign up (can-choose events only).
+- [ ] Champions page (with pics per season).
+- [ ] Select "All" on my scores.
+- [ ] Export scores from my scores.
+- [ ] Import Chicago scores.
+- [ ] Anchors on the policy page for direct links to specific policies.
+- [ ] View points by event.
+- [ ] View my points by year.
+- [ ] Standard "view more" on long lists.
+- [ ] Tables with sorting (reports and list of registered players).
+- [ ] Fix any issues with transition from tokens to same-site cookies.
+- [ ] Server-side validation of payment overrides.
+- [ ] Rework event report to reflect changes in payment amounts.
+- [ ] Rework payment report to reflect changes in payment amounts.
+- [ ] Rework membership report to show returning vs new members.
+- [ ] Job/command to reset membership at year end.
+- [ ] Rethink - when player is dropped, should we delete the fee records?
+- [ ] Add senior/non-senior to the registration types.
+- [ ] Support dark mode (problem with Bootsrap cards).
+- [ ] Server-side: register.utils is using a hard-coded tee time split. Needs to be dynamic.
+- [ ] Clean up restriction modeling on server-side (remove from FeeType).
+- [ ] Update expired card (https://stripe.com/docs/api/payment_methods/update).
+- [ ] Save image in a separate folder.
+- [ ] Remove images no longer selected.
+- [ ] Import champions for major events (Excel or csv).
+- [ ] View season long points by event.
+- [ ] View season long points by player.
+- [ ] Hide the event documents card when no documents are found.
+- [ ] Saving cc info doesn't appear to work after stripe upgrade.
+- [ ] In the rates card, show the override fees as well.

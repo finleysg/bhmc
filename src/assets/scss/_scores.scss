@@ -1,0 +1,122 @@
+.scores {
+  flex: 2;
+  display: flex;
+
+  & div {
+    border: solid $gray-400 1px;
+    height: 30px;
+    width: 30px;
+    max-width: 30px;
+    text-align: center;
+    color: $black;
+    padding-top: 4px;
+    font-size: .9rem;
+  }
+}
+.hole-numbers {
+  flex: 2;
+  display: flex;
+  & div {
+    text-align: center;
+    width: 30px;
+    max-width: 30px;
+    color: $black;
+    font-weight: 600;
+  }
+}
+.par {
+  background-color: $white;
+}
+.birdie {
+  background-color: #90ee90;
+}
+.eagle {
+  background-color: #00bfff;
+}
+.double-eagle {
+  background-color: #9932cc;
+}
+.bogey {
+  background-color: #ffe4c4;
+}
+.double-bogey {
+  background-color: #deb887;
+}
+.other {
+  background-color: #b8860b;
+}
+.below-par {
+  color: $red !important;
+}
+.above-par {
+  color: $black !important;
+}
+.total {
+  font-weight: 600;
+  width: 36px !important;
+  max-width: 36px !important;
+}
+
+.scores-header {
+  color: $white;
+  font-weight: 600;
+  font-size: 1.2rem;
+  padding-left: 2rem;
+}
+
+.bg-east {
+  background-color: $red !important;
+}
+.bg-east-pale {
+  background-color: rgb(255, 107, 104, 0.5) !important;
+}
+
+.bg-north {
+  background-color: $blue !important;
+}
+.bg-north-pale {
+  background-color: rgb(33, 150, 243, 0.5);
+}
+.bg-west {
+  background-color: $yellow-200 !important;
+}
+.bg-west-pale {
+  background-color: rgb(255, 199, 33, 0.5);
+}
+
+@media only screen and (max-width: 480px) {
+  .round {
+    font-size: .8em;
+  }
+  .scores {
+    flex: 2;
+    display: flex;
+  
+    & div {
+      font-size: .9em;
+      border: solid $gray-400 1px;
+      height: 22px;
+      width: 22px;
+      max-width: 22px;
+      text-align: center;
+      color: $black;
+      padding-top: 0;
+    }
+  }
+  .hole-numbers {
+    flex: 2;
+    display: flex;
+    & div {
+      text-align: center;
+      width: 22px;
+      max-width: 22px;
+      color: $black;
+      font-weight: 600;
+    }
+  }
+  .total {
+    font-weight: 600;
+    width: 32 !important;
+    max-width: 32px !important;
+  }
+}

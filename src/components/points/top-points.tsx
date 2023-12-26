@@ -1,0 +1,58 @@
+import { sortBy, take } from "lodash"
+
+import { useSeasonLongPoints } from "../../hooks/use-season-long-points"
+import { currentSeason } from "../../utils/app-config"
+import { OverlaySpinner } from "../spinners/overlay-spinner"
+
+interface TopPointsProps {
+  category: "gross" | "net"
+  topN: number
+}
+
+export function TopPoints({ category, topN }: TopPointsProps) {
+  const { data: points, isLoading } = useSeasonLongPoints({ season: currentSeason })
+
+  const pointsToRender = () => {
+    if (points) {
+      return take(
+        sortBy(points, [
+          function (p) {
+            return category === "gross" ? p.grossPoints : p.netPoints
+          },
+        ]),
+        topN,
+      )
+    }
+    return []
+  }
+
+  return (
+    <div className="card mt-4 mb-4">
+      <div className="card-body">
+        <OverlaySpinner loading={isLoading} />
+        <div className="card-text">
+          <div style={{ overflowY: "auto", overflowX: "auto" }}>
+            <table className="table table-striped table-sm">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pointsToRender().map((row) => {
+                  return (
+                    <tr key={row.id}>
+                      <td>{row.name}</td>
+                      <td>{category === "gross" ? row.grossPoints : row.netPoints}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

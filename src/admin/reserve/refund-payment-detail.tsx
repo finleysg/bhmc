@@ -1,0 +1,28 @@
+import { ChangeEvent } from "react"
+
+import { Checkbox } from "../../components/forms/checkbox"
+import { Refund } from "../../models/refund"
+
+interface RefundPaymentDetailProps {
+  refundFee: Refund
+  onSelect: (paymentDetailId: number, selected: boolean) => void
+}
+
+export function RefundPaymentDetail({ refundFee, onSelect }: RefundPaymentDetailProps) {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onSelect(refundFee.id, e.target.checked)
+  }
+
+  const feeInfo = `${refundFee.eventFee.name}: $${refundFee.eventFee.amount.toFixed(2)}`
+  const paidBy = `(paid by ${refundFee.paidBy})`
+
+  return (
+    <div className="mb-1">
+      <Checkbox
+        label={`${feeInfo} ${paidBy}`}
+        checked={refundFee.selected}
+        onChange={handleChange}
+      />
+    </div>
+  )
+}
