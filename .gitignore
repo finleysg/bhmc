@@ -26,3 +26,8 @@ dist-ssr
 .firebaserc
 firebase.json
 .firebase/
+
+.env
+.env.development
+.env.test
+.env.production

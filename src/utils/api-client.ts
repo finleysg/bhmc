@@ -28,6 +28,7 @@ export async function httpClient(endpoint: string, options?: Partial<RequestInit
   const config = {
     method: body ? "POST" : "GET",
     body: body,
+    credentials: "include",
     headers: {
       ...headers,
       ...customConfig.headers,
