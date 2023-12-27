@@ -27,7 +27,7 @@
 - [ ] View season long points by event.
 - [ ] View season long points by player.
 - [ ] Hide the event documents card when no documents are found.
-- [ ] Saving cc info doesn't appear to work after stripe upgrade.
+- [ ] BUG: Saving cc info doesn't appear to work after stripe upgrade.
 - [ ] In the rates card, show the override fees as well.
 - [ ] Upgrade MySQL to version 8.0 so we can upgrade Django
       (https://www.pythonanywhere.com/forums/topic/32791/).
