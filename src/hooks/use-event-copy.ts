@@ -14,11 +14,13 @@ export function useCopyEvent() {
 
   return useMutation({
     mutationFn: ({ eventId, startDate }: CopyEventArgs) => {
-      return httpClient(apiUrl(`copy-event/${eventId}/?start_dt=${startDate}`), { method: "POST" })
+      return httpClient(apiUrl(`events/${eventId}/clone/?start_dt=${startDate}`), {
+        method: "POST",
+      })
     },
     onSuccess: (data: ClubEventData, { season }: CopyEventArgs) => {
-      queryClient.setQueryData([`events/${data.id}`], ClubEventApiSchema.parse(data))
-      return queryClient.invalidateQueries({ queryKey: [`events/?season=${season}`] })
+      queryClient.setQueryData(["club-events", data.id], ClubEventApiSchema.parse(data))
+      return queryClient.invalidateQueries({ queryKey: ["club-events", "season", season] })
     },
   })
 }
