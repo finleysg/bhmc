@@ -14,7 +14,7 @@ export function SeasonSelect({ season, startAt, onSelect }: SeasonSelectProps) {
   const startingYear = startAt ?? 2013
 
   const seasons = () => {
-    const size = currentSeason - startingYear + 1
+    const size = currentSeason - startingYear + 1 + 1
     const seasons = [...Array(size).keys()]
       .map((i) => i + startingYear)
       .map((year) => {

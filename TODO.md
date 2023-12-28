@@ -31,3 +31,6 @@
 - [ ] In the rates card, show the override fees as well.
 - [ ] Upgrade MySQL to version 8.0 so we can upgrade Django
       (https://www.pythonanywhere.com/forums/topic/32791/).
+- [ ] Mobile formatting review and repair of the signup process.
+- [ ] Refresh the event signup document.
+- [ ] Refresh the event scoring document.
