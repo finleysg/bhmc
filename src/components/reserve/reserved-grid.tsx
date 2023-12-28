@@ -10,7 +10,7 @@ import { ReserveGrid } from "./reserve-grid"
 
 export function ReservedGrid({ clubEvent }: ClubEventProps) {
   const [selectedTableIndex, updateSelectedTableIndex] = useState(0)
-  const { data: slots } = useEventRegistrationSlots(clubEvent.id)
+  const { data: slots, status } = useEventRegistrationSlots(clubEvent.id)
 
   const reserveTables = LoadReserveTables(clubEvent, slots ?? [])
 
@@ -18,8 +18,8 @@ export function ReservedGrid({ clubEvent }: ClubEventProps) {
     <div className="row">
       <div className="col-12">
         <div>
-          <OverlaySpinner loading={!reserveTables[0]} />
-          {Boolean(reserveTables[0]) && (
+          <OverlaySpinner loading={status === "pending"} />
+          {reserveTables[0] ? (
             <React.Fragment>
               <Tabs>
                 {reserveTables.map((table, index) => {
@@ -44,6 +44,8 @@ export function ReservedGrid({ clubEvent }: ClubEventProps) {
                 }}
               />
             </React.Fragment>
+          ) : (
+            <p>The teesheet has not yet been created.</p>
           )}
         </div>
       </div>
