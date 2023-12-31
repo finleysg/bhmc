@@ -8,9 +8,14 @@ export function GalleryImage({ photo }: PhotoProps) {
       <picture>
         <source srcSet={photo.mobileImageUrl()} media="(max-width: 600px)" />
         <source srcSet={photo.webImageUrl()} media="(max-width: 1200px)" />
-        <img src={photo.imageUrl()} alt={photo.caption} style={{ width: "100%" }} />
+        <img
+          src={photo.imageUrl()}
+          alt={photo.caption}
+          className="card-img-bottom"
+          style={{ width: "100%", maxHeight: "70vh" }}
+        />
       </picture>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="d-flex justify-content-between">
         <TagList tags={photo.tags.map((t) => t.tag)} />
         <span>{photo.year}</span>
       </div>

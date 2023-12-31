@@ -118,9 +118,13 @@
   &.other {
     background-color: tint-color($primary, 25%);
   }
-  &.open-registration {
-    background-color: tint-color($warning, 20%);
+  &.season-registration {
+    background-color: $success;
   }
+  &.season-long {
+    background-color: $success;
+  }
+
   a {
     text-decoration: none;
   }

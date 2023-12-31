@@ -34,3 +34,4 @@
 - [ ] Mobile formatting review and repair of the signup process.
 - [ ] Refresh the event signup document.
 - [ ] Refresh the event scoring document.
+- [x] Bug - photo gallery / infinite scroll not working.
