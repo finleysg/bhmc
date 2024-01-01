@@ -37,6 +37,7 @@ export class EventFee {
   code: string
   isRequired: boolean
   isSkinsFee: boolean
+  hasOverride: boolean = false
 
   constructor(json: EventFeeData) {
     this.id = json.id
@@ -49,6 +50,7 @@ export class EventFee {
     this.code = json.fee_type.code
     this.isRequired = json.is_required
     this.isSkinsFee = this.name.toLowerCase().indexOf("skins") >= 0
+    this.hasOverride = this.overrideRestriction !== null
   }
 
   amountDue = (player?: Player) => {

@@ -2,7 +2,7 @@ import React from "react"
 
 import { BiEnvelope, BiLogInCircle } from "react-icons/bi"
 import { GiGolfFlag, GiTrophyCup } from "react-icons/gi"
-import { GoCalendar, GoHome, GoInfo, GoQuestion } from "react-icons/go"
+import { GoCalendar, GoHome, GoInfo, GoPlus, GoQuestion } from "react-icons/go"
 import { GrOrderedList } from "react-icons/gr"
 import { MdGridOn, MdPeopleOutline, MdPersonAdd } from "react-icons/md"
 import { PiPencilLine } from "react-icons/pi"
@@ -29,7 +29,7 @@ export function Sidebar() {
           groups.indexOf(Groups.TournamentAdmins) >= 0) && (
           <MenuItem path="admin" icon={<PiPencilLine />} name="Administration" />
         )}
-        {/* <MenuItem path="membership" icon={<GoPlus />} name={`${currentSeason} Signup Page`} /> */}
+        <MenuItem path="membership" icon={<GoPlus />} name={`${currentSeason} Signup Page`} />
         <MenuItem
           path={`calendar/${year}/${monthName.toLowerCase()}`}
           icon={<GoCalendar />}

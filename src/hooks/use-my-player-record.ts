@@ -9,11 +9,10 @@ export function useMyPlayerRecord() {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const email = user.email
-  const endpoint = apiUrl(`players/?email=${email}`)
 
   return useQuery({
-    queryKey: ["player"],
-    queryFn: () => getOne(endpoint, PlayerApiSchema),
+    queryKey: ["player", email],
+    queryFn: () => getOne(apiUrl(`players/?email=${email}`), PlayerApiSchema),
     initialData: () => {
       return queryClient.getQueryData<PlayerApiData | undefined>(["player"])
     },

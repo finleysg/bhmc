@@ -1,5 +1,5 @@
 import { useEventRegistrationSlots } from "../../hooks/use-event-registration-slots"
-import { RegistrationType, StartType } from "../../models/codes"
+import { RegistrationType } from "../../models/codes"
 import { ClubEventProps } from "../../models/common-props"
 
 export function FeesAndPoints({ clubEvent }: ClubEventProps) {
@@ -9,7 +9,6 @@ export function FeesAndPoints({ clubEvent }: ClubEventProps) {
   const showAvailableSpots =
     clubEvent.registrationType !== RegistrationType.None &&
     clubEvent.registrationWindow !== "past" &&
-    clubEvent.startType !== StartType.NA &&
     openSpots !== -1 // unlimited
 
   return (
@@ -25,7 +24,19 @@ export function FeesAndPoints({ clubEvent }: ClubEventProps) {
               </div>
             )
           })}
-          <div className="fees-points-item" style={{ marginTop: "1rem" }}>
+          {clubEvent.fees
+            .filter((fee) => fee.hasOverride)
+            .map((eventFee) => {
+              return (
+                <div key={eventFee.id} className="fees-points-item">
+                  <span className="label">
+                    {eventFee.name} ({eventFee.overrideRestriction})
+                  </span>
+                  <span className="value">${eventFee.overrideAmount?.toFixed(2)}</span>
+                </div>
+              )
+            })}
+          <div className="fees-points-item mt-4">
             <span className="label">Season long points</span>
             <span className="value">{clubEvent.seasonPoints ?? 0}</span>
           </div>
