@@ -19,15 +19,14 @@ export function EventRegistrationManager({ clubEvent }: { clubEvent: ClubEvent }
   const [selectedStart, setSelectedStart] = useState("")
 
   const queryClient = useQueryClient()
-  const { completeRegistration, createRegistration, loadRegistration, loadEvent } =
-    useEventRegistration()
+  const { createRegistration, loadRegistration, loadEvent } = useEventRegistration()
   const { data: slots } = useEventRegistrationSlots(clubEvent.id)
   const { data: player } = useMyPlayerRecord()
 
   useEffect(() => {
     loadEvent(clubEvent)
-    return () => completeRegistration()
-  }, [clubEvent, loadEvent, completeRegistration])
+    // return () => completeRegistration()
+  }, [clubEvent, loadEvent])
 
   const handleStart = () => {
     if (clubEvent.canChoose) {

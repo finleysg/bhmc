@@ -9,7 +9,7 @@
 - [ ] View my points by year.
 - [ ] Standard "view more" on long lists.
 - [ ] Tables with sorting (reports and list of registered players).
-- [ ] Fix any issues with transition from tokens to same-site cookies.
+- [x] Fix any issues with transition from tokens to same-site cookies.
 - [ ] Server-side validation of payment overrides.
 - [ ] Rework event report to reflect changes in payment amounts.
 - [ ] Rework payment report to reflect changes in payment amounts.
@@ -28,7 +28,7 @@
 - [ ] View season long points by player.
 - [ ] Hide the event documents card when no documents are found.
 - [ ] BUG: Saving cc info doesn't appear to work after stripe upgrade.
-- [ ] In the rates card, show the override fees as well.
+- [x] In the rates card, show the override fees as well.
 - [ ] Upgrade MySQL to version 8.0 so we can upgrade Django
       (https://www.pythonanywhere.com/forums/topic/32791/).
 - [ ] Mobile formatting review and repair of the signup process.
