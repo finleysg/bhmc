@@ -18,7 +18,7 @@ export function EditRegistrationButton({
   if (hasSignedUp && clubEvent.canEditRegistration() && clubEvent.paymentsAreOpen()) {
     return (
       <button
-        className="btn btn-warning btn-sm me-2"
+        className="btn btn-warning btn-sm"
         disabled={currentStep !== PendingStep}
         onClick={onClick}
         {...rest}

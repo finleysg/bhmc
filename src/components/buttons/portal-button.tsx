@@ -9,7 +9,7 @@ export function EventPortalButton({
   if (clubEvent?.portalUrl) {
     return (
       <a
-        className="btn btn-info btn-sm me-2"
+        className="btn btn-info btn-sm"
         href={clubEvent.portalUrl}
         target="_blank"
         rel="noreferrer"

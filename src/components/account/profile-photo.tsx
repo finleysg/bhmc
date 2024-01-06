@@ -1,6 +1,5 @@
 import React from "react"
 
-import { MdCameraAlt } from "react-icons/md"
 import { toast } from "react-toastify"
 
 import defaultProfilePic from "../../assets/img/unknown.jpg"
@@ -52,15 +51,12 @@ export function ProfilePhoto() {
                 <img className="img-responsive" src={defaultProfilePic} alt="Default Profile" />
               )}
             </span>
-            <button onClick={() => setMode("edit")} className="pmop-edit">
-              <i>
-                <MdCameraAlt />
-              </i>{" "}
-              <span className="hidden-xs-down">Update Profile Picture</span>
-            </button>
           </div>
           <div className="pmo-stat">
             <h2>{player.name}</h2>
+            <button onClick={() => setMode("edit")} className="btn btn-link btn-sm">
+              Update Profile Picture
+            </button>
           </div>
         </div>
       </div>

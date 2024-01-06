@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import ReactMarkdown from "react-markdown"
 import { Link } from "react-router-dom"
@@ -21,6 +21,10 @@ export function SeasonEventDetail({
   const { data: player } = useMyPlayerRecord()
   const hasSignedUp = player?.isMember ?? false
   const isReturning = player?.isReturningMember ?? false
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <div className="card">
@@ -94,13 +98,13 @@ export function SeasonEventDetail({
               </div>
               <div className="row">
                 <div className="col-12" style={{ textAlign: "right" }}>
+                  <RegisteredButton clubEvent={clubEvent} style={{ marginRight: ".5rem" }} />
                   <RegisterButton
                     clubEvent={clubEvent}
                     hasSignedUp={hasSignedUp}
                     currentStep={PendingStep}
                     onClick={onRegister}
                   />
-                  <RegisteredButton clubEvent={clubEvent} />
                 </div>
               </div>
             </div>

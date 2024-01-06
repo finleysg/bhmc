@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -22,56 +22,46 @@ export interface EventDetailProps {
   onEditRegistration: () => void
 }
 
-function EventActionButtons({
-  clubEvent,
-  hasSignedUp,
-  onRegister,
-  onEditRegistration,
-}: EventDetailProps & { hasSignedUp: boolean }) {
-  return (
-    <div className="event-header">
-      <div className="event-header--title">
-        <h3 className="text-primary-emphasis">{clubEvent.name}</h3>
-      </div>
-      <div className="event-header--actions">
-        <EventAdminButton clubEvent={clubEvent} />
-        <EventPortalButton clubEvent={clubEvent} />
-        <RegisteredButton clubEvent={clubEvent} />
-        <EditRegistrationButton
-          clubEvent={clubEvent}
-          hasSignedUp={hasSignedUp}
-          currentStep={PendingStep}
-          onClick={onEditRegistration}
-        />
-        <RegisterButton
-          clubEvent={clubEvent}
-          hasSignedUp={hasSignedUp}
-          currentStep={PendingStep}
-          onClick={onRegister}
-        />
-      </div>
-    </div>
-  )
-}
-
 export function EventDetail({ clubEvent, onRegister, onEditRegistration }: EventDetailProps) {
   const hasSignedUp = useMyRegistrationStatus(clubEvent.id)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <div className="card mb-4">
       <div className="card-body">
         <OverlaySpinner loading={!clubEvent?.id} />
-        <EventActionButtons
-          clubEvent={clubEvent}
-          hasSignedUp={hasSignedUp}
-          onRegister={onRegister}
-          onEditRegistration={onEditRegistration}
-        />
+        <div className="event-header">
+          <div className="event-header--title">
+            <h3 className="text-primary-emphasis">{clubEvent.name}</h3>
+          </div>
+          <div className="event-header--actions">
+            <EventAdminButton clubEvent={clubEvent} />
+            <EventPortalButton clubEvent={clubEvent} />
+            <RegisteredButton clubEvent={clubEvent} />
+            <EditRegistrationButton
+              clubEvent={clubEvent}
+              hasSignedUp={hasSignedUp}
+              currentStep={PendingStep}
+              onClick={onEditRegistration}
+            />
+            <RegisterButton
+              clubEvent={clubEvent}
+              hasSignedUp={hasSignedUp}
+              currentStep={PendingStep}
+              onClick={onRegister}
+            />
+          </div>
+        </div>
         <div className="card-text">
           {clubEvent.status === "Canceled" ? <h4 className="text-danger">Canceled</h4> : null}
           <div className="registration-start-item">
             <div className="label">Event date:</div>
-            <div className="value">{dayAndDateFormat(clubEvent.startDate)}</div>
+            <div className="value text-primary-emphasis fw-bold">
+              {dayAndDateFormat(clubEvent.startDate)}
+            </div>
           </div>
           <div className="registration-start-item">
             <div className="label">Start:</div>
@@ -85,14 +75,22 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
                 <div className="label">Registration opens:</div>
                 <div className="value">{dayDateAndTimeFormat(clubEvent.signupStart)}</div>
               </div>
+              {clubEvent.prioritySignupStart && (
+                <div className="registration-start-item">
+                  <div className="label">Priority registration:</div>
+                  <div className="value">{dayDateAndTimeFormat(clubEvent.prioritySignupStart)}</div>
+                </div>
+              )}
               <div className="registration-start-item">
                 <div className="label">Registration closes:</div>
                 <div className="value">{dayDateAndTimeFormat(clubEvent.signupEnd)}</div>
               </div>
-              <div className="registration-start-item">
-                <div className="label">Skins closes:</div>
-                <div className="value">{dayDateAndTimeFormat(clubEvent.paymentsEnd)}</div>
-              </div>
+              {clubEvent.paymentsEnd && (
+                <div className="registration-start-item">
+                  <div className="label">Skins closes:</div>
+                  <div className="value">{dayDateAndTimeFormat(clubEvent.paymentsEnd)}</div>
+                </div>
+              )}
             </React.Fragment>
           )}
           <div className="registration-start-item">

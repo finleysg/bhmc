@@ -12,12 +12,8 @@ export function RegisteredButton({ clubEvent, ...rest }: ClubEventProps & Custom
 
   if (canView) {
     return (
-      <Link
-        className="btn btn-info btn-sm me-2"
-        to={clubEvent.eventUrl + "/registrations"}
-        {...rest}
-      >
-        Who&apos;s Registered?
+      <Link className="btn btn-info btn-sm" to={clubEvent.eventUrl + "/registrations"} {...rest}>
+        Players
       </Link>
     )
   }

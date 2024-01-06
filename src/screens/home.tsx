@@ -26,6 +26,7 @@ export function HomeScreen() {
                 Club News and Announcements
               </h3>
               <AnnouncementList />
+              <hr />
               <RandomPicList take={1} />
             </div>
           </div>

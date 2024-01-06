@@ -84,7 +84,7 @@ function RoundsByCourse({ course, rounds }: CourseProps & RoundsProps) {
   }
 
   return (
-    <div className="card">
+    <div className="card mb-2">
       <div className={headerClass(course)}>
         <span>{course.name}</span>
       </div>

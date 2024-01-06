@@ -36,7 +36,7 @@ export function EditAccountView({ form, onCancel, onSubmit }: EditAccountViewPro
       />
       <InputControl
         name="email"
-        type="text"
+        type="email"
         label="Email"
         register={register("email")}
         error={formErrors.email}
@@ -62,10 +62,15 @@ export function EditAccountView({ form, onCancel, onSubmit }: EditAccountViewPro
         register={register("phone_number")}
         error={formErrors.phone_number}
       />
-      <button type="submit" className="btn btn-primary" disabled={false}>
+      <button type="submit" className="btn btn-primary btn-sm me-2" disabled={false}>
         Save Changes
       </button>
-      <button type="reset" className="btn btn-light" disabled={isSubmitting} onClick={onCancel}>
+      <button
+        type="reset"
+        className="btn btn-light btn-sm"
+        disabled={isSubmitting}
+        onClick={onCancel}
+      >
         Cancel
       </button>
       {isSubmitting && <Spinner />}

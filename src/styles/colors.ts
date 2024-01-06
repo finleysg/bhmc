@@ -37,10 +37,10 @@ export const black = "#000000"
 export const white = "#ffffff"
 
 // Theme Colors
-export const primary = blue
-export const secondary = gray600
-export const success = green
-export const info = lightBlue
-export const warning = amber
-export const danger = red
-export const dark = gray700
+export const primary = "#164886"
+export const secondary = "#bdc6cd"
+export const success = "#52912f"
+export const info = "#276f1f"
+export const warning = "#861680"
+export const danger = "#865416"
+export const dark = gray600
