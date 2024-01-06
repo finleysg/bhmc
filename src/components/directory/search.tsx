@@ -47,9 +47,9 @@ function StarToggle({ player }: PlayerProps) {
     <div
       style={{
         display: "inline-block",
-        marginRight: "10px",
         fontSize: "1.5rem",
         cursor: "pointer",
+        margin: "0 1rem 0 0",
       }}
       role="button"
       onClick={handleClick}
@@ -59,9 +59,9 @@ function StarToggle({ player }: PlayerProps) {
       {loading ? (
         <Spinner style={{ verticalAlign: "middle" }} />
       ) : isFriend ? (
-        <MdStar style={{ verticalAlign: "middle", color: colors.yellow }} />
+        <MdStar style={{ verticalAlign: "middle", color: colors.success }} />
       ) : (
-        <MdStarBorder style={{ verticalAlign: "middle" }} />
+        <MdStarBorder style={{ verticalAlign: "middle", color: colors.success }} />
       )}
     </div>
   )
@@ -69,14 +69,27 @@ function StarToggle({ player }: PlayerProps) {
 
 export function PlayerRow({ player }: PlayerProps) {
   return (
-    <div className="mb-2 d-flex align-items-center">
-      <StarToggle player={player} />
-      <h6 className="text-primary d-inline-block">{player.name}</h6>
-      <Link className="btn btn-link text-success-emphasis me-2" to={`/directory/${player.id}`}>
-        (player profile)
-      </Link>
-      <a href={`mailto:${player.email}`}>{player.email}</a>
-    </div>
+    <>
+      <tr>
+        <td className="p-0">
+          <StarToggle player={player} />
+        </td>
+        <td className="p-0">
+          <h6 className="text-primary mb-0">{player.name}</h6>
+        </td>
+        <td className="p-0">
+          <Link className="btn btn-link" to={`/directory/${player.id}`}>
+            (view)
+          </Link>
+        </td>
+      </tr>
+      <tr>
+        <td className="pb-2">&nbsp;</td>
+        <td className="pb-2" colSpan={2}>
+          <a href={`mailto:${player.email}`}>{player.email}</a>
+        </td>
+      </tr>
+    </>
   )
 }
 
@@ -113,11 +126,11 @@ export function PlayerSearch() {
           onChange={handleSearch}
         />
       </div>
-      <div>
+      <table>
         {results.map((player) => {
           return <PlayerRow key={player.id} player={player} />
         })}
-      </div>
+      </table>
     </div>
   )
 }

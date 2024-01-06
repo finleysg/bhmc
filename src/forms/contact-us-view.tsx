@@ -22,7 +22,6 @@ export function ContactUsView({ form, onCancel, onSubmit }: ContactUsViewProps) 
   const { errors: formErrors, isSubmitting } = formState
 
   const submit = (data: ContactMessageData) => {
-    console.log(formState.errors)
     if (formState.isValid) {
       onSubmit(data)
     }

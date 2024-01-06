@@ -49,12 +49,7 @@ export function RegisterButton({
 
   const isEnabled = currentStep === PendingStep && canRegister()
   return (
-    <button
-      className="btn btn-warning btn-sm me-2"
-      disabled={!isEnabled}
-      onClick={onClick}
-      {...rest}
-    >
+    <button className="btn btn-warning btn-sm" disabled={!isEnabled} onClick={onClick} {...rest}>
       Sign Up
     </button>
   )

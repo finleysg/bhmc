@@ -74,11 +74,11 @@ export function MyEvents() {
   }
 
   return (
-    <div className="card">
+    <div className="card mb-4">
       <div className="card-body">
         <h4 className="card-header mb-2">My {currentSeason} Events</h4>
         <div className="card-text">
-          <div className="row" style={{ padding: "6px 0" }}>
+          <div className="row p-1">
             <div className="col-12">
               {eventList().map((evt) => {
                 return <EventCard key={evt!.id} registration={evt!} />

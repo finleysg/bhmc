@@ -23,10 +23,14 @@ export function ProfilePhotoPicker({
         </h2>
       </div>
       <PhotoPicker onSelect={(files) => setPic(files[0])} />
-      <button className="btn btn-primary" onClick={() => onSelect(pic!)} disabled={!pic}>
+      <button
+        className="btn btn-primary btn-sm me-2"
+        onClick={() => onSelect(pic!)}
+        disabled={!pic}
+      >
         Save
       </button>
-      <button className="btn btn-light ml-1" onClick={onClose}>
+      <button className="btn btn-light btn-sm" onClick={onClose}>
         Cancel
       </button>
     </div>

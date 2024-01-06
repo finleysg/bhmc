@@ -37,10 +37,15 @@ export function ChangePasswordView({ form, onCancel, onSubmit }: IChangePassword
         error={formErrors.re_new_password}
         type="password"
       />
-      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+      <button type="submit" className="btn btn-primary btn-sm me-2" disabled={isSubmitting}>
         Change Password
       </button>
-      <button type="reset" className="btn btn-light" disabled={isSubmitting} onClick={onCancel}>
+      <button
+        type="reset"
+        className="btn btn-light btn-sm"
+        disabled={isSubmitting}
+        onClick={onCancel}
+      >
         Cancel
       </button>
       {isSubmitting && <Spinner />}

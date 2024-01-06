@@ -66,19 +66,24 @@
 
 .bg-east {
   background-color: $red !important;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
 }
 .bg-east-pale {
   background-color: rgb(255, 107, 104, 0.5) !important;
 }
-
 .bg-north {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
   background-color: $blue !important;
 }
 .bg-north-pale {
   background-color: rgb(33, 150, 243, 0.5);
 }
 .bg-west {
-  background-color: $yellow-200 !important;
+  background-color: $yellow !important;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
 }
 .bg-west-pale {
   background-color: rgb(255, 199, 33, 0.5);
@@ -89,27 +94,28 @@
     font-size: .8em;
   }
   .scores {
-    flex: 2;
+    flex: 3;
     display: flex;
   
     & div {
-      font-size: .9em;
+      font-size: .8em;
       border: solid $gray-400 1px;
       height: 22px;
-      width: 22px;
-      max-width: 22px;
+      width: 24px;
+      max-width: 24px;
       text-align: center;
       color: $black;
       padding-top: 0;
+      font-weight: 400;
     }
   }
   .hole-numbers {
-    flex: 2;
+    flex: 3;
     display: flex;
     & div {
       text-align: center;
-      width: 22px;
-      max-width: 22px;
+      width: 24px;
+      max-width: 24px;
       color: $black;
       font-weight: 600;
     }

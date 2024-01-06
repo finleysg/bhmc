@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 import { useAuth } from "../../hooks/use-auth"
 import { ClubEventProps } from "../../models/common-props"
+import { isMobile } from "../../styles/media-queries"
 
 export function EventAdminButton({
   clubEvent,
@@ -13,13 +14,14 @@ export function EventAdminButton({
   const navigate = useNavigate()
 
   if (user.isAdmin()) {
+    const buttonText = isMobile() ? "Admin" : "Event Administration"
     return (
       <button
         className="btn btn-secondary btn-sm"
         onClick={() => navigate(clubEvent.adminUrl)}
         {...rest}
       >
-        Event Administration
+        {buttonText}
       </button>
     )
   }
