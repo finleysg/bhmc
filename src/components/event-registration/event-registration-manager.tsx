@@ -25,7 +25,6 @@ export function EventRegistrationManager({ clubEvent }: { clubEvent: ClubEvent }
 
   useEffect(() => {
     loadEvent(clubEvent)
-    // return () => completeRegistration()
   }, [clubEvent, loadEvent])
 
   const handleStart = () => {

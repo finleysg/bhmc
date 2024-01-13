@@ -43,8 +43,8 @@ export function RegisterView({ selectedStart, mode, onCancel }: RegisterViewProp
     clubEvent?.maximumSignupGroupSize === 1
       ? "vertical"
       : (clubEvent?.fees.length ?? 0) > 5
-      ? "vertical"
-      : "horizontal"
+        ? "vertical"
+        : "horizontal"
   const showPickers = mode === "new" && (clubEvent?.maximumSignupGroupSize ?? 0) > 1
 
   const handleFriendSelect = (friend: Player) => {
@@ -65,7 +65,6 @@ export function RegisterView({ selectedStart, mode, onCancel }: RegisterViewProp
   const handleCancel = () => {
     setShowConfirm(false)
     if (mode === "new") {
-      console.log("calling cancel")
       cancelRegistration()
     }
     onCancel()

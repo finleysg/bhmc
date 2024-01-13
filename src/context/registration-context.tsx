@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useAuth } from "../hooks/use-auth"
 import { useMyPlayerRecord } from "../hooks/use-my-player-record"
 import { ClubEvent } from "../models/club-event"
+import { EventType } from "../models/codes"
 import { Course } from "../models/course"
 import { EventFee } from "../models/event-fee"
 import { Payment, PaymentDetail } from "../models/payment"
@@ -19,6 +20,7 @@ import {
 } from "../models/registration"
 import { getMany, getOne, httpClient } from "../utils/api-client"
 import { apiUrl } from "../utils/api-utils"
+import { currentSeason } from "../utils/app-config"
 import {
   defaultRegistrationState,
   eventRegistrationReducer,
@@ -35,7 +37,6 @@ export interface IRegistrationContext {
   addFee: (slot: RegistrationSlot, eventFee: EventFee, player: Player) => void
   addPlayer: (slot: RegistrationSlot, player: Player) => void
   cancelRegistration: () => void
-  completeRegistration: () => void
   confirmPayment: (paymentMethod: string, saveCard: boolean, callback?: () => void) => void
   createRegistration: (course?: Course, slots?: RegistrationSlot[], cb?: () => void) => void
   loadEvent: (clubEvent: ClubEvent) => void
@@ -122,10 +123,9 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
         }),
       })
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: ["event-registration-slots", state.clubEvent?.id],
-      }),
+    onSuccess: () => {
+      _completeRegistration()
+    },
   })
 
   const { mutate: _updateRegistrationSlotPlayer } = useMutation({
@@ -261,6 +261,26 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
   }
 
   /**
+   * Completes the registration flow and resets the flow back to the initial state.
+   */
+  const _completeRegistration = () => {
+    if (state.clubEvent?.eventType === EventType.Membership) {
+      queryClient.setQueryData(["player", user.email], {
+        ...player?.data,
+        is_member: true,
+        last_season: currentSeason - 1,
+      })
+    } else {
+      queryClient.invalidateQueries({ queryKey: ["player", user.email] })
+    }
+    queryClient.invalidateQueries({ queryKey: ["my-cards"] })
+    queryClient.invalidateQueries({ queryKey: ["my-events"] })
+    queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
+    queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
+    // dispatch({ type: "load-event", payload: { clubEvent: null } })
+  }
+
+  /**
    * Loads the given event into state and resets all other state.
    * @param {number} id - The event id to load.
    */
@@ -342,15 +362,6 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
       console.error("Should not see a cancellation request without a current registration.")
     }
   }, [_cancelRegistration, state.payment?.id, state.registration])
-
-  /**
-   * Completes the registration flow and resets the flow back to the initial state.
-   */
-  const completeRegistration = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ["my-events"], refetchType: "active" })
-    queryClient.invalidateQueries({ queryKey: ["player"], refetchType: "active" })
-    dispatch({ type: "load-event", payload: { clubEvent: null } })
-  }, [queryClient])
 
   /**
    * Confirms that a payment with the given method is valid. We call Stripe to
@@ -440,7 +451,6 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
     addFee,
     addPlayer,
     cancelRegistration,
-    completeRegistration,
     confirmPayment,
     createRegistration,
     loadEvent,

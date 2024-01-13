@@ -14,7 +14,7 @@ export function useMyPlayerRecord() {
     queryKey: ["player", email],
     queryFn: () => getOne(apiUrl(`players/?email=${email}`), PlayerApiSchema),
     initialData: () => {
-      return queryClient.getQueryData<PlayerApiData | undefined>(["player"])
+      return queryClient.getQueryData<PlayerApiData | undefined>(["player", email])
     },
     enabled: email !== undefined,
     select: (data) => new Player(data),

@@ -49,7 +49,7 @@ export function RegistrationComplete({ selectedStart, title, mode }: Registratio
         <div className="row">
           <div className="col-12" style={{ textAlign: "right" }}>
             {clubEvent && <RegisteredButton clubEvent={clubEvent} />}
-            <Link to="/home" className="btn btn-sm btn-primary">
+            <Link to="/home" className="btn btn-sm btn-primary ms-2">
               Home
             </Link>
           </div>
