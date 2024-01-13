@@ -63,7 +63,7 @@ export function MembershipScreen() {
               </p>
               <div>
                 <CreateAccountButton />
-                <LoginButton />
+                <LoginButton redirectUrl="/membership" />
               </div>
             </div>
           )}

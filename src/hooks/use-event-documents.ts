@@ -11,10 +11,9 @@ interface DocumentArgs {
 }
 
 export function useEventDocuments(eventId: number) {
-  const endpoint = `documents/?event_id=${eventId}`
   return useQuery({
     queryKey: ["documents", eventId],
-    queryFn: () => getMany(endpoint, DocumentApiSchema),
+    queryFn: () => getMany(`documents/?event_id=${eventId}`, DocumentApiSchema),
     select: (data) => data.map((doc) => new BhmcDocument(doc)),
     staleTime: twoMinutes,
     enabled: eventId > 0,

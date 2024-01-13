@@ -5,10 +5,14 @@ import { SavedCard } from "../models/saved-card"
 import { httpClient } from "../utils/api-client"
 import { apiUrl } from "../utils/api-utils"
 
+const transformPaymentMethods = (data: PaymentMethod[]) => {
+  return data.map((pm) => new SavedCard(pm))
+}
+
 export function useMyCards() {
   return useQuery({
     queryKey: ["my-cards"],
     queryFn: () => httpClient(apiUrl("saved-cards")),
-    select: (data) => data.map((c: PaymentMethod) => new SavedCard(c)) as SavedCard[],
+    select: transformPaymentMethods,
   })
 }

@@ -1,7 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react"
 
-import { toast } from "react-toastify"
-
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
 
 import { useAuth } from "../../hooks/use-auth"
@@ -10,7 +8,8 @@ import { useMyCards } from "../../hooks/use-my-cards"
 import { NoAmount } from "../../models/payment"
 import { ErrorDisplay } from "../feedback/error-display"
 import { Checkbox } from "../forms/checkbox"
-import { CreditCardList, StyledCardElement } from "../payment/credit-card"
+import { CreditCardList } from "../payment/credit-card-list"
+import { StyledCardElement } from "../payment/styled-card-element"
 import { OverlaySpinner } from "../spinners/overlay-spinner"
 
 interface RegistrationPaymentProps {
@@ -28,7 +27,7 @@ export function RegistrationPayment({
   selectedStart,
   title,
 }: RegistrationPaymentProps) {
-  const [cardUsed, setCardUsed] = useState("new")
+  const [cardUsed, setCardUsed] = useState<string | undefined>()
   const [isBusy, setIsBusy] = useState(false)
   const [saveCard, setSaveCard] = useState(false)
   const { user } = useAuth()
@@ -38,7 +37,9 @@ export function RegistrationPayment({
   const elements = useElements()
 
   useEffect(() => {
-    if (myCards && myCards.length > 0) {
+    if (myCards === undefined || myCards.length === 0) {
+      setCardUsed("new")
+    } else {
       setCardUsed(myCards[0].paymentMethod)
     }
   }, [myCards])
@@ -78,10 +79,9 @@ export function RegistrationPayment({
   const finishPayment = (method: string) => {
     try {
       confirmPayment(method, cardUsed === "new" && saveCard, () => {
-        toast.success("💸 Your payment has been accepted.")
         onComplete()
       })
-    } finally {
+    } catch (err) {
       setIsBusy(false)
     }
   }

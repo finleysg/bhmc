@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -9,6 +9,7 @@ import { LoginData, LoginSchema } from "../models/auth"
 import { LoginView } from "./login-view"
 
 export function LoginHandler() {
+  const [searchParams] = useSearchParams()
   const {
     login: { mutate, error },
   } = useAuth()
@@ -20,7 +21,7 @@ export function LoginHandler() {
   const submitHandler = (args: LoginData) => {
     mutate(args, {
       onSuccess: () => {
-        navigate("/home")
+        navigate(searchParams.get("redirectUrl") ?? "/home")
       },
     })
   }

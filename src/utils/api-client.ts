@@ -42,11 +42,13 @@ export async function httpClient(endpoint: string, options?: Partial<RequestInit
         const data = await response.json()
         return data
       }
-      return null
     } else {
-      const error = await response.json()
-      return Promise.reject(parseError(error))
+      if (response.status !== 401) {
+        const error = await response.json()
+        return Promise.reject(parseError(error))
+      }
     }
+    return null
   })
 }
 

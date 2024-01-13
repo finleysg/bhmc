@@ -22,7 +22,7 @@ export function useAddFriend() {
 
   return useMutation({
     mutationFn: (friendId: number) => {
-      const endpoint = apiUrl(`friends/add/${friendId}/`)
+      const endpoint = apiUrl(`friends/${friendId}/add/`)
       return httpClient(endpoint, { method: "POST" })
     },
     onSuccess: () => {
@@ -36,7 +36,7 @@ export function useRemoveFriend() {
 
   return useMutation({
     mutationFn: (friendId: number) => {
-      const endpoint = apiUrl(`friends/remove/${friendId}/`)
+      const endpoint = apiUrl(`friends/${friendId}/remove/`)
       return httpClient(endpoint, { method: "DELETE" })
     },
     onSuccess: () => {

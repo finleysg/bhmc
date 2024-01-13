@@ -13,7 +13,8 @@ import { apiUrl } from "../../utils/api-utils"
 import { CardContent } from "../card/content"
 import { ConfirmDialog } from "../dialog/confirm"
 import { ErrorDisplay } from "../feedback/error-display"
-import { ManageCreditCards, StyledCardElement } from "../payment/credit-card"
+import { ManageCreditCards } from "../payment/manage-credit-cards"
+import { StyledCardElement } from "../payment/styled-card-element"
 import { LoadingSpinner } from "../spinners/loading-spinner"
 
 export function MyCards() {
