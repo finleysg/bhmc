@@ -43,7 +43,7 @@ export const RegisterStep: IRegistrationStep = {
 export const ReviewStep: IRegistrationStep = {
   name: "review",
   order: 3,
-  title: "Confirm Registration Details",
+  title: "Review Registration Details",
 }
 export const PaymentStep: IRegistrationStep = {
   name: "payment",
@@ -64,6 +64,7 @@ export type RegistrationAction =
     }
   | { type: "create-registration"; payload: { registration: Registration; payment: Payment } }
   | { type: "update-registration"; payload: { registration: Registration } }
+  | { type: "update-registration-notes"; payload: { notes: string } }
   | { type: "cancel-registration"; payload: null }
   | { type: "reset-registration"; payload: { clubEvent: ClubEvent } }
   | { type: "update-payment"; payload: { payment: Payment } }
@@ -123,6 +124,12 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
     case "update-registration": {
       draft.registration = payload.registration
       draft.error = null
+      return
+    }
+    case "update-registration-notes": {
+      if (draft.registration) {
+        draft.registration.notes = payload.notes
+      }
       return
     }
     case "cancel-registration": {

@@ -1,0 +1,174 @@
+import { ChangeEvent, useState } from "react"
+
+import { rest } from "lodash"
+import { useNavigate } from "react-router-dom"
+
+import { ConfirmDialog } from "../components/dialog/confirm"
+import { FriendPicker } from "../components/directory/friend-picker"
+import { PeoplePicker } from "../components/directory/people-picker"
+import { RegistrationAmountDue } from "../components/event-registration/registration-amount-due"
+import { RegistrationSlotGroup } from "../components/event-registration/registration-slot-group"
+import { ErrorDisplay } from "../components/feedback/error-display"
+import { OverlaySpinner } from "../components/spinners/overlay-spinner"
+import { ReviewStep } from "../context/registration-reducer"
+import { useEventRegistration } from "../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
+import { useAddFriend } from "../hooks/use-my-friends"
+import { NoAmount } from "../models/payment"
+import { Player } from "../models/player"
+import { useCurrentEvent } from "./event-detail"
+
+export function RegisterScreen() {
+  const navigate = useNavigate()
+  const { clubEvent } = useCurrentEvent()
+  const { mutate: addFriend } = useAddFriend()
+  const {
+    currentStep,
+    error,
+    payment,
+    registration,
+    cancelRegistration,
+    addFee,
+    addPlayer,
+    removeFee,
+    removePlayer,
+    savePayment,
+    setError,
+    updateRegistrationNotes,
+    updateStep,
+  } = useEventRegistration()
+
+  const [notes, setNotes] = useState<string>(registration?.notes ?? "")
+  const [showCancelDialog, setShowCancelDialog] = useState(false)
+
+  useEventRegistrationGuard(clubEvent, registration)
+
+  const isBusy = !registration?.id
+  const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
+  const layout =
+    clubEvent?.maximumSignupGroupSize === 1
+      ? "vertical"
+      : (clubEvent?.fees.length ?? 0) > 5
+        ? "vertical"
+        : "horizontal"
+  const showPickers = (clubEvent?.maximumSignupGroupSize ?? 0) > 1
+
+  const handleFriendSelect = (friend: Player) => {
+    const slot = registration?.slots.find((slot) => !slot.playerId)
+    if (slot) {
+      addPlayer(slot, friend)
+    }
+  }
+
+  const handlePlayerSelect = (player: Player) => {
+    const slot = registration?.slots.find((slot) => !slot.playerId)
+    if (slot) {
+      addPlayer(slot, player)
+      addFriend(player.id)
+    }
+  }
+
+  const handleCancel = () => {
+    setShowCancelDialog(false)
+    cancelRegistration()
+    navigate("../")
+  }
+
+  const handleNotesChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setNotes(e.target.value)
+  }
+
+  const handleNextStep = () => {
+    updateRegistrationNotes(notes)
+    savePayment(() => {
+      updateStep(ReviewStep)
+      navigate("../review")
+    })
+  }
+
+  return (
+    <div className="row">
+      <div className="col-12 col-md-6">
+        <div className="card border border-primary mb-4" {...rest}>
+          <div className="card-body">
+            <OverlaySpinner loading={isBusy} />
+            <h4 className="card-header mb-2">{currentStep.title}</h4>
+            {error && (
+              <ErrorDisplay error={error?.message} delay={5000} onClose={() => setError(null)} />
+            )}
+            <p className="text-info fst-italic">{registration?.selectedStart}</p>
+            {payment && registration && (
+              <RegistrationSlotGroup
+                eventFees={clubEvent.fees}
+                registration={registration}
+                payment={payment}
+                removePlayer={removePlayer}
+                addFee={addFee}
+                removeFee={removeFee}
+                layout={layout}
+                mode="new"
+                teamSize={clubEvent.teamSize}
+                skinsType={clubEvent.skinsType}
+              />
+            )}
+            <RegistrationAmountDue amountDue={amountDue} />
+            <hr />
+            {registration && (
+              <div className="row">
+                <div className="col-12">
+                  <label className="text-primary" htmlFor="notes">
+                    Notes / Special Requests
+                  </label>
+                  <textarea
+                    id="notes"
+                    name="notes"
+                    className="form-control fc-alt"
+                    defaultValue={registration.notes ?? ""}
+                    onChange={handleNotesChange}
+                    readOnly={false}
+                    rows={5}
+                  ></textarea>
+                </div>
+              </div>
+            )}
+            <div className="row mt-2" style={{ textAlign: "right" }}>
+              <div className="col-12">
+                <button
+                  className="btn btn-secondary"
+                  disabled={isBusy}
+                  onClick={() => setShowCancelDialog(true)}
+                >
+                  Cancel
+                </button>
+                <button className="btn btn-primary ms-2" disabled={isBusy} onClick={handleNextStep}>
+                  Continue
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="col-12 col-md-6">
+        {showPickers && (
+          <>
+            <PeoplePicker
+              style={{ position: "absolute", top: "12px", right: "30px" }}
+              allowNew={false}
+              clubEvent={clubEvent}
+              onSelect={handlePlayerSelect}
+            />
+            <div className="col-12 col-md-3">
+              <FriendPicker clubEvent={clubEvent} onSelect={handleFriendSelect} />
+            </div>
+          </>
+        )}
+        <ConfirmDialog
+          show={showCancelDialog}
+          title="Cancel Registration?"
+          message="Cancel this registration and return to the event detail page."
+          onClose={(result) => (result ? handleCancel() : setShowCancelDialog(false))}
+        />
+      </div>
+    </div>
+  )
+}

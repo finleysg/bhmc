@@ -3,7 +3,7 @@ import { immerable } from "immer"
 import { z } from "zod"
 
 import { dayDateAndTimeFormat, isoDayFormat } from "../utils/date-utils"
-import { RegistrationType, StartType, getEventTypeName } from "./codes"
+import { EventType, RegistrationType, StartType, getEventTypeName } from "./codes"
 import { Course, CourseApiSchema } from "./course"
 import { EventFee, EventFeeApiSchema } from "./event-fee"
 import { RegistrationSlot } from "./registration"
@@ -163,7 +163,10 @@ export class ClubEvent {
    * @returns boolean
    */
   canEditRegistration() {
-    return Boolean(this.paymentsEnd)
+    return (
+      (this.eventType === EventType.Major || this.eventType === EventType.Weeknight) &&
+      Boolean(this.paymentsEnd)
+    )
   }
 
   /**
