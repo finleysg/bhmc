@@ -15,7 +15,7 @@ export function MemberhipReport() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    httpClient(apiUrl(`reports/membership/${currentSeason}/`))
+    httpClient(apiUrl(`membership/${currentSeason}/`))
       .then((json) => {
         setData(json)
         setLoading(false)
