@@ -98,15 +98,15 @@ export const ResetPasswordSchema = z
   .object({
     uid: z.string().optional(),
     token: z.string().optional(),
-    password: z.string().trim().min(8, "Your password must be at least 8 characters long."),
-    re_password: z.string().trim().min(8, "Your password must be at least 8 characters long."),
+    new_password: z.string().trim().min(8, "Your password must be at least 8 characters long."),
+    re_new_password: z.string().trim().min(8, "Your password must be at least 8 characters long."),
   })
-  .superRefine(({ password, re_password }, ctx) => {
-    if (password !== re_password) {
+  .superRefine(({ new_password, re_new_password }, ctx) => {
+    if (new_password !== re_new_password) {
       ctx.addIssue({
         code: "custom",
         message: "The passwords do not match.",
-        path: ["re_password"],
+        path: ["re_new_password"],
       })
     }
   })

@@ -15,17 +15,17 @@ export function ResetPasswordView({ form, onSubmit }: IResetPasswordView) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <InputControl
-        name="password"
+        name="new_password"
         label="Password"
-        register={register("password")}
-        error={formErrors.password}
+        register={register("new_password")}
+        error={formErrors.new_password}
         type="password"
       />
       <InputControl
-        name="re_password"
+        name="re_new_password"
         label="Confirm Password"
-        register={register("re_password")}
-        error={formErrors.re_password}
+        register={register("re_new_password")}
+        error={formErrors.re_new_password}
         type="password"
       />
       <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
