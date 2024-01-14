@@ -38,7 +38,12 @@ export interface IRegistrationContext {
   addPlayer: (slot: RegistrationSlot, player: Player) => void
   cancelRegistration: () => void
   confirmPayment: (paymentMethod: string, saveCard: boolean, callback?: () => void) => void
-  createRegistration: (course?: Course, slots?: RegistrationSlot[], cb?: () => void) => void
+  createRegistration: (
+    course?: Course,
+    slots?: RegistrationSlot[],
+    selectedStart?: string,
+    cb?: () => void,
+  ) => void
   loadEvent: (clubEvent: ClubEvent) => void
   loadRegistration: (player: Player) => Promise<void>
   removeFee: (slot: RegistrationSlot, eventFee: EventFee) => void
@@ -182,7 +187,14 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
   })
 
   const { mutate: _createRegistration } = useMutation({
-    mutationFn: ({ courseId, slots }: { courseId?: number; slots?: RegistrationSlot[] }) => {
+    mutationFn: ({
+      courseId,
+      slots,
+    }: {
+      courseId?: number
+      slots?: RegistrationSlot[]
+      selectedStart?: string
+    }) => {
       return httpClient(apiUrl("registration"), {
         body: JSON.stringify({
           event: state.clubEvent?.id,
@@ -191,12 +203,12 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
         }),
       })
     },
-    onSuccess: (data) => {
+    onSuccess: (data, args) => {
       const registrationData = RegistrationApiSchema.parse(data)
       dispatch({
         type: "create-registration",
         payload: {
-          registration: new Registration(registrationData),
+          registration: new Registration(registrationData, args.selectedStart),
           payment: _createInitialPaymentRecord(registrationData),
         },
       })
@@ -329,9 +341,9 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
    * Creates a new registration record for the current user.
    */
   const createRegistration = useCallback(
-    (course?: Course, slots?: RegistrationSlot[], cb?: () => void) => {
+    (course?: Course, slots?: RegistrationSlot[], selectedStart?: string, cb?: () => void) => {
       _createRegistration(
-        { courseId: course?.id, slots },
+        { courseId: course?.id, slots, selectedStart },
         {
           onSuccess: () => {
             if (cb) cb()
@@ -347,6 +359,7 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
    */
   const updateRegistrationNotes = useCallback(
     (notes: string) => {
+      dispatch({ type: "update-registration-notes", payload: { notes } })
       _updateRegistrationNotes(notes)
     },
     [_updateRegistrationNotes],

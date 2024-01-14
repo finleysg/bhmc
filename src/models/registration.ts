@@ -111,9 +111,10 @@ export class Registration {
   startingOrder: number
   notes?: string | null
   createdDate: Date
+  selectedStart?: string
   slots: RegistrationSlot[]
 
-  constructor(json: RegistrationData) {
+  constructor(json: RegistrationData, selectedStart?: string) {
     this.id = json.id
     this.eventId = json.event
     this.courseId = json.course
@@ -123,6 +124,7 @@ export class Registration {
     this.startingOrder = json.starting_order
     this.notes = json.notes
     this.createdDate = new Date(json.created_date)
+    this.selectedStart = selectedStart
     this.slots = json.slots ? json.slots.map((s) => new RegistrationSlot(s)) : []
   }
 

@@ -1,12 +1,11 @@
 import { parse } from "date-fns"
-import { useNavigate, useParams } from "react-router-dom"
+import { Outlet, useNavigate, useOutletContext, useParams } from "react-router-dom"
 
-import { EventRegistrationManager } from "../components/event-registration/event-registration-manager"
-import { EventView } from "../components/events/event-view"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { useClubEvents } from "../hooks/use-club-events"
 import { ClubEvent } from "../models/club-event"
-import { EventType } from "../models/codes"
+
+export type ClubEventContextType = { clubEvent: ClubEvent }
 
 export function EventDetailScreen() {
   const { eventDate, eventName } = useParams()
@@ -18,29 +17,21 @@ export function EventDetailScreen() {
 
   if (!eventDate || !eventName) {
     navigate("/home")
-  } else if (clubEvent?.eventType === EventType.Membership) {
-    navigate("/membership")
-  } else if (clubEvent?.eventType === EventType.MatchPlay) {
-    navigate("/match-play")
+    // } else if (clubEvent?.eventType === EventType.Membership) {
+    //   navigate("/membership")
+    // } else if (clubEvent?.eventType === EventType.MatchPlay) {
+    //   navigate("/match-play")
   }
 
   return (
     <div className="content__inner">
       <OverlaySpinner loading={!found} />
-      {clubEvent && clubEvent.paymentsAreOpen() && (
-        <EventRegistrationManager clubEvent={clubEvent} />
-      )}
-      {clubEvent && !clubEvent.paymentsAreOpen() && (
-        <EventView
-          clubEvent={clubEvent}
-          onRegister={function (): void {
-            throw new Error("Registration is not open.")
-          }}
-          onEditRegistration={function (): void {
-            throw new Error("Registration is not open.")
-          }}
-        />
-      )}
+      {clubEvent && <Outlet context={{ clubEvent } satisfies ClubEventContextType} />}
     </div>
   )
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useCurrentEvent() {
+  return useOutletContext<ClubEventContextType>()
 }
