@@ -6,7 +6,7 @@ export function ResetPasswordScreen() {
   return (
     <div className="login">
       <div className="login__block active">
-        <div className="login__header bg-green">
+        <div className="login__header bg-primary">
           <i>
             <MdAccountCircle />
           </i>

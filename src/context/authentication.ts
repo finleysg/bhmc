@@ -28,9 +28,13 @@ export interface IAuthenticationProvider {
 export class DefaultAuthenticationProvider implements IAuthenticationProvider {
   public async getUser() {
     const endpoint = authUrl("users/me")
-    return httpClient(endpoint).then((data: unknown) => {
-      return new User(UserApiSchema.parse(data))
-    })
+    return httpClient(endpoint)
+      .then((data: unknown) => {
+        return new User(UserApiSchema.parse(data))
+      })
+      .catch(() => {
+        return new User(null)
+      })
   }
 
   public async login(data: LoginData) {
