@@ -50,7 +50,7 @@ const queryClient = new QueryClient({
         if (error.message === '{"detail":"Authentication credentials were not provided."}')
           return false
         else if (error.name === "NotFound") return false
-        else if (failureCount < 3) return true
+        else if (failureCount < 2) return true
         else return false
       },
     },
@@ -58,7 +58,7 @@ const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
       if (error.name === "ZodError") {
-        toast.error(`API parsing error: ${error.message}`, { autoClose: false })
+        console.error(`API parsing error: ${error.message}`, { autoClose: false })
       } else if (error.name === "ServerError") {
         toast.warn(`Server error (hopefully temporary): ${error.message}`)
       } else {
