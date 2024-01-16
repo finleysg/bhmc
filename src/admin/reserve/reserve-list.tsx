@@ -95,9 +95,14 @@ export function ReserveListAdmin({
 
   const handleDropConfirm = (dropSlots: ReserveSlot[], dropNotes: string) => {
     try {
+      const registrationId =
+        selectedRegistrationId > 0 ? selectedRegistrationId : dropSlots[0].registrationId
       const slotIds = dropSlots.map((slot) => slot.id)
       const refunds = createRefunds(dropSlots, dropNotes)
-      onDrop(selectedRegistrationId, slotIds, refunds)
+      if (!registrationId) {
+        throw new Error("Failed assertion: No registration id found.")
+      }
+      onDrop(registrationId, slotIds, refunds)
     } finally {
       setShowDrop(false)
       setSelectedSlotId(-1)

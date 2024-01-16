@@ -48,6 +48,14 @@ export class User {
     this.data = json
   }
 
+  /**
+   * True if the user has not yet been loaded from the server.
+   * @returns
+   */
+  public isUnknown = () => {
+    return this.firstName === "unknown" && this.lastName === "unknown"
+  }
+
   public isAdmin = () => {
     return (
       this.isStaff ||

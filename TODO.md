@@ -11,11 +11,11 @@
 - [ ] Tables with sorting (reports and list of registered players).
 - [x] Fix any issues with transition from tokens to same-site cookies.
 - [ ] Server-side validation of payment overrides.
-- [ ] Rework event report to reflect changes in payment amounts.
-- [ ] Rework payment report to reflect changes in payment amounts.
+- [x] Rework event report to reflect changes in payment amounts.
+- [x] Rework payment report to reflect changes in payment amounts.
 - [ ] Rework membership report to show returning vs new members.
 - [ ] Job/command to reset membership at year end.
-- [ ] Rethink - when player is dropped, should we delete the fee records?
+- [x] Rethink - when player is dropped, should we delete the fee records? (no)
 - [ ] Add senior/non-senior to the registration types.
 - [ ] Support dark mode (problem with Bootsrap cards).
 - [ ] Server-side: register.utils is using a hard-coded tee time split. Needs to be dynamic.
@@ -36,5 +36,10 @@
 - [ ] Refresh the event scoring document.
 - [x] Bug - photo gallery / infinite scroll not working.
 - [ ] Countdown on the register button and enable without the need for a refresh.
-- [ ] Bug - navigate directly to a controlled page doesn't work (sent home).
+- [x] Bug - navigate directly to a controlled page doesn't work (sent home).
 - [ ] Bug - admin header menu does not render well on mobile.
+- [ ] Bug - refund amounts must reflect override amount if that applies.
+- [ ] Add a warning to event report if payment is not confirmed. (Notify treasurer that player owes
+      us money.)
+- [ ] Add a payment detail screen to assist researching payment issues/history.
+- [ ] Manage a version number and render in the footer.

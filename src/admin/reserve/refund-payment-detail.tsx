@@ -14,15 +14,11 @@ export function RefundPaymentDetail({ refundFee, onSelect }: RefundPaymentDetail
   }
 
   const feeInfo = `${refundFee.eventFee.name}: $${refundFee.eventFee.amount.toFixed(2)}`
-  const paidBy = `(paid by ${refundFee.paidBy})`
+  // const paidBy = `(paid by ${refundFee.paidBy})`
 
   return (
     <div className="mb-1">
-      <Checkbox
-        label={`${feeInfo} ${paidBy}`}
-        checked={refundFee.selected}
-        onChange={handleChange}
-      />
+      <Checkbox label={feeInfo} checked={refundFee.selected} onChange={handleChange} />
     </div>
   )
 }

@@ -35,11 +35,17 @@ interface IAuthProvider {
 export const AuthContext = createContext<IAuthState | null>(null)
 AuthContext.displayName = "AuthContext"
 
+const placeholderUser = new User({
+  first_name: "unknown",
+  last_name: "unknown",
+  email: "unknown",
+})
+
 export function AuthProvider({
   children,
   authenticationProvider,
 }: PropsWithChildren<IAuthProvider>) {
-  const [user, setUser] = useState(new User(null))
+  const [user, setUser] = useState(placeholderUser)
   const queryClient = useQueryClient()
 
   const loadUser = useCallback(async () => {

@@ -10,7 +10,7 @@ export function Admin() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!user.isAdmin()) {
+    if (!user.isAdmin() && !user.isUnknown()) {
       navigate("/")
     }
   }, [user, navigate])

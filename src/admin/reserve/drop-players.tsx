@@ -6,7 +6,7 @@ import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
 import { usePaymentData } from "../../hooks/use-payment-data"
 import { ClubEvent } from "../../models/club-event"
 import { EventFee } from "../../models/event-fee"
-import { PaymentReportData } from "../../models/payment"
+import { PaymentData } from "../../models/payment"
 import { ReserveSlot } from "../../models/reserve"
 import { RefundSlotDetail } from "./refund-slot-detail"
 
@@ -19,7 +19,7 @@ import { RefundSlotDetail } from "./refund-slot-detail"
  */
 const createRefundDetails = (
   slots: ReserveSlot[],
-  payments: PaymentReportData[],
+  payments: PaymentData[],
   eventFeeMap: Map<number, EventFee>,
 ) => {
   const transformedSlots: ReserveSlot[] = []
@@ -42,7 +42,7 @@ const createRefundDetails = (
         newSlot.fees.push({
           id: detail.id,
           eventFee: eventFeeMap.get(detail.event_fee)!,
-          paidBy: `${payment.user_first_name} ${payment.user_last_name}`,
+          paidBy: `TODO: derive user from id: ${payment.user}`,
           payment: payment,
           selected: true,
         })
