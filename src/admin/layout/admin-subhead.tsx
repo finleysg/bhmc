@@ -2,9 +2,13 @@ import { Link, useLocation } from "react-router-dom"
 
 export function AdminSubheader() {
   const location = useLocation()
-  const isEventAdmin = location.pathname.split("/").indexOf("event") > -1
+  if (!location?.pathname) {
+    console.warn("AdminSubheader: location pathname is null")
+    return null
+  }
+  const isEventAdmin = location.pathname?.split("/").indexOf("event") > -1
 
-  // Do not show this subheader is we're doing event administration,
+  // Do not show this subheader if we're doing event administration,
   // which is on child routes to the main admin route.
   if (isEventAdmin) {
     return null

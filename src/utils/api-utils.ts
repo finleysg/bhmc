@@ -1,6 +1,10 @@
 import { apiBaseUrl, authBaseUrl, serverBaseUrl } from "./app-config"
 
 const normalizeEndpoint = (endpoint: string) => {
+  if (!endpoint) {
+    console.warn("Endpoint is empty")
+    return ""
+  }
   const [base, querystring] = endpoint.split("?")
   if (!base.startsWith("/") && base.endsWith("/")) {
     return `${base}${querystring ? "?" + querystring : ""}`

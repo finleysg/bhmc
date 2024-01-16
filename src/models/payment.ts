@@ -28,15 +28,15 @@ export const PaymentApiSchema = z.object({
   confirmed: z.boolean(),
   payment_details: z.array(PaymentDetailApiSchema).optional(),
 })
-export const PaymentReportSchema = PaymentApiSchema.extend({
-  payment_date: z.coerce.date(),
-  user_first_name: z.string(),
-  user_last_name: z.string(),
-}).omit({ user: true })
+// export const PaymentReportSchema = PaymentApiSchema.extend({
+//   payment_date: z.coerce.date(),
+//   user_first_name: z.string(),
+//   user_last_name: z.string(),
+// }).omit({ user: true })
 
 export type PaymentDetailData = z.infer<typeof PaymentDetailApiSchema>
 export type PaymentData = z.infer<typeof PaymentApiSchema>
-export type PaymentReportData = z.infer<typeof PaymentReportSchema>
+// export type PaymentReportData = z.infer<typeof PaymentReportSchema>
 export type PaymentAmount = {
   subtotal: number
   transactionFee: number

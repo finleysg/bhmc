@@ -1,12 +1,12 @@
 import { EventFee } from "./event-fee"
-import { PaymentReportData } from "./payment"
+import { PaymentData } from "./payment"
 import { ReserveSlot } from "./reserve"
 
 export interface Refund {
   id: number
   eventFee: EventFee
   paidBy: string
-  payment: PaymentReportData
+  payment: PaymentData
   selected: boolean
 }
 

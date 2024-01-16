@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { differenceInYears, parseISO } from "date-fns"
+import { differenceInYears, format, parseISO } from "date-fns"
 
 import { ClubEvent } from "../../models/club-event"
 import { EventFee } from "../../models/event-fee"
@@ -88,13 +88,16 @@ const getCanChooseEventReportRow = (index: number, clubEvent: ClubEvent, obj: an
 const getPaymentReportRow = (obj: any) => {
   const paymentAmount = !isNaN(obj.payment_amount) ? +obj.payment_amount : 0
   const transactionFee = !isNaN(obj.transaction_fee) ? +obj.transaction_fee : 0
+  const refundAmount = !isNaN(obj.refund_amount) ? +obj.refund_amount : 0
   const values = []
-  values.push(`${obj.user_first_name} ${obj.user_last_name}`)
+  values.push(`${obj.first_name} ${obj.last_name}`)
+  values.push(obj.id)
   values.push(obj.payment_code)
-  values.push(isoDayFormat(parseISO(obj.payment_date)))
-  values.push((paymentAmount - transactionFee).toFixed(2))
-  values.push(transactionFee.toFixed(2))
+  values.push(format(parseISO(obj.payment_date), "yyyy-MM-dd hh:mm:ss"))
+  values.push(format(parseISO(obj.confirm_date), "yyyy-MM-dd hh:mm:ss"))
   values.push(paymentAmount.toFixed(2))
+  values.push(transactionFee.toFixed(2))
+  values.push(refundAmount.toFixed(2))
   return values
 }
 
@@ -130,7 +133,16 @@ const getSkinsReportHeader = () => {
 }
 
 const getPaymentReportHeader = () => {
-  return ["Player", "Payment Code", "Payment Date", "Amount Due", "Transaction Fee", "Total"]
+  return [
+    "Player",
+    "Id",
+    "Payment Code",
+    "Payment Date",
+    "Confirm Date",
+    "Amount Paid",
+    "Transaction Fee",
+    "Refunded",
+  ]
 }
 
 const getMembershipReportHeader = () => {
@@ -175,7 +187,11 @@ const getMembershipReportRow = (obj: any, index: number) => {
   values.push(obj.last_name)
   values.push(obj.first_name)
   values.push(obj.email)
-  values.push(isoDayFormat(parseISO(obj.birth_date)))
+  try {
+    values.push(isoDayFormat(parseISO(obj.birth_date)))
+  } catch (err) {
+    values.push("n/a")
+  }
   values.push(obj.tee)
   values.push(obj.signed_up_by)
   values.push(isoDayFormat(parseISO(obj.signup_date)))
