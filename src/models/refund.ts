@@ -7,12 +7,18 @@ export interface Refund {
   eventFee: EventFee
   paidBy: string
   payment: PaymentData
+  amountPaid: number
   selected: boolean
+}
+
+export interface RefundInstance {
+  event_fee_id: number
+  amount_paid: number
 }
 
 export interface RefundData {
   payment: number
-  refund_amount: number
+  refund_fees: RefundInstance[]
   notes: string
 }
 
@@ -23,11 +29,11 @@ export const createRefunds = (slots: ReserveSlot[], notes: string) => {
     .reduce((acc, curr) => {
       const refund = acc.get(curr.payment.id)
       if (refund) {
-        refund.refund_amount += curr.eventFee.amount
+        refund.refund_fees.push({ event_fee_id: curr.eventFee.id, amount_paid: curr.amountPaid })
       } else {
         acc.set(curr.payment.id, {
           payment: curr.payment.id,
-          refund_amount: curr.eventFee.amount,
+          refund_fees: [{ event_fee_id: curr.eventFee.id, amount_paid: curr.amountPaid }],
           notes,
         })
       }

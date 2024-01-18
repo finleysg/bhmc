@@ -1,28 +1,32 @@
 import { ChangeEvent, useState } from "react"
 
 import { PeoplePicker } from "../../components/directory/people-picker"
+import { Checkbox } from "../../components/forms/checkbox"
 import { ClubEvent } from "../../models/club-event"
 import { Player } from "../../models/player"
 import { EventFeeDetail } from "./event-fee-detail"
 
 interface AddPlayerProps {
   clubEvent: ClubEvent
-  onAdd: (player: Player, feeIds: number[], notes: string) => void
+  onAdd: (player: Player, feeIds: number[], isMoneyOwed: boolean, notes: string) => void
   onCancel: () => void
 }
 
 export function AddPlayer({ clubEvent, onAdd, onCancel }: AddPlayerProps) {
   const [newPlayer, setNewPlayer] = useState<Player | null>(null)
   const [selectedFees, setSelectedFees] = useState<number[]>([])
+  const [collectingFees, setCollectingFees] = useState(true)
   const [notes, setNotes] = useState("")
 
   const calculateTotalFees = () => {
     let total = 0
-    clubEvent.fees.forEach((fee) => {
-      if (selectedFees.includes(fee.id)) {
-        total += fee.amount
-      }
-    })
+    if (collectingFees) {
+      clubEvent.fees.forEach((fee) => {
+        if (selectedFees.includes(fee.id)) {
+          total += fee.amount
+        }
+      })
+    }
     return total
   }
 
@@ -32,7 +36,7 @@ export function AddPlayer({ clubEvent, onAdd, onCancel }: AddPlayerProps) {
 
   const handleAdd = () => {
     if (newPlayer) {
-      onAdd(newPlayer, selectedFees, notes)
+      onAdd(newPlayer, selectedFees, collectingFees, notes)
       setNewPlayer(null)
       setSelectedFees([])
       setNotes("")
@@ -86,6 +90,13 @@ export function AddPlayer({ clubEvent, onAdd, onCancel }: AddPlayerProps) {
           })}
         </div>
         <div className="form-group mt-4 mb-2">
+          <Checkbox
+            label="Are we collecting fees?"
+            checked={collectingFees}
+            onChange={() => setCollectingFees(!collectingFees)}
+          />
+        </div>
+        <div className="form-group mb-2">
           <label htmlFor="notes">Notes / Payment Information</label>
           <textarea
             id="notes"

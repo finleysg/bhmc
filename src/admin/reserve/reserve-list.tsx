@@ -14,11 +14,16 @@ import { SwapPlayers } from "./swap-players"
 interface ReserveListAdminProps extends Omit<ComponentPropsWithoutRef<"div">, "onDrop"> {
   clubEvent: ClubEvent
   registrations: Registration[]
-  onRegister: (slot: ReserveSlot, playerId: number, feeIds: number[], notes: string) => void
+  onRegister: (playerId: number, feeIds: number[], isMoneyOwed: boolean, notes: string) => void
   onDrop: (registrationId: number, slotIds: number[], refunds: Map<number, RefundData>) => void
   onSwap: (slot: ReserveSlot, newPlayerId: number) => void
 }
 
+/**
+ * Renders a list of players who have registered for a club event.
+ * The event is not a can-choose event, so the players are not selecting
+ * their own tee times or starting holes.
+ */
 export function ReserveListAdmin({
   clubEvent,
   registrations,
@@ -71,9 +76,14 @@ export function ReserveListAdmin({
     setShowAdd(true)
   }
 
-  const handleAddConfirm = (player: Player, feeIds: number[], notes: string) => {
+  const handleAddConfirm = (
+    player: Player,
+    feeIds: number[],
+    isMoneyOwed: boolean,
+    notes: string,
+  ) => {
     try {
-      onRegister(selectedSlots[0], player.id, feeIds, notes)
+      onRegister(player.id, feeIds, isMoneyOwed, notes)
     } finally {
       setShowAdd(false)
       setSelectedSlotId(-1)
@@ -97,11 +107,11 @@ export function ReserveListAdmin({
     try {
       const registrationId =
         selectedRegistrationId > 0 ? selectedRegistrationId : dropSlots[0].registrationId
-      const slotIds = dropSlots.map((slot) => slot.id)
-      const refunds = createRefunds(dropSlots, dropNotes)
       if (!registrationId) {
         throw new Error("Failed assertion: No registration id found.")
       }
+      const slotIds = dropSlots.map((slot) => slot.id)
+      const refunds = createRefunds(dropSlots, dropNotes)
       onDrop(registrationId, slotIds, refunds)
     } finally {
       setShowDrop(false)

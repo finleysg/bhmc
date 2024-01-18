@@ -75,7 +75,9 @@ export function MyCards() {
       return // cancel
     }
     setShowConfirm(false)
-    await httpClient(apiUrl(`remove-card/${currentCard?.paymentMethod}`), { method: "DELETE" })
+    await httpClient(apiUrl(`remove-card/${currentCard?.paymentMethod}`), {
+      method: "DELETE",
+    })
     queryClient.invalidateQueries({ queryKey: ["my-cards"] })
     toast.success("💳 Your card has been removed.")
   }

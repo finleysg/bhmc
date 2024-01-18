@@ -42,6 +42,7 @@ const createRefundDetails = (
         newSlot.fees.push({
           id: detail.id,
           eventFee: eventFeeMap.get(detail.event_fee)!,
+          amountPaid: detail.amount ?? -1, // TODO: there should always be an amount
           paidBy: `TODO: derive user from id: ${payment.user}`,
           payment: payment,
           selected: true,
@@ -77,7 +78,7 @@ export function DropPlayers({ clubEvent, slots, onDrop, onCancel }: DropPlayersP
       .flatMap((slot) => slot.fees)
       .filter((fee) => fee.selected)
       .reduce((acc, curr) => {
-        return acc + curr.eventFee.amount
+        return acc + curr.amountPaid
       }, 0)
   }
 

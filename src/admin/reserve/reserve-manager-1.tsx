@@ -17,6 +17,10 @@ import { RefundData } from "../../models/refund"
 import { LoadReserveTables, ReserveSlot } from "../../models/reserve"
 import { ReserveGridAdmin } from "./reserve-grid"
 
+/**
+ * Manage players for events where players are selecting their own tee times or
+ * starting holes.
+ */
 export function ReserveManager1({ clubEvent }: ClubEventProps) {
   const [selectedTableIndex, updateSelectedTableIndex] = useState(0)
   const [busy, setBusy] = useState(false)
