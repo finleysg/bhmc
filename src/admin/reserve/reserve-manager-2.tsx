@@ -6,7 +6,7 @@ import { ErrorDisplay } from "../../components/feedback/error-display"
 import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
 import { useDropPlayers } from "../../hooks/use-drop-players"
 import { useEventRegistrations } from "../../hooks/use-event-registrations"
-import { useIssueRefunds } from "../../hooks/use-issue-refunds"
+import { useIssueMultipleRefunds } from "../../hooks/use-issue-refunds"
 import { useRegisterPlayer } from "../../hooks/use-register-player"
 import { useSwapPlayers } from "../../hooks/use-swap-players"
 import { ClubEventProps } from "../../models/common-props"
@@ -14,6 +14,10 @@ import { RefundData } from "../../models/refund"
 import { ReserveSlot } from "../../models/reserve"
 import { ReserveListAdmin } from "./reserve-list"
 
+/**
+ * Manage players for majors and other events where players are not selecting
+ * their own tee times or starting holes.
+ */
 export function ReserveManager2({ clubEvent }: ClubEventProps) {
   const [busy, setBusy] = useState(false)
   const { data: registrations, status, error } = useEventRegistrations(clubEvent.id)
@@ -24,15 +28,15 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
   } = useRegisterPlayer(clubEvent.id)
   const { mutateAsync: dropPlayers, status: dropStatus, error: dropError } = useDropPlayers()
   const { mutateAsync: swapPlayers, status: swapStatus, error: swapError } = useSwapPlayers()
-  const issueRefunds = useIssueRefunds()
+  const issueRefunds = useIssueMultipleRefunds()
 
   const handleRegister = async (
-    slot: ReserveSlot,
     playerId: number,
     feeIds: number[],
+    isMoneyOwed: boolean,
     notes: string,
   ) => {
-    await registerPlayer({ playerId, fees: feeIds, slotId: slot.id, notes })
+    await registerPlayer({ slotId: 0, playerId, fees: feeIds, isMoneyOwed, notes })
     toast.success("Player registration was successful.")
   }
 
@@ -43,9 +47,15 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
   ) => {
     try {
       setBusy(true)
-      await issueRefunds(refunds)
-      await dropPlayers({ registrationId, slotIds })
-      toast.success("Player drop was successful.")
+      issueRefunds(refunds)
+        ?.then(() => {
+          dropPlayers({ registrationId, slotIds }).then(() => {
+            toast.success("Player drop was successful.")
+          })
+        })
+        .catch(() => {
+          toast.error("Failed to issue refund(s).")
+        })
     } finally {
       setBusy(false)
     }

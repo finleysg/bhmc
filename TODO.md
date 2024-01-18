@@ -38,7 +38,7 @@
 - [ ] Countdown on the register button and enable without the need for a refresh.
 - [x] Bug - navigate directly to a controlled page doesn't work (sent home).
 - [ ] Bug - admin header menu does not render well on mobile.
-- [ ] Bug - refund amounts must reflect override amount if that applies.
+- [x] Bug - refund amounts must reflect override amount if that applies.
 - [ ] Add a warning to event report if payment is not confirmed. (Notify treasurer that player owes
       us money.)
 - [ ] Add a payment detail screen to assist researching payment issues/history.

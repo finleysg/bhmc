@@ -13,7 +13,7 @@ export function RefundPaymentDetail({ refundFee, onSelect }: RefundPaymentDetail
     onSelect(refundFee.id, e.target.checked)
   }
 
-  const feeInfo = `${refundFee.eventFee.name}: $${refundFee.eventFee.amount.toFixed(2)}`
+  const feeInfo = `${refundFee.eventFee.name}: $${refundFee.amountPaid.toFixed(2)}`
   // const paidBy = `(paid by ${refundFee.paidBy})`
 
   return (
