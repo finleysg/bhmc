@@ -4,7 +4,7 @@ import { MajorChampion, MajorChampionApiSchema, MajorChampionData } from "../mod
 import { getMany } from "../utils/api-client"
 
 export function usePlayerChampionships(playerId: number) {
-  const endpoint = `champions/?player_id=${playerId}`
+  const endpoint = `champions/?player=${playerId}`
 
   return useQuery({
     queryKey: [endpoint],
