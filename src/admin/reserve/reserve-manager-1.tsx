@@ -41,9 +41,11 @@ export function ReserveManager1({ clubEvent }: ClubEventProps) {
     slot: ReserveSlot,
     playerId: number,
     feeIds: number[],
+    isMoneyOwed: boolean,
     notes: string,
   ) => {
-    await registerPlayer({ playerId, fees: feeIds, slotId: slot.id, notes })
+    // TODO: Need to support the 'isMoneyOwed' flag
+    await registerPlayer({ playerId, fees: feeIds, isMoneyOwed, slotId: slot.id, notes })
     toast.success("Player registration was successful.")
   }
 

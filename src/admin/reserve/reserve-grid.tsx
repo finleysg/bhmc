@@ -16,7 +16,13 @@ import { SwapPlayers } from "./swap-players"
 interface ReserveGridAdminProps extends Omit<ComponentPropsWithoutRef<"div">, "onDrop"> {
   clubEvent: ClubEvent
   table: ReserveTable
-  onRegister: (slot: ReserveSlot, playerId: number, feeIds: number[], notes: string) => void
+  onRegister: (
+    slot: ReserveSlot,
+    playerId: number,
+    feeIds: number[],
+    isMoneyOwed: boolean,
+    notes: string,
+  ) => void
   onMove: (
     registrationId: number,
     sourceSlots: ReserveSlot[],
@@ -84,9 +90,14 @@ export function ReserveGridAdmin({
     }
   }
 
-  const handleAddConfirm = (player: Player, feeIds: number[], notes: string) => {
+  const handleAddConfirm = (
+    player: Player,
+    feeIds: number[],
+    isMoneyOwed: boolean,
+    notes: string,
+  ) => {
     try {
-      onRegister(selectedSlots[0], player.id, feeIds, notes)
+      onRegister(selectedSlots[0], player.id, feeIds, isMoneyOwed, notes)
     } finally {
       setShowAdd(false)
       updateSelectedSlots([])
