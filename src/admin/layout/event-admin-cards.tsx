@@ -84,11 +84,11 @@ export function ImportScoresCard() {
   )
 }
 
-export function ImportWinnersCard() {
+export function ImportChampionsCard() {
   return (
     <AdminCard
-      title="Import Winners"
-      action={"import-winners"}
+      title="Import Champions"
+      action={"import-champions"}
       description="Upload a file with the first-place finishers of this event."
     />
   )

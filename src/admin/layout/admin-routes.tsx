@@ -3,6 +3,7 @@ import { CloneEventsScreen } from "../screens/clone-events"
 import { ClubDocumentsScreen } from "../screens/club-documents"
 import { EventDocumentsScreen } from "../screens/event-documents"
 import { EventReportScreen } from "../screens/event-report"
+import { ImportChampionsScreen } from "../screens/import-champions"
 import { ImportPointsScreen } from "../screens/import-points"
 import { ImportScoresScreen } from "../screens/import-scores"
 import { ManagePlayersScreen } from "../screens/manage-players"
@@ -42,7 +43,7 @@ export const adminRoutes = () => [
           { path: "manage-documents", element: <EventDocumentsScreen /> },
           { path: "import-points", element: <ImportPointsScreen /> },
           { path: "import-scores", element: <ImportScoresScreen /> },
-          { path: "import-winners", element: <div>TODO: import winners screen</div> },
+          { path: "import-champions", element: <ImportChampionsScreen /> },
           { path: "view-slots", element: <ViewSlotsScreen /> },
         ],
       },

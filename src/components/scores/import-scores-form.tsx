@@ -1,12 +1,13 @@
-import { FormEvent, useState } from "react"
+import { ComponentPropsWithoutRef, FormEvent, useState } from "react"
 
 import { FilePicker } from "../document/file-picker"
 
-interface ImportScoresFormProps {
+interface ImportScoresFormProps extends Omit<ComponentPropsWithoutRef<"div">, "onSubmit"> {
+  commandName: string
   onSubmit: (file: File) => void
 }
 
-export function ImportScoresForm({ onSubmit }: ImportScoresFormProps) {
+export function ImportScoresForm({ commandName, onSubmit, ...rest }: ImportScoresFormProps) {
   const [refreshKey, setRefreshKey] = useState(0)
   const [files, setFiles] = useState<File[]>([])
 
@@ -22,12 +23,12 @@ export function ImportScoresForm({ onSubmit }: ImportScoresFormProps) {
   }
 
   return (
-    <div>
+    <div {...rest}>
       <form onSubmit={handleFileSubmit}>
         <FilePicker key={refreshKey} onSelected={handleFileSelected} onDrop={handleFileSelected} />
         <div className="d-flex justify-content-end mt-2">
           <button type="submit" className="btn btn-primary ms-2" disabled={files.length === 0}>
-            Import Scores
+            {commandName}
           </button>
         </div>
       </form>

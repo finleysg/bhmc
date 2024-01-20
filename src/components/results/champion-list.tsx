@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom"
 
 import { useAuth } from "../../hooks/use-auth"
-import { useChampions } from "../../hooks/use-major-champions"
 import { MajorChampionProps, SeasonProps } from "../../models/common-props"
 import { MajorChampion } from "../../models/major-champion"
+
+interface ChampionListProps extends SeasonProps {
+  champions: MajorChampion[]
+}
 
 function ChampionRow({ champion }: MajorChampionProps) {
   const { user } = useAuth()
@@ -24,22 +27,9 @@ function ChampionRow({ champion }: MajorChampionProps) {
   )
 }
 
-function NoChampions({ season }: SeasonProps) {
-  return (
-    <div className="card">
-      <div className="card-body">
-        <h4 className="card-title text-primary">{season} Major Champions</h4>
-        <p>No information for this season.</p>
-      </div>
-    </div>
-  )
-}
-
-export function ChampionList({ season }: SeasonProps) {
-  const { data: champions } = useChampions(season)
-
+export function ChampionList({ champions, season }: ChampionListProps) {
   if (!champions || champions.length === 0) {
-    return <NoChampions season={season} />
+    return <p>No champions imported yet for {season}.</p>
   }
 
   const championsByEvent =
@@ -52,18 +42,15 @@ export function ChampionList({ season }: SeasonProps) {
     }, new Map<string, MajorChampion[]>()) ?? new Map<string, MajorChampion[]>()
 
   return (
-    <div className="card">
-      <div className="card-body">
-        <h4 className="card-header mb-2">{season} Major Champions</h4>
-        {[...championsByEvent.entries()].map((entry) => (
-          <div key={entry[0]} style={{ padding: ".5rem" }}>
-            <h5 className="text-info">{entry[0]}</h5>
-            {entry[1]?.map((c) => {
-              return <ChampionRow key={c.id} champion={c} />
-            })}
-          </div>
-        ))}
-      </div>
-    </div>
+    <>
+      {[...championsByEvent.entries()].map((entry) => (
+        <div key={entry[0]} style={{ padding: ".5rem" }}>
+          <h5 className="text-info">{entry[0]}</h5>
+          {entry[1]?.map((c) => {
+            return <ChampionRow key={c.id} champion={c} />
+          })}
+        </div>
+      ))}
+    </>
   )
 }
