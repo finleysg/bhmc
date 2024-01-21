@@ -1,9 +1,8 @@
 import React from "react"
 
 import { BiEnvelope, BiLogInCircle } from "react-icons/bi"
-import { GiGolfFlag, GiTrophyCup } from "react-icons/gi"
+import { GiGolfFlag, GiLaurelsTrophy, GiTrophyCup } from "react-icons/gi"
 import { GoCalendar, GoHome, GoInfo, GoPlus, GoQuestion } from "react-icons/go"
-import { GrOrderedList } from "react-icons/gr"
 import { MdGridOn, MdPeopleOutline, MdPersonAdd } from "react-icons/md"
 import { PiPencilLine } from "react-icons/pi"
 import { RiGalleryFill } from "react-icons/ri"
@@ -35,11 +34,7 @@ export function Sidebar() {
           icon={<GoCalendar />}
           name="Event Calendar"
         />
-        <MenuItem
-          path={`results/weeknight-events/${currentSeason}`}
-          icon={<GrOrderedList />}
-          name="Event Results"
-        />
+        <MenuItem path={`champions/${currentSeason}`} icon={<GiLaurelsTrophy />} name="Champions" />
         {groups.indexOf(Groups.AuthenticatedUsers) >= 0 && (
           <MenuItem
             path={`my-scores/gross/${currentSeason}`}
