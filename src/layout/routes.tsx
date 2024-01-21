@@ -2,6 +2,7 @@ import { AboutUsScreen } from "../screens/about-us"
 import { AccountScreen } from "../screens/account"
 import { AccountSettingsScreen } from "../screens/account-settings"
 import { CalendarScreen } from "../screens/calendar"
+import { ChampionsScreen } from "../screens/champions"
 import { ContactScreen } from "../screens/contact"
 import { DamCupScreen } from "../screens/dam-cup"
 import { DirectoryScreen } from "../screens/directory"
@@ -22,7 +23,6 @@ import { RegisterScreen } from "../screens/register"
 import { RegisteredScreen } from "../screens/registered"
 import { RegistrationCompleteScreen } from "../screens/registration-complete"
 import { ReserveScreen } from "../screens/reserve"
-import { ResultsScreen } from "../screens/results"
 import { ReviewRegistrationScreen } from "../screens/review-registration"
 import { SeasonLongPointsScreen } from "../screens/season-long-points"
 import { SendMessageScreen } from "../screens/send-message"
@@ -49,7 +49,7 @@ export const mainRoutes = () =>
             { path: "registrations", element: <RegisteredScreen /> },
           ],
         },
-        { path: "/results/:eventType/:season", element: <ResultsScreen /> },
+        { path: "/champions/:season", element: <ChampionsScreen /> },
         { path: "/my-scores/:scoreType/:season", element: <PlayerScoresScreen /> },
         { path: "/policies/:policyType", element: <PolicyScreen /> },
         { path: "/match-play", element: <MatchPlayScreen /> },

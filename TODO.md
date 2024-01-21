@@ -1,6 +1,7 @@
 - [x] Support returning member only registration.
 - [ ] Priority sign up one hour before regular sign up (can-choose events only).
-- [ ] Champions page (with pics per season).
+- [ ] Countdown on the register button and enable without the need for a refresh.
+- [x] Champions page (with pics per season).
 - [ ] Select "All" on my scores.
 - [ ] Export scores from my scores.
 - [ ] Import Chicago scores.
@@ -23,7 +24,7 @@
 - [ ] Update expired card (https://stripe.com/docs/api/payment_methods/update).
 - [ ] Save image in a separate folder.
 - [ ] Remove images no longer selected.
-- [ ] Import champions for major events (Excel or csv).
+- [x] Import champions for major events (Excel).
 - [ ] View season long points by event.
 - [ ] View season long points by player.
 - [ ] Hide the event documents card when no documents are found.
@@ -35,7 +36,6 @@
 - [ ] Refresh the event signup document.
 - [ ] Refresh the event scoring document.
 - [x] Bug - photo gallery / infinite scroll not working.
-- [ ] Countdown on the register button and enable without the need for a refresh.
 - [x] Bug - navigate directly to a controlled page doesn't work (sent home).
 - [ ] Bug - admin header menu does not render well on mobile.
 - [x] Bug - refund amounts must reflect override amount if that applies.
