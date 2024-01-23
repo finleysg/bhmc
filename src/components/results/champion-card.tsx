@@ -19,7 +19,11 @@ export function ChampionCard({ players, eventName, flight, score }: ChampionCard
   return (
     <div className="m-2 d-inline-block">
       <div className="champion-card">
-        <div className="champion-card__header">
+        <div
+          className={`champion-card__header ${
+            flight.indexOf("gross") > 0 ? "champion-card__gross" : "champion-card__net"
+          }`}
+        >
           <span className="champion-card__icon">
             <GiLaurelsTrophy />
           </span>
