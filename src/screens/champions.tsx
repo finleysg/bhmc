@@ -1,3 +1,4 @@
+import { sortBy } from "lodash"
 import { useParams } from "react-router-dom"
 
 import { ChampionGroup } from "../components/results/champion-group"
@@ -15,7 +16,11 @@ export function ChampionsScreen() {
   // TODO: move to utility file - also used in champion list component
   // or simplify that champion list component since we don't need multiple groupings there
   const championsByEvent =
-    champions?.reduce((acc, value) => {
+    sortBy(champions, [
+      function (c: MajorChampion) {
+        return c.eventId ?? c.eventName, c.flight
+      },
+    ])?.reduce((acc, value) => {
       if (!acc.has(value.eventName)) {
         acc.set(value.eventName, [])
       }

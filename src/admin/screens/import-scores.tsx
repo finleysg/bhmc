@@ -1,5 +1,7 @@
 import { useState } from "react"
 
+import { toast } from "react-toastify"
+
 import { CardContent } from "../../components/card/content"
 import { ErrorDisplay } from "../../components/feedback/error-display"
 import { ImportScoresForm } from "../../components/scores/import-scores-form"
@@ -35,6 +37,7 @@ export function ImportScoresScreen() {
     if (results && results.length > 0) {
       setImportFailures(results)
     }
+    toast.success("Scores imported successfully")
   }
 
   return (
