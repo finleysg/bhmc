@@ -1,5 +1,4 @@
 import { MajorChampion } from "../../models/major-champion"
-import { ChampionPics } from "../photo/champion-pics"
 import { ChampionCard, ChampionCardProps } from "./champion-card"
 
 interface ChampionGroupProps {
@@ -8,7 +7,7 @@ interface ChampionGroupProps {
   champions: MajorChampion[]
 }
 
-export function ChampionGroup({ season, eventName, champions }: ChampionGroupProps) {
+export function ChampionGroup({ eventName, champions }: ChampionGroupProps) {
   const championsToRender: ChampionCardProps[] = []
   champions.forEach((c) => {
     const index = championsToRender.findIndex((cc) => cc.teamId === c.teamId)
@@ -28,7 +27,7 @@ export function ChampionGroup({ season, eventName, champions }: ChampionGroupPro
   return (
     <>
       {championsToRender?.map((c) => <ChampionCard key={c.teamId} {...c} />)}
-      <ChampionPics season={season} eventName={eventName} />
+      {/* <ChampionPics season={season} eventName={eventName} /> */}
     </>
   )
 }
