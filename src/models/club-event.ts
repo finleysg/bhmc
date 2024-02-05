@@ -6,6 +6,7 @@ import { dayDateAndTimeFormat, isoDayFormat } from "../utils/date-utils"
 import { EventType, RegistrationType, StartType, getEventTypeName } from "./codes"
 import { Course, CourseApiSchema } from "./course"
 import { EventFee, EventFeeApiSchema } from "./event-fee"
+import { Player } from "./player"
 import { RegistrationSlot } from "./registration"
 
 export const slugify = (text: string) => {
@@ -171,31 +172,81 @@ export class ClubEvent {
 
   /**
    * Returns true if the current date and time is between signup start and payments end.
+   * @param {Date} now The current date and time
    * @returns boolean
    */
-  paymentsAreOpen() {
+  paymentsAreOpen(now: Date = new Date()) {
     if (this.registrationType === RegistrationType.None || !this.signupStart || !this.paymentsEnd) {
       return false
     }
-    return isWithinInterval(new Date(), {
-      start: this.signupStart,
+    return isWithinInterval(now, {
+      start: this.prioritySignupStart ?? this.signupStart,
       end: this.paymentsEnd,
     })
   }
 
   /**
-   * Returns true if the current date and time is between signup start and signup end.
+   * Returns true if the given date and time is between signup start and signup end.
+   * @param {Date} now The current date and time
    * @returns boolean
    */
-  registrationIsOpen() {
+  registrationIsOpen(now: Date = new Date()) {
     if (this.registrationType === RegistrationType.None || !this.signupStart || !this.signupEnd) {
       return false
     }
 
-    return isWithinInterval(new Date(), {
+    return isWithinInterval(now, {
       start: this.signupStart,
       end: this.signupEnd,
     })
+  }
+
+  /**
+   * Returns true if the current date and time is between priority signup start and signup start.
+   * @param {Date} now The current date and time
+   * @returns boolean
+   */
+  priorityRegistrationIsOpen(now: Date = new Date()) {
+    if (
+      this.registrationType === RegistrationType.None ||
+      !this.prioritySignupStart ||
+      !this.signupStart ||
+      !this.signupEnd
+    ) {
+      return false
+    }
+
+    return isWithinInterval(now, {
+      start: this.prioritySignupStart,
+      end: this.signupStart,
+    })
+  }
+
+  /**
+   * Returns true if the current date and time is between the start and end of the event.
+   * @param {Date} now The current date and time
+   * @param {Player} player The player to check for registration eligibility
+   * @returns boolean
+   * @memberof ClubEvent
+   */
+  playerCanRegister(now: Date, player?: Player) {
+    if (!player) {
+      return false
+    } else if (!this.priorityRegistrationIsOpen(now) && !this.registrationIsOpen(now)) {
+      return false
+    } else if (
+      this.registrationType === RegistrationType.ReturningMembersOnly &&
+      !player.isReturningMember
+    ) {
+      return false
+    } else if (this.registrationType === RegistrationType.MembersOnly && !player.isMember) {
+      return false
+    } else if (this.registrationType === RegistrationType.GuestsAllowed && !player.isMember) {
+      return false
+    } else if (this.ghinRequired && !player.ghin) {
+      return false
+    }
+    return true
   }
 
   /**

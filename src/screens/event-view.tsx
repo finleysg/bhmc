@@ -1,5 +1,3 @@
-import { useEffect } from "react"
-
 import { useNavigate } from "react-router-dom"
 
 import { EventDocuments } from "../components/document/event-documents"
@@ -13,13 +11,9 @@ import { useCurrentEvent } from "./event-detail"
 
 export function EventViewScreen() {
   const { clubEvent } = useCurrentEvent()
-  const { createRegistration, loadEvent, loadRegistration, updateStep } = useEventRegistration()
+  const { createRegistration, loadRegistration, updateStep } = useEventRegistration()
   const { data: player } = useMyPlayerRecord()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    loadEvent(clubEvent)
-  }, [clubEvent, loadEvent])
 
   const handleStart = () => {
     if (clubEvent.canChoose) {

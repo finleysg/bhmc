@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
 import { ConfirmDialog } from "../components/dialog/confirm"
+import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { RegistrationSlotLineItemReview } from "../components/event-registration/registration-slot-line-item-review"
 import { ErrorDisplay } from "../components/feedback/error-display"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
@@ -84,6 +85,7 @@ export function ReviewRegistrationScreen() {
             )}
             <hr />
             <div style={{ textAlign: "right" }}>
+              <RegisterCountdown />
               <button className="btn btn-secondary" disabled={isBusy} onClick={handleBack}>
                 Back
               </button>

@@ -1,6 +1,6 @@
 - [x] Support returning member only registration.
-- [ ] Priority sign up one hour before regular sign up (can-choose events only).
-- [ ] Countdown on the register button and enable without the need for a refresh.
+- [x] Priority sign up one hour before regular sign up (can-choose events only).
+- [x] Countdown on the register button and enable without the need for a refresh.
 - [x] Champions page (with pics per season).
 - [ ] Select "All" on my scores.
 - [ ] Export scores from my scores.

@@ -1,11 +1,12 @@
 import { ChangeEvent, useState } from "react"
 
-import { rest } from "lodash"
 import { useNavigate } from "react-router-dom"
 
 import { ConfirmDialog } from "../components/dialog/confirm"
+import { Dialog } from "../components/dialog/dialog"
 import { FriendPicker } from "../components/directory/friend-picker"
 import { PeoplePicker } from "../components/directory/people-picker"
+import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { RegistrationAmountDue } from "../components/event-registration/registration-amount-due"
 import { RegistrationSlotGroup } from "../components/event-registration/registration-slot-group"
 import { ErrorDisplay } from "../components/feedback/error-display"
@@ -28,6 +29,7 @@ export function RegisterScreen() {
     payment,
     registration,
     cancelRegistration,
+    canRegister,
     addFee,
     addPlayer,
     removeFee,
@@ -40,6 +42,7 @@ export function RegisterScreen() {
 
   const [notes, setNotes] = useState<string>(registration?.notes ?? "")
   const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const [showPriorityDialog, setShowPriorityDialog] = useState(false)
 
   useEventRegistrationGuard(clubEvent, registration)
 
@@ -79,6 +82,10 @@ export function RegisterScreen() {
   }
 
   const handleNextStep = () => {
+    if (!canRegister()) {
+      setShowPriorityDialog(true)
+      return
+    }
     updateRegistrationNotes(notes)
     savePayment(() => {
       updateStep(ReviewStep)
@@ -89,7 +96,7 @@ export function RegisterScreen() {
   return (
     <div className="row">
       <div className="col-12 col-md-6">
-        <div className="card border border-primary mb-4" {...rest}>
+        <div className="card border border-primary mb-4">
           <div className="card-body">
             <OverlaySpinner loading={isBusy} />
             <h4 className="card-header mb-2">{currentStep.title}</h4>
@@ -133,6 +140,7 @@ export function RegisterScreen() {
             )}
             <div className="row mt-2" style={{ textAlign: "right" }}>
               <div className="col-12">
+                <RegisterCountdown />
                 <button
                   className="btn btn-secondary"
                   disabled={isBusy}
@@ -152,7 +160,7 @@ export function RegisterScreen() {
         {showPickers && (
           <>
             <PeoplePicker
-              style={{ position: "absolute", top: "12px", right: "30px" }}
+              style={{ position: "absolute", top: "12px", right: "10px" }}
               allowNew={false}
               clubEvent={clubEvent}
               onSelect={handlePlayerSelect}
@@ -168,6 +176,17 @@ export function RegisterScreen() {
           message="Cancel this registration and return to the event detail page."
           onClose={(result) => (result ? handleCancel() : setShowCancelDialog(false))}
         />
+        <Dialog
+          show={showPriorityDialog}
+          title="Large Groups Only"
+          onClose={() => setShowPriorityDialog(false)}
+        >
+          <p>
+            During the priority registration period, you must have 4 or 5 players to register.
+            Please add more players to your group or cancel your registration and wait until sign
+            ups open for everyone.
+          </p>
+        </Dialog>
       </div>
     </div>
   )

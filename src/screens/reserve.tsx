@@ -31,7 +31,7 @@ export function ReserveScreen() {
       registationSlots,
       `${clubEvent.name}: ${course.name} ${groupName}`,
       () => {
-        navigate("/register")
+        navigate("../register")
       },
     )
   }

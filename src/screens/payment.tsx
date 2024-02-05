@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
 
 import { ConfirmDialog } from "../components/dialog/confirm"
+import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { ErrorDisplay } from "../components/feedback/error-display"
 import { Checkbox } from "../components/forms/checkbox"
 import { CreditCardList } from "../components/payment/credit-card-list"
@@ -138,6 +139,7 @@ export function PaymentScreen() {
             )}
             <hr />
             <div style={{ textAlign: "right" }}>
+              <RegisterCountdown />
               <button className="btn btn-secondary" disabled={isBusy} onClick={handleBack}>
                 Back
               </button>

@@ -47,12 +47,7 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
               currentStep={PendingStep}
               onClick={onEditRegistration}
             />
-            <RegisterButton
-              clubEvent={clubEvent}
-              hasSignedUp={hasSignedUp}
-              currentStep={PendingStep}
-              onClick={onRegister}
-            />
+            <RegisterButton clubEvent={clubEvent} hasSignedUp={hasSignedUp} onClick={onRegister} />
           </div>
         </div>
         <div className="card-text">
