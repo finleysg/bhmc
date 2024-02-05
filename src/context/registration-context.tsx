@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useCallback, useReducer } from "react"
+import { createContext, PropsWithChildren, useCallback, useEffect, useReducer } from "react"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
@@ -6,6 +6,7 @@ import { useAuth } from "../hooks/use-auth"
 import { useMyPlayerRecord } from "../hooks/use-my-player-record"
 import { ClubEvent } from "../models/club-event"
 import { EventType } from "../models/codes"
+import { ClubEventProps } from "../models/common-props"
 import { Course } from "../models/course"
 import { EventFee } from "../models/event-fee"
 import { Payment, PaymentDetail } from "../models/payment"
@@ -37,6 +38,7 @@ export interface IRegistrationContext {
   addFee: (slot: RegistrationSlot, eventFee: EventFee, player: Player) => void
   addPlayer: (slot: RegistrationSlot, player: Player) => void
   cancelRegistration: () => void
+  canRegister: () => boolean
   confirmPayment: (paymentMethod: string, saveCard: boolean, callback?: () => void) => void
   createRegistration: (
     course?: Course,
@@ -44,7 +46,6 @@ export interface IRegistrationContext {
     selectedStart?: string,
     cb?: () => void,
   ) => void
-  loadEvent: (clubEvent: ClubEvent) => void
   loadRegistration: (player: Player) => Promise<void>
   removeFee: (slot: RegistrationSlot, eventFee: EventFee) => void
   removePlayer: (slot: RegistrationSlot) => void
@@ -57,12 +58,19 @@ export interface IRegistrationContext {
 export const EventRegistrationContext = createContext<IRegistrationContext | null>(null)
 EventRegistrationContext.displayName = "EventRegistrationContext"
 
-export function EventRegistrationProvider({ children }: PropsWithChildren) {
+export function EventRegistrationProvider({
+  clubEvent,
+  children,
+}: PropsWithChildren<ClubEventProps>) {
   const queryClient = useQueryClient()
   const [state, dispatch] = useReducer(eventRegistrationReducer, defaultRegistrationState)
 
   const { user } = useAuth()
   const { data: player } = useMyPlayerRecord()
+
+  useEffect(() => {
+    dispatch({ type: "load-event", payload: { clubEvent: clubEvent } })
+  }, [clubEvent])
 
   const { mutate: _createPayment } = useMutation({
     mutationFn: (payment: Partial<Payment>) => {
@@ -293,14 +301,6 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
   }
 
   /**
-   * Loads the given event into state and resets all other state.
-   * @param {number} id - The event id to load.
-   */
-  const loadEvent = useCallback((clubEvent: ClubEvent) => {
-    dispatch({ type: "load-event", payload: { clubEvent: clubEvent } })
-  }, [])
-
-  /**
    * Changes the current step in the registration process.
    */
   const updateStep = useCallback((step: IRegistrationStep) => {
@@ -455,6 +455,18 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
     dispatch({ type: "remove-fee", payload: { eventFeeId: eventFee.id, slotId: slot.id } })
   }, [])
 
+  const canRegister = useCallback(() => {
+    const slots = state.registration?.slots ?? []
+    if (state.clubEvent?.priorityRegistrationIsOpen()) {
+      return slots.filter((s) => s.playerId).length >= 4 // TODO: Make this configurable
+    } else if (state.clubEvent?.registrationIsOpen()) {
+      return (
+        slots.filter((s) => s.playerId).length >= (state.clubEvent?.minimumSignupGroupSize ?? 1)
+      )
+    }
+    return false
+  }, [state.clubEvent, state.registration])
+
   const setError = useCallback((error: Error | null) => {
     dispatch({ type: "update-error", payload: { error } })
   }, [])
@@ -464,9 +476,9 @@ export function EventRegistrationProvider({ children }: PropsWithChildren) {
     addFee,
     addPlayer,
     cancelRegistration,
+    canRegister,
     confirmPayment,
     createRegistration,
-    loadEvent,
     loadRegistration,
     removeFee,
     removePlayer,

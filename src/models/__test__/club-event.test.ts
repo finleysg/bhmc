@@ -85,3 +85,92 @@ test("calculates the available spots for tee times", () => {
   const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
   expect(event.availableSpots()).toEqual(300)
 })
+
+test.each([
+  "2024-06-11T17:00:00Z",
+  "2024-06-11T18:15:00Z",
+  "2024-06-14T19:59:00Z",
+  "2024-06-15T10:59:00Z",
+])(
+  "payments are open if the current time is after priority payments start and before the payment deadline",
+  (currentTime: string) => {
+    const eventData = getTestEvent(TestEventType.weeknight)
+    eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+    eventData.signup_start = "2024-06-11T18:00:00Z"
+    eventData.signup_end = "2024-06-14T20:00:00Z"
+    eventData.payments_end = "2024-06-15T11:00:00Z"
+    const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+
+    expect(event.paymentsAreOpen(new Date(currentTime))).toBe(true)
+  },
+)
+
+test.each(["2024-06-11T16:59:00Z", "2024-06-15T11:01:00Z"])(
+  "payments are not open if the current time is before priority payments start or after the payment deadline",
+  (currentTime: string) => {
+    const eventData = getTestEvent(TestEventType.weeknight)
+    eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+    eventData.signup_start = "2024-06-11T18:00:00Z"
+    eventData.signup_end = "2024-06-14T20:00:00Z"
+    eventData.payments_end = "2024-06-15T11:00:00Z"
+    const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+
+    expect(event.paymentsAreOpen(new Date(currentTime))).toBe(false)
+  },
+)
+
+test.each(["2024-06-11T18:15:00Z", "2024-06-14T19:59:00Z"])(
+  "registration is open if the current time is after signup start and before signup end",
+  (currentTime: string) => {
+    const eventData = getTestEvent(TestEventType.weeknight)
+    eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+    eventData.signup_start = "2024-06-11T18:00:00Z"
+    eventData.signup_end = "2024-06-14T20:00:00Z"
+    eventData.payments_end = "2024-06-15T11:00:00Z"
+    const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+
+    expect(event.registrationIsOpen(new Date(currentTime))).toBe(true)
+  },
+)
+
+test.each(["2024-06-11T17:59:00Z", "2024-06-14T20:01:00Z"])(
+  "registration is not open if the current time is before signup start or after signup end",
+  (currentTime: string) => {
+    const eventData = getTestEvent(TestEventType.weeknight)
+    eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+    eventData.signup_start = "2024-06-11T18:00:00Z"
+    eventData.signup_end = "2024-06-14T20:00:00Z"
+    eventData.payments_end = "2024-06-15T11:00:00Z"
+    const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+
+    expect(event.registrationIsOpen(new Date(currentTime))).toBe(false)
+  },
+)
+
+test.each(["2024-06-11T17:01:00Z", "2024-06-11T17:59:00Z"])(
+  "priority registration is open if the current time is after priority signup start and before signup start",
+  (currentTime: string) => {
+    const eventData = getTestEvent(TestEventType.weeknight)
+    eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+    eventData.signup_start = "2024-06-11T18:00:00Z"
+    eventData.signup_end = "2024-06-14T20:00:00Z"
+    eventData.payments_end = "2024-06-15T11:00:00Z"
+    const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+
+    expect(event.priorityRegistrationIsOpen(new Date(currentTime))).toBe(true)
+  },
+)
+
+test.each(["2024-06-11T16:59:00Z", "2024-06-11T18:01:00Z"])(
+  "priority registration is not open if the current time is before priority signup start or after signup start",
+  (currentTime: string) => {
+    const eventData = getTestEvent(TestEventType.weeknight)
+    eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+    eventData.signup_start = "2024-06-11T18:00:00Z"
+    eventData.signup_end = "2024-06-14T20:00:00Z"
+    eventData.payments_end = "2024-06-15T11:00:00Z"
+    const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+
+    expect(event.priorityRegistrationIsOpen(new Date(currentTime))).toBe(false)
+  },
+)

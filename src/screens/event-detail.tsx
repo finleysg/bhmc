@@ -2,6 +2,7 @@ import { parse } from "date-fns"
 import { Outlet, useNavigate, useOutletContext, useParams } from "react-router-dom"
 
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
+import { EventRegistrationProvider } from "../context/registration-context"
 import { useClubEvents } from "../hooks/use-club-events"
 import { ClubEvent } from "../models/club-event"
 
@@ -17,16 +18,16 @@ export function EventDetailScreen() {
 
   if (!eventDate || !eventName) {
     navigate("/home")
-    // } else if (clubEvent?.eventType === EventType.Membership) {
-    //   navigate("/membership")
-    // } else if (clubEvent?.eventType === EventType.MatchPlay) {
-    //   navigate("/match-play")
   }
 
   return (
     <div className="content__inner">
       <OverlaySpinner loading={!found} />
-      {clubEvent && <Outlet context={{ clubEvent } satisfies ClubEventContextType} />}
+      {clubEvent && (
+        <EventRegistrationProvider clubEvent={clubEvent}>
+          <Outlet context={{ clubEvent } satisfies ClubEventContextType} />
+        </EventRegistrationProvider>
+      )}
     </div>
   )
 }

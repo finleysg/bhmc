@@ -7,7 +7,7 @@ import {
   eventFee,
   skinFee,
 } from "../../../test/data/registration"
-import { render, screen, within } from "../../../test/test-utils"
+import { renderWithAuth, screen, within } from "../../../test/test-utils"
 import { RegistrationSlotGroup } from "../registration-slot-group"
 
 test("renders registration group", async () => {
@@ -19,7 +19,7 @@ test("renders registration group", async () => {
   const removeFeeSpy = vi.fn()
   const removePlayerSpy = vi.fn()
 
-  render(
+  renderWithAuth(
     <div>
       <RegistrationSlotGroup
         addFee={addFeeSpy}

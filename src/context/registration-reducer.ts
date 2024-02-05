@@ -38,7 +38,7 @@ export const ReserveStep: IRegistrationStep = {
 export const RegisterStep: IRegistrationStep = {
   name: "register",
   order: 2,
-  title: "Online Registration",
+  title: "Players and Fees",
 }
 export const ReviewStep: IRegistrationStep = {
   name: "review",

@@ -12,7 +12,6 @@ import { FullPageSpinner } from "./components/spinners/full-screen-spinner"
 import { AuthProvider } from "./context/auth-context"
 import { DefaultAuthenticationProvider } from "./context/authentication"
 import { LayoutProvider } from "./context/layout-context"
-import { EventRegistrationProvider } from "./context/registration-context"
 import { ErrorScreen } from "./screens/error"
 import * as config from "./utils/app-config"
 
@@ -74,9 +73,7 @@ export function App() {
       <LayoutProvider>
         <AuthProvider authenticationProvider={new DefaultAuthenticationProvider()}>
           <Elements stripe={stripePromise}>
-            <EventRegistrationProvider>
-              <RouterProvider router={routes} fallbackElement={<FullPageSpinner />} />
-            </EventRegistrationProvider>
+            <RouterProvider router={routes} fallbackElement={<FullPageSpinner />} />
           </Elements>
         </AuthProvider>
       </LayoutProvider>

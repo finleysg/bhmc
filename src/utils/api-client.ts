@@ -61,12 +61,13 @@ export async function getOne<TData extends object>(
   } else if (typeof json === "object") {
     result = schema.safeParse(json)
   } else {
-    return undefined
+    throw new Error(`No data returned from ${endpoint}`)
   }
   if (result.success) {
     return result.data
   } else {
     // Unexpected data - should just be a development issue
+    console.error(`API data parsing error from ${endpoint}`)
     throw result.error
   }
 }
@@ -83,6 +84,7 @@ export async function getMany<TData extends object>(
       data.push(result.data)
     } else {
       // Unexpected data - should just be a development issue
+      console.error(`API data parsing error from ${endpoint}`)
       throw result.error
     }
   })

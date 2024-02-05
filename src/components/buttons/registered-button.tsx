@@ -6,7 +6,7 @@ import { ClubEventProps } from "../../models/common-props"
 import { CustomLinkProps } from "./login-button"
 
 export function RegisteredButton({ clubEvent, ...rest }: ClubEventProps & CustomLinkProps) {
-  const signupStart = clubEvent.signupStart ?? new Date()
+  const signupStart = clubEvent.prioritySignupStart ?? clubEvent.signupStart ?? new Date()
   const canView =
     clubEvent.registrationType !== RegistrationType.None && !isBefore(new Date(), signupStart)
 

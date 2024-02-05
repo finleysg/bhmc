@@ -1,56 +1,58 @@
 import { ComponentPropsWithoutRef } from "react"
 
-import { IRegistrationStep, PendingStep } from "../../context/registration-reducer"
+import { differenceInMinutes, isBefore } from "date-fns"
+
+import { useCounter } from "../../hooks/use-counter"
 import { useMyPlayerRecord } from "../../hooks/use-my-player-record"
 import { RegistrationType } from "../../models/codes"
 import { ClubEventProps } from "../../models/common-props"
 
 interface RegisterButtonProps extends ComponentPropsWithoutRef<"button"> {
   hasSignedUp: boolean
-  currentStep: IRegistrationStep
+  now?: Date
 }
 
 export function RegisterButton({
   clubEvent,
   hasSignedUp,
-  currentStep,
   onClick,
   ...rest
 }: RegisterButtonProps & ClubEventProps) {
+  const currentTime = new Date()
+  const targetDate = clubEvent.prioritySignupStart ?? clubEvent.signupStart ?? currentTime
+  const startCountdown =
+    isBefore(currentTime, targetDate) && differenceInMinutes(targetDate, currentTime) < 60
+
   const { data: player } = useMyPlayerRecord()
+  const { minutes, seconds } = useCounter(targetDate)
 
-  const canRegister = () => {
-    if (!player) {
-      return false
-    } else if (!clubEvent.registrationIsOpen()) {
-      return false
-    } else if (
-      clubEvent.registrationType === RegistrationType.ReturningMembersOnly &&
-      !player.isReturningMember
-    ) {
-      return false
-    } else if (clubEvent.registrationType === RegistrationType.MembersOnly && !player.isMember) {
-      return false
-    } else if (clubEvent.registrationType === RegistrationType.GuestsAllowed && !player.isMember) {
-      return false
-    } else if (clubEvent.ghinRequired && !player.ghin) {
-      return false
-    }
-    return true
-  }
-
-  const notVisible =
+  if (
     hasSignedUp ||
     clubEvent.registrationType === RegistrationType.None ||
     clubEvent.registrationWindow === "past"
-  if (notVisible) {
+  ) {
     return null
   }
 
-  const isEnabled = currentStep === PendingStep && canRegister()
+  const isDisabled = !clubEvent.playerCanRegister(currentTime, player)
+  const buttonText =
+    startCountdown && minutes + seconds > 0 ? (
+      <span className="fw-bold">
+        {minutes}:{seconds.toString().padStart(2, "0")}
+      </span>
+    ) : (
+      <span>Sign Up</span>
+    )
+
   return (
-    <button className="btn btn-warning btn-sm" disabled={!isEnabled} onClick={onClick} {...rest}>
-      Sign Up
+    <button
+      className="btn btn-warning btn-sm"
+      style={{ minWidth: "80px" }}
+      onClick={onClick}
+      disabled={isDisabled}
+      {...rest}
+    >
+      {buttonText}
     </button>
   )
 }

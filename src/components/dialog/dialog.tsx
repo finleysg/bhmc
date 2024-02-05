@@ -22,12 +22,12 @@ export function Dialog({ children, title, show, onClose }: PropsWithChildren<Dia
 
   return (
     <dialog className="border-0" ref={dialogRef}>
-      <div className="card border-0">
+      <div className="card text-left border-0">
         <div className="card-body">
-          {title ?? <h3 className="card-title text-primary">{title}</h3>}
+          {title && <h4 className="card-header">{title}</h4>}
           {children}
         </div>
-        <div className="card-footer">
+        <div className="card-footer text-center">
           <button type="button" className="btn btn-sm btn-primary" onClick={closeDialog}>
             Ok
           </button>

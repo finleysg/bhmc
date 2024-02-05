@@ -11,7 +11,7 @@ import {
 } from "../../../test/test-utils"
 import { RegisteredButton } from "../registered-button"
 
-test.each([["registration"], ["past"]])(
+test.each([["priority"], ["registration"], ["past"]])(
   "renders the button if sign-ups have started",
   async (registrationWindow) => {
     setupAuthenticatedUser()
@@ -25,7 +25,7 @@ test.each([["registration"], ["past"]])(
       </div>,
     )
     await waitFor(() =>
-      expect(screen.queryByRole("link", { name: /who's registered?/i })).toBeInTheDocument(),
+      expect(screen.queryByRole("link", { name: /players/i })).toBeInTheDocument(),
     )
   },
 )

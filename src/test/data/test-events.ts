@@ -522,6 +522,16 @@ const getEvent = (eventType: number) => {
   }
 }
 
+type dateFieldTypes = {
+  start_date: string
+  priority_signup_start: string | null
+  signup_start: string
+  signup_end: string
+  payments_end: string
+  registration_window: string
+  season: number
+}
+
 const getTestEvent = (eventType: number, state: string = "registration") => {
   let now = new Date()
   if (state === "future") {
@@ -531,8 +541,9 @@ const getTestEvent = (eventType: number, state: string = "registration") => {
   } else {
     now = addDays(now, 7)
   }
-  const dateFields = {
+  const dateFields: dateFieldTypes = {
     start_date: format(now, "yyyy-MM-dd"),
+    priority_signup_start: null,
     signup_start: subDays(now, 14).toISOString(),
     signup_end: subDays(now, 4).toISOString(),
     payments_end: subDays(now, 1).toISOString(),

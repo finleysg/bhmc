@@ -32,6 +32,7 @@ export function RegistrationSlotGroup({
   removePlayer,
 }: RegistrationSlotGroupProps) {
   const { data: players } = usePlayers()
+
   const handleRemovePlayer = (slot: RegistrationSlot) => {
     removePlayer(slot)
   }
