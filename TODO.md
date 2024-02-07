@@ -1,7 +1,19 @@
-- [x] Support returning member only registration.
-- [x] Priority sign up one hour before regular sign up (can-choose events only).
-- [x] Countdown on the register button and enable without the need for a refresh.
-- [x] Champions page (with pics per season).
+# 2024 TODO List
+
+## High Priority
+
+- [ ] Upgrade MySQL to version 8.0 so we can upgrade Django
+      (https://www.pythonanywhere.com/forums/topic/32791/).
+- [x] Server-side: register.utils is using a hard-coded tee time split. Needs to be dynamic.
+- [ ] Refactor registration edit to work within new routing.
+- [ ] Rework membership report to show returning vs new members.
+- [ ] Refresh the event signup document.
+- [ ] Add a warning to event report if payment is not confirmed. (Notify treasurer that player owes
+      us money.)
+- [ ] Add a payment detail screen to assist researching payment issues/history.
+
+## Would Like To Do
+
 - [ ] Select "All" on my scores.
 - [ ] Export scores from my scores.
 - [ ] Import Chicago scores.
@@ -10,36 +22,35 @@
 - [ ] View my points by year.
 - [ ] Standard "view more" on long lists.
 - [ ] Tables with sorting (reports and list of registered players).
-- [x] Fix any issues with transition from tokens to same-site cookies.
 - [ ] Server-side validation of payment overrides.
-- [x] Rework event report to reflect changes in payment amounts.
-- [x] Rework payment report to reflect changes in payment amounts.
-- [ ] Rework membership report to show returning vs new members.
 - [ ] Job/command to reset membership at year end.
-- [x] Rethink - when player is dropped, should we delete the fee records? (no)
 - [ ] Add senior/non-senior to the registration types.
 - [ ] Support dark mode (problem with Bootsrap cards).
-- [ ] Server-side: register.utils is using a hard-coded tee time split. Needs to be dynamic.
 - [ ] Clean up restriction modeling on server-side (remove from FeeType).
 - [ ] Update expired card (https://stripe.com/docs/api/payment_methods/update).
 - [ ] Save image in a separate folder.
 - [ ] Remove images no longer selected.
-- [x] Import champions for major events (Excel).
 - [ ] View season long points by event.
 - [ ] View season long points by player.
 - [ ] Hide the event documents card when no documents are found.
+- [ ] Refresh the event scoring document.
+- [ ] Manage a version number and render in the footer.
+- [ ] Bug - admin header menu does not render well on mobile.
+
+## Done
+
+- [x] Support returning member only registration.
+- [x] Priority sign up one hour before regular sign up (can-choose events only).
+- [x] Countdown on the register button and enable without the need for a refresh.
+- [x] Champions page (with pics per season).
+- [x] Fix any issues with transition from tokens to same-site cookies.
+- [x] Rework event report to reflect changes in payment amounts.
+- [x] Rework payment report to reflect changes in payment amounts.
+- [x] Rethink - when player is dropped, should we delete the fee records? (no)
+- [x] Import champions for major events (Excel).
 - [x] BUG: Saving cc info doesn't appear to work after stripe upgrade.
 - [x] In the rates card, show the override fees as well.
-- [ ] Upgrade MySQL to version 8.0 so we can upgrade Django
-      (https://www.pythonanywhere.com/forums/topic/32791/).
 - [x] Mobile formatting review and repair.
-- [ ] Refresh the event signup document.
-- [ ] Refresh the event scoring document.
 - [x] Bug - photo gallery / infinite scroll not working.
 - [x] Bug - navigate directly to a controlled page doesn't work (sent home).
-- [ ] Bug - admin header menu does not render well on mobile.
 - [x] Bug - refund amounts must reflect override amount if that applies.
-- [ ] Add a warning to event report if payment is not confirmed. (Notify treasurer that player owes
-      us money.)
-- [ ] Add a payment detail screen to assist researching payment issues/history.
-- [ ] Manage a version number and render in the footer.

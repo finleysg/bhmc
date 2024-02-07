@@ -4,7 +4,6 @@ import ReactMarkdown from "react-markdown"
 import { Link } from "react-router-dom"
 import remarkGfm from "remark-gfm"
 
-import { PendingStep } from "../../context/registration-reducer"
 import { useMyPlayerRecord } from "../../hooks/use-my-player-record"
 import * as colors from "../../styles/colors"
 import { currentSeason } from "../../utils/app-config"
@@ -102,7 +101,6 @@ export function SeasonEventDetail({
                   <RegisterButton
                     clubEvent={clubEvent}
                     hasSignedUp={hasSignedUp}
-                    currentStep={PendingStep}
                     onClick={onRegister}
                   />
                 </div>
