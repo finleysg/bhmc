@@ -94,7 +94,11 @@ const getPaymentReportRow = (obj: any) => {
   values.push(obj.id)
   values.push(obj.payment_code)
   values.push(format(parseISO(obj.payment_date), "yyyy-MM-dd hh:mm:ss"))
-  values.push(format(parseISO(obj.confirm_date), "yyyy-MM-dd hh:mm:ss"))
+  if (obj.confirm_date) {
+    values.push(format(parseISO(obj.confirm_date), "yyyy-MM-dd hh:mm:ss"))
+  } else {
+    values.push("n/a")
+  }
   values.push(paymentAmount.toFixed(2))
   values.push(transactionFee.toFixed(2))
   values.push(refundAmount.toFixed(2))
@@ -145,6 +149,14 @@ const getPaymentReportHeader = () => {
   ]
 }
 
+const getPaymentDetailHeader = () => {
+  return ["Event Fee", "Paid", "Amount Paid", "Player"]
+}
+
+const getRefundDetailHeader = () => {
+  return ["Refund Amount", "Date", "Confirmed", "Issuer", "Notes"]
+}
+
 const getMembershipReportHeader = () => {
   return [
     "#",
@@ -173,6 +185,33 @@ const getEventReportRows = (clubEvent: ClubEvent, reportData: any[]) => {
 
 const getPaymentReportRows = (reportData: any[]) => {
   return reportData?.map((obj: any) => getPaymentReportRow(obj)) ?? []
+}
+
+const getPaymentDetailRows = (reportData: any[]) => {
+  return (
+    reportData?.map((obj: any) => {
+      const values = []
+      values.push(obj.event_fee)
+      values.push(obj.is_paid ? "✔️" : "")
+      values.push(obj.amount_paid)
+      values.push(`${obj.first_name} ${obj.last_name}`)
+      return values
+    }) ?? []
+  )
+}
+
+const getRefundDetailRows = (reportData: any[]) => {
+  return (
+    reportData?.map((obj: any) => {
+      const values = []
+      values.push(obj.refund_amount)
+      values.push(sortableDateAndTimeFormat(parseISO(obj.refund_date)))
+      values.push(obj.confirmed ? "✔️" : "")
+      values.push(obj.issuer)
+      values.push(obj.notes)
+      return values
+    }) ?? []
+  )
 }
 
 const getSkinsReportRows = (clubEvent: ClubEvent, reportData: any[]) => {
@@ -208,8 +247,12 @@ export {
   getEventReportRows,
   getMembershipReportHeader,
   getMembershipReportRows,
+  getPaymentDetailHeader,
+  getPaymentDetailRows,
   getPaymentReportHeader,
   getPaymentReportRows,
+  getRefundDetailHeader,
+  getRefundDetailRows,
   getSkinsReportHeader,
   getSkinsReportRows,
 }
