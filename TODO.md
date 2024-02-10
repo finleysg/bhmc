@@ -10,7 +10,7 @@
 - [ ] Refresh the event signup document.
 - [ ] Add a warning to event report if payment is not confirmed. (Notify treasurer that player owes
       us money.)
-- [ ] Add a payment detail screen to assist researching payment issues/history.
+- [x] Add a payment detail screen to assist researching payment issues/history.
 
 ## Would Like To Do
 
@@ -36,6 +36,7 @@
 - [ ] Refresh the event scoring document.
 - [ ] Manage a version number and render in the footer.
 - [ ] Bug - admin header menu does not render well on mobile.
+- [ ] Improve payment report with better currency and date formatting.
 
 ## Done
 

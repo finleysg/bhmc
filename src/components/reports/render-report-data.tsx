@@ -1,14 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DownloadButton } from "./download-button"
+import { PaymentDetails } from "./payment-details"
+import { RefundDetails } from "./refund-details"
+import { ReportRow } from "./report-row"
 
 interface RenderReportDataProps {
+  eventId: number
   title: string
   reportName: string
   reportHeader: string[]
   reportData: any[][]
 }
 
+const getReportDetail = (eventId: number, reportName: string, data: any[]) => {
+  if (reportName.indexOf("payment-report") > 0) {
+    const paymentId = data[1] // TODO: this is brittle, need to find a better way to get the payment id
+    if (paymentId) {
+      return (
+        <div className="d-flex">
+          <PaymentDetails eventId={eventId} paymentId={paymentId} />
+          <RefundDetails eventId={eventId} paymentId={paymentId} />
+        </div>
+      )
+    }
+  }
+  return null
+}
+
 export function RenderReportData({
+  eventId,
   reportName,
   reportHeader,
   reportData,
@@ -40,15 +60,9 @@ export function RenderReportData({
             <tbody>
               {reportData.map((row, rx) => {
                 return (
-                  <tr key={`${row[0]}-${rx}`}>
-                    {row.map((cell, cx) => {
-                      return (
-                        <td key={`${cell}-${cx}`} className="report-cell">
-                          {cell}
-                        </td>
-                      )
-                    })}
-                  </tr>
+                  <ReportRow key={`${row[0]}-${rx}`} row={row} rx={rx}>
+                    {getReportDetail(eventId, reportName, row)}
+                  </ReportRow>
                 )
               })}
             </tbody>

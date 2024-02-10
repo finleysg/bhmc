@@ -40,6 +40,7 @@ export function PaymentReport({ clubEvent }: ClubEventProps) {
   } else {
     return (
       <RenderReportData
+        eventId={clubEvent.id}
         title="Payment Report"
         reportData={reportData}
         reportHeader={reportHeader}
