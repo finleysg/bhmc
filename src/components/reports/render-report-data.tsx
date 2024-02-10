@@ -5,17 +5,17 @@ import { RefundDetails } from "./refund-details"
 import { ReportRow } from "./report-row"
 
 interface RenderReportDataProps {
-  eventId: number
+  eventId?: number
   title: string
   reportName: string
   reportHeader: string[]
   reportData: any[][]
 }
 
-const getReportDetail = (eventId: number, reportName: string, data: any[]) => {
+const getReportDetail = (reportName: string, data: any[], eventId?: number) => {
   if (reportName.indexOf("payment-report") > 0) {
     const paymentId = data[1] // TODO: this is brittle, need to find a better way to get the payment id
-    if (paymentId) {
+    if (eventId && paymentId) {
       return (
         <div className="d-flex">
           <PaymentDetails eventId={eventId} paymentId={paymentId} />
@@ -61,7 +61,7 @@ export function RenderReportData({
               {reportData.map((row, rx) => {
                 return (
                   <ReportRow key={`${row[0]}-${rx}`} row={row} rx={rx}>
-                    {getReportDetail(eventId, reportName, row)}
+                    {getReportDetail(reportName, row, eventId)}
                   </ReportRow>
                 )
               })}
