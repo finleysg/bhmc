@@ -4,6 +4,7 @@ import { differenceInYears, format, parseISO } from "date-fns"
 import { ClubEvent } from "../../models/club-event"
 import { EventFee } from "../../models/event-fee"
 import { GetGroupStartName } from "../../models/reserve"
+import { currentSeason } from "../../utils/app-config"
 import { isoDayFormat, sortableDateAndTimeFormat } from "../../utils/date-utils"
 
 const standardHeader = [
@@ -169,7 +170,8 @@ const getMembershipReportHeader = () => {
     "Tee",
     "Signed Up By",
     "Signup Date",
-    "Last Season",
+    "Returning",
+    "New",
   ]
 }
 
@@ -234,7 +236,14 @@ const getMembershipReportRow = (obj: any, index: number) => {
   values.push(obj.tee)
   values.push(obj.signed_up_by)
   values.push(isoDayFormat(parseISO(obj.signup_date)))
-  values.push(obj.last_season)
+  // == is intentional here
+  if (obj.last_season == currentSeason - 1) {
+    values.push("✔️")
+    values.push("")
+  } else {
+    values.push("")
+    values.push("✔️")
+  }
   return values
 }
 

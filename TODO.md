@@ -6,10 +6,10 @@
       (https://www.pythonanywhere.com/forums/topic/32791/).
 - [x] Server-side: register.utils is using a hard-coded tee time split. Needs to be dynamic.
 - [ ] Refactor registration edit to work within new routing.
-- [ ] Rework membership report to show returning vs new members.
+- [x] Rework membership report to show returning vs new members.
 - [ ] Refresh the event signup document.
-- [ ] Add a warning to event report if payment is not confirmed. (Notify treasurer that player owes
-      us money.)
+- [x] Add a warning to event report if payment is not confirmed. (Notify treasurer that player owes
+      us money.) For now, rely on $0 paid. Revisit in April/May.
 - [x] Add a payment detail screen to assist researching payment issues/history.
 
 ## Would Like To Do
