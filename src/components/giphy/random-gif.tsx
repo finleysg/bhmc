@@ -51,6 +51,7 @@ interface RandomGif {
 
 interface RandomGifProps {
   enabled: boolean
+  gifId?: string
 }
 
 const getRandomGif = () => {
@@ -60,9 +61,9 @@ const getRandomGif = () => {
   return gifs[gifIndex]
 }
 
-const giphy = async () => {
+const giphy = async (gifId: string) => {
   const response = await window.fetch(
-    `https://api.giphy.com/v1/gifs/${getRandomGif()}?api_key=${config.giphyApiKey}`,
+    `https://api.giphy.com/v1/gifs/${gifId}?api_key=${config.giphyApiKey}`,
   )
   const result = await response.json()
   if (result && result.data) {
@@ -74,12 +75,13 @@ const giphy = async () => {
   return null
 }
 
-export function RandomGif({ enabled }: RandomGifProps) {
+export function RandomGif({ enabled, gifId }: RandomGifProps) {
   const [gif, setGif] = useState<RandomGif | null>(null)
 
   React.useEffect(() => {
-    giphy().then((gif) => setGif(gif))
-  }, [])
+    const displayGifId = gifId || getRandomGif()
+    giphy(displayGifId).then((gif) => setGif(gif))
+  }, [gifId])
 
   return (
     <div style={{ textAlign: "center" }}>
