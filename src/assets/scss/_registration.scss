@@ -19,15 +19,15 @@
 
   .reserve-group-name {
     // flex: 1.5;
-    // min-width: 220px;
+    min-width: 240px;
     color: $info;
 
     > span {
       font-weight: bold;
-      margin-right: 2rem;
+      margin-right: 1rem;
     }
     > button {
-      margin-right: 1rem;
+      margin-right: .5rem;
 
       &:disabled {
         background-color: $gray-400;

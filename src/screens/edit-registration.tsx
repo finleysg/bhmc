@@ -2,11 +2,6 @@ import { ChangeEvent, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
 
-import { ConfirmDialog } from "../components/dialog/confirm"
-import { Dialog } from "../components/dialog/dialog"
-import { FriendPicker } from "../components/directory/friend-picker"
-import { PeoplePicker } from "../components/directory/people-picker"
-import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { RegistrationAmountDue } from "../components/event-registration/registration-amount-due"
 import { RegistrationSlotGroup } from "../components/event-registration/registration-slot-group"
 import { ErrorDisplay } from "../components/feedback/error-display"
@@ -14,24 +9,19 @@ import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { ReviewStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
 import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
-import { useAddFriend } from "../hooks/use-my-friends"
 import { NoAmount } from "../models/payment"
-import { Player } from "../models/player"
 import { useCurrentEvent } from "./event-detail"
 
-export function RegisterScreen() {
+export function EditRegistrationScreen() {
   const navigate = useNavigate()
   const { clubEvent } = useCurrentEvent()
-  const { mutate: addFriend } = useAddFriend()
   const {
     currentStep,
     error,
+    existingFees,
     payment,
     registration,
-    cancelRegistration,
-    canRegister,
     addFee,
-    addPlayer,
     removeFee,
     removePlayer,
     savePayment,
@@ -41,8 +31,6 @@ export function RegisterScreen() {
   } = useEventRegistration()
 
   const [notes, setNotes] = useState<string>(registration?.notes ?? "")
-  const [showCancelDialog, setShowCancelDialog] = useState(false)
-  const [showPriorityDialog, setShowPriorityDialog] = useState(false)
 
   useEventRegistrationGuard(clubEvent, registration)
 
@@ -54,38 +42,16 @@ export function RegisterScreen() {
       : (clubEvent?.fees.length ?? 0) > 5
         ? "vertical"
         : "horizontal"
-  const showPickers = (clubEvent?.maximumSignupGroupSize ?? 0) > 1
-
-  const handleFriendSelect = (friend: Player) => {
-    const slot = registration?.slots.find((slot) => !slot.playerId)
-    if (slot) {
-      addPlayer(slot, friend)
-    }
-  }
-
-  const handlePlayerSelect = (player: Player) => {
-    const slot = registration?.slots.find((slot) => !slot.playerId)
-    if (slot) {
-      addPlayer(slot, player)
-      addFriend(player.id)
-    }
-  }
-
-  const handleCancel = () => {
-    setShowCancelDialog(false)
-    cancelRegistration()
-    navigate("../")
-  }
 
   const handleNotesChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setNotes(e.target.value)
   }
 
+  const handleCancel = () => {
+    navigate("../")
+  }
+
   const handleNextStep = () => {
-    if (!canRegister()) {
-      setShowPriorityDialog(true)
-      return
-    }
     updateRegistrationNotes(notes)
     savePayment(() => {
       updateStep(ReviewStep)
@@ -107,14 +73,14 @@ export function RegisterScreen() {
             {payment && registration && (
               <RegistrationSlotGroup
                 eventFees={clubEvent.fees}
-                existingFees={[]}
+                existingFees={existingFees}
                 registration={registration}
                 payment={payment}
                 removePlayer={removePlayer}
                 addFee={addFee}
                 removeFee={removeFee}
                 layout={layout}
-                mode="new"
+                mode="edit"
                 teamSize={clubEvent.teamSize}
                 skinsType={clubEvent.skinsType}
               />
@@ -141,12 +107,7 @@ export function RegisterScreen() {
             )}
             <div className="row mt-2" style={{ textAlign: "right" }}>
               <div className="col-12">
-                <RegisterCountdown />
-                <button
-                  className="btn btn-secondary"
-                  disabled={isBusy}
-                  onClick={() => setShowCancelDialog(true)}
-                >
+                <button className="btn btn-secondary" disabled={isBusy} onClick={handleCancel}>
                   Cancel
                 </button>
                 <button className="btn btn-primary ms-2" disabled={isBusy} onClick={handleNextStep}>
@@ -156,38 +117,6 @@ export function RegisterScreen() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="col-12 col-md-6">
-        {showPickers && (
-          <>
-            <PeoplePicker
-              style={{ position: "absolute", top: "12px", right: "10px" }}
-              allowNew={false}
-              clubEvent={clubEvent}
-              onSelect={handlePlayerSelect}
-            />
-            <div className="col-12 col-md-3">
-              <FriendPicker clubEvent={clubEvent} onSelect={handleFriendSelect} />
-            </div>
-          </>
-        )}
-        <ConfirmDialog
-          show={showCancelDialog}
-          title="Cancel Registration?"
-          message="Cancel this registration and return to the event detail page."
-          onClose={(result) => (result ? handleCancel() : setShowCancelDialog(false))}
-        />
-        <Dialog
-          show={showPriorityDialog}
-          title="Large Groups Only"
-          onClose={() => setShowPriorityDialog(false)}
-        >
-          <p>
-            During the priority registration period, you must have 4 or 5 players to register.
-            Please add more players to your group or cancel your registration and wait until sign
-            ups open for everyone.
-          </p>
-        </Dialog>
       </div>
     </div>
   )

@@ -26,6 +26,7 @@ test("renders registration group", async () => {
         removeFee={removeFeeSpy}
         removePlayer={removePlayerSpy}
         eventFees={fees}
+        existingFees={[]}
         registration={registration}
         payment={payment}
         layout="horizontal"

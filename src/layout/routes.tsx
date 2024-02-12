@@ -6,6 +6,7 @@ import { ChampionsScreen } from "../screens/champions"
 import { ContactScreen } from "../screens/contact"
 import { DamCupScreen } from "../screens/dam-cup"
 import { DirectoryScreen } from "../screens/directory"
+import { EditRegistrationScreen } from "../screens/edit-registration"
 import { EventDetailScreen } from "../screens/event-detail"
 import { EventViewScreen } from "../screens/event-view"
 import { GalleryImageScreen } from "../screens/gallery-image"
@@ -43,6 +44,7 @@ export const mainRoutes = () =>
             { element: <EventViewScreen />, index: true },
             { path: "reserve", element: <ReserveScreen /> },
             { path: "register", element: <RegisterScreen /> },
+            { path: "edit", element: <EditRegistrationScreen /> },
             { path: "review", element: <ReviewRegistrationScreen /> },
             { path: "payment", element: <PaymentScreen /> },
             { path: "complete", element: <RegistrationCompleteScreen /> },

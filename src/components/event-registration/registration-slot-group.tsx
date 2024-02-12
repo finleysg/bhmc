@@ -3,12 +3,13 @@ import { usePlayers } from "../../hooks/use-players"
 import { EventFee } from "../../models/event-fee"
 import { Payment } from "../../models/payment"
 import { Player } from "../../models/player"
-import { Registration, RegistrationSlot } from "../../models/registration"
+import { Registration, RegistrationFee, RegistrationSlot } from "../../models/registration"
 import { EventFeeHeader } from "./event-fee-header"
 import { RegistrationSlotLineItem } from "./registration-slot-line-item"
 
 interface RegistrationSlotGroupProps {
   eventFees: EventFee[]
+  existingFees: RegistrationFee[]
   layout: "horizontal" | "vertical"
   mode: RegistrationMode
   payment: Payment
@@ -21,6 +22,7 @@ interface RegistrationSlotGroupProps {
 }
 export function RegistrationSlotGroup({
   eventFees,
+  existingFees,
   layout,
   mode,
   payment,
@@ -61,6 +63,7 @@ export function RegistrationSlotGroup({
             payment={payment}
             player={player}
             eventFees={eventFees}
+            existingFees={existingFees.filter((f) => f.registrationSlotId === slot.id)} // TODO: a map would be better
             onRemovePlayer={handleRemovePlayer}
             onToggleFee={handleToggleFee}
             team={slot.getTeamNumber(teamSize)}
