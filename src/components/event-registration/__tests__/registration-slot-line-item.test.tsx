@@ -1,3 +1,4 @@
+import { immerable } from "immer"
 import { expect, test, vi } from "vitest"
 
 import userEvent from "@testing-library/user-event"
@@ -33,6 +34,7 @@ test("renders registration slot for default player", () => {
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
+        existingFees={[]}
         payment={payment}
         team={0}
         skinsType={SkinsType.Individual}
@@ -82,6 +84,7 @@ test("renders registration slot for the non-default player", async () => {
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
+        existingFees={[]}
         payment={payment}
         team={0}
         skinsType={SkinsType.Individual}
@@ -131,6 +134,7 @@ test("renders a team number if provided", () => {
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
+        existingFees={[]}
         payment={payment}
         team={1}
         skinsType={SkinsType.Individual}
@@ -167,6 +171,7 @@ test.each([
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
+        existingFees={[]}
         payment={payment}
         team={teamNumber}
         skinsType={SkinsType.Team}
@@ -210,6 +215,7 @@ test.each([
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
+        existingFees={[]}
         payment={payment}
         team={teamNumber}
         skinsType={SkinsType.Team}
@@ -263,6 +269,7 @@ test("a selected optional fee is rendered as checked and can be removed", async 
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
+        existingFees={[]}
         payment={payment}
         skinsType={SkinsType.Individual}
         mode="new"
@@ -288,7 +295,7 @@ test("a selected optional fee is rendered as checked and can be removed", async 
   expect(onToggleFee).toHaveBeenCalledTimes(1)
 })
 
-test.each([["new", "edit"]])("a paid fee can only be removed in edit mode", (mode) => {
+test.each([["new", "edit"]])("a paid fee can only be removed when not in edit mode", (mode) => {
   const user = buildAdminUser()
   const fees = [eventFee(), skinFee(), cartFee()]
   const payment = createEmptyPayment()
@@ -300,15 +307,25 @@ test.each([["new", "edit"]])("a paid fee can only be removed in edit mode", (mod
       is_member: true,
     },
   })
+  const existingFees = [
+    {
+      [immerable]: true,
+      id: 1,
+      eventFeeId: 2,
+      registrationSlotId: slot.id,
+      paymentId: 1,
+      isPaid: true,
+      amount: 100,
+    },
+  ]
   const onToggleFee = vi.fn()
-
-  slot.paidFeeIds.push(2)
 
   render(
     <div>
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
+        existingFees={existingFees}
         payment={payment}
         team={0}
         skinsType={SkinsType.Team}

@@ -29,9 +29,10 @@ import {
 } from "./registration-reducer"
 
 export interface IRegistrationContext {
-  clubEvent: ClubEvent | null
+  clubEvent: ClubEvent | null // TODO: consider removing this from the context
   currentStep: IRegistrationStep
   error: Error | null
+  existingFees: RegistrationFee[]
   payment: Payment | null
   registration: Registration | null
   selectedFees: EventFee[]

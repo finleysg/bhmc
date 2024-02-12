@@ -9,7 +9,7 @@ export const RegistrationFeeApiSchema = z.object({
   registration_slot: z.number().nullish(),
   payment: z.number().nullish(),
   is_paid: z.boolean(),
-  amount: z.number().nullish(),
+  amount: z.string().nullish(),
 })
 
 export const RegistrationSlotApiSchema = z.object({
@@ -56,7 +56,7 @@ export class RegistrationFee {
     this.registrationSlotId = json.registration_slot ?? 0
     this.paymentId = json.payment ?? 0
     this.isPaid = json.is_paid
-    this.amount = json.amount ?? 0
+    this.amount = json.amount ? +json.amount : 0
   }
 }
 
@@ -72,7 +72,7 @@ export class RegistrationSlot {
   startingOrder: number
   slot: number
   status: string
-  paidFeeIds: number[]
+  // paidFeeIds: number[]
   obj: RegistrationSlotData
 
   constructor(json: RegistrationSlotData) {
@@ -87,7 +87,7 @@ export class RegistrationSlot {
     this.startingOrder = json.starting_order
     this.slot = json.slot
     this.status = json.status
-    this.paidFeeIds = []
+    // this.paidFeeIds = []
     this.obj = json
   }
 

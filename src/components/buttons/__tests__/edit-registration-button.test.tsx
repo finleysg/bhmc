@@ -1,6 +1,5 @@
 import { expect, test, vi } from "vitest"
 
-import { PendingStep } from "../../../context/registration-reducer"
 import { ClubEvent, ClubEventApiSchema } from "../../../models/club-event"
 import { TestEventType, getTestEvent } from "../../../test/data/test-events"
 import {
@@ -19,12 +18,7 @@ test("renders the button if sign-ups have started and user is registered", async
 
   renderWithAuth(
     <div>
-      <EditRegistrationButton
-        clubEvent={clubEvent}
-        hasSignedUp={true}
-        currentStep={PendingStep}
-        onClick={vi.fn()}
-      />
+      <EditRegistrationButton clubEvent={clubEvent} hasSignedUp={true} onClick={vi.fn()} />
     </div>,
   )
 
@@ -39,12 +33,7 @@ test("does not render the button if registration as not started", async () => {
 
   renderWithAuth(
     <div>
-      <EditRegistrationButton
-        clubEvent={clubEvent}
-        hasSignedUp={false}
-        currentStep={PendingStep}
-        onClick={vi.fn()}
-      />
+      <EditRegistrationButton clubEvent={clubEvent} hasSignedUp={false} onClick={vi.fn()} />
     </div>,
   )
 
@@ -61,12 +50,7 @@ test("does not render the button if there is no registration", async () => {
 
   renderWithAuth(
     <div>
-      <EditRegistrationButton
-        clubEvent={clubEvent}
-        hasSignedUp={true}
-        currentStep={PendingStep}
-        onClick={vi.fn()}
-      />
+      <EditRegistrationButton clubEvent={clubEvent} hasSignedUp={true} onClick={vi.fn()} />
     </div>,
   )
 

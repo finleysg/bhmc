@@ -5,13 +5,14 @@ import { SkinsType } from "../../models/codes"
 import { EventFee } from "../../models/event-fee"
 import { Payment } from "../../models/payment"
 import { Player } from "../../models/player"
-import { RegistrationSlot } from "../../models/registration"
+import { RegistrationFee, RegistrationSlot } from "../../models/registration"
 import * as colors from "../../styles/colors"
 import { EventFeeItem } from "./event-fee-item"
 import { RegistrationSlotPlayer } from "./registration-slot-player"
 
 interface RegistrationSlotLineItemProps {
   eventFees: EventFee[]
+  existingFees: RegistrationFee[]
   mode: RegistrationMode
   payment: Payment
   player?: Player
@@ -24,6 +25,7 @@ interface RegistrationSlotLineItemProps {
 
 export function RegistrationSlotLineItem({
   eventFees,
+  existingFees,
   mode,
   payment,
   player,
@@ -54,11 +56,6 @@ export function RegistrationSlotLineItem({
 
   const slotTotal = () => {
     return payment.details.filter((d) => d.slotId === slot.id).reduce((acc, d) => acc + d.amount, 0)
-    // const selected = eventFees.filter((f) => hasPaymentDetail(f)).map((s) => s.amount)
-    // if (selected.length === 1) {
-    //   return selected[0]
-    // }
-    // return selected.reduce((acc, fee) => acc + fee, 0)
   }
 
   const handleToggleFee = (fee: EventFee, isSelected: boolean) => {
@@ -96,7 +93,9 @@ export function RegistrationSlotLineItem({
       <RegistrationSlotPlayer slot={slot} onRemovePlayer={onRemovePlayer} mode={mode} team={team} />
       <div className="fees">
         {eventFees.map((eventFee) => {
-          const existing = slot.paidFeeIds.indexOf(eventFee.id) >= 0
+          // TODO: a map would be more efficient
+          const existing =
+            existingFees?.findIndex((fee) => fee.eventFeeId === eventFee.id) >= 0 ?? false
           return (
             <EventFeeItem
               key={eventFee.id * slot.id}

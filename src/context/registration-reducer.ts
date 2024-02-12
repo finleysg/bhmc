@@ -21,6 +21,7 @@ export interface IRegistrationState {
   readonly registration: Registration | null
   readonly payment: Payment | null
   readonly selectedFees: EventFee[]
+  readonly existingFees: RegistrationFee[] // needed for edit mode
   readonly error: Error | null
   readonly currentStep: IRegistrationStep
 }
@@ -81,6 +82,7 @@ export const defaultRegistrationState: IRegistrationState = {
   registration: null,
   payment: null,
   selectedFees: [],
+  existingFees: [],
   error: null,
   currentStep: PendingStep,
 }
@@ -105,12 +107,7 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
       draft.mode = "edit"
       draft.currentStep = RegisterStep
       draft.registration = payload.registration
-      draft.registration.slots.forEach((slot) => {
-        // The event_fee_ids already paid
-        payload.existingFees
-          .filter((f) => f.registrationSlotId === slot.id)
-          .forEach((f) => slot.paidFeeIds.push(f.eventFeeId))
-      })
+      draft.existingFees = payload.existingFees
       draft.payment = payload.payment
       return
     }
