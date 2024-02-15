@@ -26,6 +26,7 @@ import {
   defaultRegistrationState,
   eventRegistrationReducer,
   IRegistrationStep,
+  RegistrationMode,
 } from "./registration-reducer"
 
 export interface IRegistrationContext {
@@ -33,6 +34,7 @@ export interface IRegistrationContext {
   currentStep: IRegistrationStep
   error: Error | null
   existingFees: RegistrationFee[]
+  mode: RegistrationMode
   payment: Payment | null
   registration: Registration | null
   selectedFees: EventFee[]
@@ -40,6 +42,7 @@ export interface IRegistrationContext {
   addPlayer: (slot: RegistrationSlot, player: Player) => void
   cancelRegistration: () => void
   canRegister: () => boolean
+  completeRegistration: () => void
   confirmPayment: (paymentMethod: string, saveCard: boolean, callback?: () => void) => void
   createRegistration: (
     course?: Course,
@@ -138,7 +141,7 @@ export function EventRegistrationProvider({
       })
     },
     onSuccess: () => {
-      _completeRegistration()
+      _invalidateQueries()
     },
   })
 
@@ -282,9 +285,9 @@ export function EventRegistrationProvider({
   }
 
   /**
-   * Completes the registration flow and resets the flow back to the initial state.
+   * Updates query state so the UI reflects the completed registration.
    */
-  const _completeRegistration = () => {
+  const _invalidateQueries = () => {
     if (state.clubEvent?.eventType === EventType.Membership) {
       queryClient.setQueryData(["player", user.email], {
         ...player?.data,
@@ -298,7 +301,6 @@ export function EventRegistrationProvider({
     queryClient.invalidateQueries({ queryKey: ["my-events"] })
     queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
     queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
-    // dispatch({ type: "load-event", payload: { clubEvent: null } })
   }
 
   /**
@@ -376,6 +378,14 @@ export function EventRegistrationProvider({
       console.error("Should not see a cancellation request without a current registration.")
     }
   }, [_cancelRegistration, state.payment?.id, state.registration])
+
+  /**
+   * Completes the registration process, clearing registration state and
+   * setting the mode to "idle", which enables the guard on the register routes.
+   */
+  const completeRegistration = useCallback(() => {
+    dispatch({ type: "complete-registration", payload: null })
+  }, [])
 
   /**
    * Confirms that a payment with the given method is valid. We call Stripe to
@@ -478,6 +488,7 @@ export function EventRegistrationProvider({
     addPlayer,
     cancelRegistration,
     canRegister,
+    completeRegistration,
     confirmPayment,
     createRegistration,
     loadRegistration,

@@ -16,7 +16,7 @@ export function useMyPlayerRecord() {
     initialData: () => {
       return queryClient.getQueryData<PlayerApiData | null>(["player", email])
     },
-    enabled: email !== undefined,
+    enabled: email !== undefined && email !== "unknown",
     select: (data) => new Player(data),
   })
 }

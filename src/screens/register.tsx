@@ -99,7 +99,13 @@ export function RegisterScreen() {
         <div className="card border border-primary mb-4">
           <div className="card-body">
             <OverlaySpinner loading={isBusy} />
-            <h4 className="card-header mb-2">{currentStep.title}</h4>
+            <PeoplePicker
+              style={{ float: "right", maxWidth: "180px" }}
+              allowNew={false}
+              clubEvent={clubEvent}
+              onSelect={handlePlayerSelect}
+            />
+            <h4 className="card-header mb-2 text-nowrap">{currentStep.title}</h4>
             {error && (
               <ErrorDisplay error={error?.message} delay={5000} onClose={() => setError(null)} />
             )}
@@ -159,17 +165,9 @@ export function RegisterScreen() {
       </div>
       <div className="col-12 col-md-6">
         {showPickers && (
-          <>
-            <PeoplePicker
-              style={{ position: "absolute", top: "12px", right: "10px" }}
-              allowNew={false}
-              clubEvent={clubEvent}
-              onSelect={handlePlayerSelect}
-            />
-            <div className="col-12 col-md-3">
-              <FriendPicker clubEvent={clubEvent} onSelect={handleFriendSelect} />
-            </div>
-          </>
+          <div className="col-12 col-md-3">
+            <FriendPicker clubEvent={clubEvent} onSelect={handleFriendSelect} />
+          </div>
         )}
         <ConfirmDialog
           show={showCancelDialog}

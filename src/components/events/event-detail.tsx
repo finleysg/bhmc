@@ -3,7 +3,6 @@ import React, { useEffect } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
-import { PendingStep } from "../../context/registration-reducer"
 import { useMyRegistrationStatus } from "../../hooks/use-my-registration-status"
 import { ClubEvent } from "../../models/club-event"
 import { getRegistrationTypeName, getStartTypeName } from "../../models/codes"
@@ -44,7 +43,6 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
             <EditRegistrationButton
               clubEvent={clubEvent}
               hasSignedUp={hasSignedUp}
-              currentStep={PendingStep}
               onClick={onEditRegistration}
             />
             <RegisterButton clubEvent={clubEvent} hasSignedUp={hasSignedUp} onClick={onRegister} />

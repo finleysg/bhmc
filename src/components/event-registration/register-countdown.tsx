@@ -43,8 +43,9 @@ export const RegisterCountdown = () => {
       </p>
       <Dialog show={showExpiryDialog} title="Time Limit Exceeded" onClose={handleExpiration}>
         <p>
-          The time allowed to submit a payment for this registration has passed. You will need to
-          start the registration process again.
+          The time allowed to submit a payment for this registration has passed.
+          <br />
+          You will need to start the registration process again.
         </p>
       </Dialog>
     </>
