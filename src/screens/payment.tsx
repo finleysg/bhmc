@@ -30,6 +30,7 @@ export function PaymentScreen() {
   const {
     currentStep,
     error,
+    mode,
     payment,
     registration,
     cancelRegistration,
@@ -42,7 +43,7 @@ export function PaymentScreen() {
   const elements = useElements()
   const navigate = useNavigate()
 
-  useEventRegistrationGuard(clubEvent, registration)
+  useEventRegistrationGuard(clubEvent, registration, mode)
 
   useEffect(() => {
     if (myCards === undefined || myCards.length === 0) {
@@ -139,7 +140,7 @@ export function PaymentScreen() {
             )}
             <hr />
             <div style={{ textAlign: "right" }}>
-              <RegisterCountdown />
+              {mode === "new" && <RegisterCountdown />}
               <button className="btn btn-secondary" disabled={isBusy} onClick={handleBack}>
                 Back
               </button>

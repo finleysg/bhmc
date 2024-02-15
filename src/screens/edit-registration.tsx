@@ -32,7 +32,7 @@ export function EditRegistrationScreen() {
 
   const [notes, setNotes] = useState<string>(registration?.notes ?? "")
 
-  useEventRegistrationGuard(clubEvent, registration)
+  useEventRegistrationGuard(clubEvent, registration, "edit")
 
   const isBusy = !registration?.id
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount

@@ -15,13 +15,21 @@ import { useCurrentEvent } from "./event-detail"
 
 export function ReviewRegistrationScreen() {
   const { clubEvent } = useCurrentEvent()
-  const { currentStep, registration, payment, error, cancelRegistration, setError, updateStep } =
-    useEventRegistration()
+  const {
+    currentStep,
+    registration,
+    payment,
+    mode,
+    error,
+    cancelRegistration,
+    setError,
+    updateStep,
+  } = useEventRegistration()
   const [showCancelDialog, setShowCancelDialog] = useState(false)
 
   const navigate = useNavigate()
 
-  useEventRegistrationGuard(clubEvent, registration)
+  useEventRegistrationGuard(clubEvent, registration, mode)
 
   const isBusy = !payment?.hasPaymentDetails()
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
@@ -85,7 +93,7 @@ export function ReviewRegistrationScreen() {
             )}
             <hr />
             <div style={{ textAlign: "right" }}>
-              <RegisterCountdown />
+              {mode === "new" && <RegisterCountdown />}
               <button className="btn btn-secondary" disabled={isBusy} onClick={handleBack}>
                 Back
               </button>

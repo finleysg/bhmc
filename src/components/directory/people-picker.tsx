@@ -1,8 +1,8 @@
 import { ComponentPropsWithoutRef, useRef } from "react"
 
 import { Typeahead, TypeaheadRef } from "react-bootstrap-typeahead"
+import { toast } from "react-toastify"
 
-import { useEventRegistration } from "../../hooks/use-event-registration"
 import { usePlayers } from "../../hooks/use-players"
 import { ClubEvent } from "../../models/club-event"
 import { RegistrationType } from "../../models/codes"
@@ -25,7 +25,6 @@ interface PeoplePickerProps extends Omit<ComponentPropsWithoutRef<"div">, "onSel
 export function PeoplePicker({ allowNew, clubEvent, onSelect, ...rest }: PeoplePickerProps) {
   const typeaheadRef = useRef<TypeaheadRef>(null)
   const { data } = usePlayers()
-  const { setError } = useEventRegistration()
 
   const players =
     data?.map((p) => {
@@ -47,8 +46,7 @@ export function PeoplePicker({ allowNew, clubEvent, onSelect, ...rest }: PeopleP
           clubEvent.registrationType === RegistrationType.MembersOnly &&
           !selectedPlayer.isMember
         ) {
-          // toast.error(`Not eligible! ${selectedPlayer.name} is not a member.`)
-          setError(new Error(`${selectedPlayer.name} is not a member.`))
+          toast.error(`Not eligible! ${selectedPlayer.name} is not a member.`, { autoClose: 5000 })
           return
         }
         onSelect(selectedPlayer)

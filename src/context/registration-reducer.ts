@@ -6,7 +6,7 @@ import { Payment, PaymentDetail } from "../models/payment"
 import { Player } from "../models/player"
 import { Registration, RegistrationFee, RegistrationSlot } from "../models/registration"
 
-export type RegistrationMode = "new" | "edit"
+export type RegistrationMode = "new" | "edit" | "idle"
 type RegistrationStep = "pending" | "reserve" | "register" | "review" | "payment" | "complete"
 
 export interface IRegistrationStep {
@@ -67,6 +67,7 @@ export type RegistrationAction =
   | { type: "update-registration"; payload: { registration: Registration } }
   | { type: "update-registration-notes"; payload: { notes: string } }
   | { type: "cancel-registration"; payload: null }
+  | { type: "complete-registration"; payload: null }
   | { type: "reset-registration"; payload: { clubEvent: ClubEvent } }
   | { type: "update-payment"; payload: { payment: Payment } }
   | { type: "update-error"; payload: { error: Error | null } }
@@ -77,7 +78,7 @@ export type RegistrationAction =
   | { type: "remove-fee"; payload: { slotId: number; eventFeeId: number } }
 
 export const defaultRegistrationState: IRegistrationState = {
-  mode: "new",
+  mode: "idle",
   clubEvent: null,
   registration: null,
   payment: null,
@@ -96,6 +97,7 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
       draft.payment = null
       draft.selectedFees = []
       draft.error = null
+      draft.mode = "idle"
       draft.currentStep = PendingStep
       return
     }
@@ -134,7 +136,18 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
       draft.payment = null
       draft.selectedFees = []
       draft.error = null
+      draft.mode = "idle"
       draft.currentStep = PendingStep
+      return
+    }
+    // TODO: consolidate with cancel-registration
+    case "complete-registration": {
+      draft.registration = null
+      draft.payment = null
+      draft.selectedFees = []
+      draft.error = null
+      draft.mode = "idle"
+      draft.currentStep = CompleteStep
       return
     }
     case "update-payment": {

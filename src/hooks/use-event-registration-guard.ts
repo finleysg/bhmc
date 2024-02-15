@@ -2,17 +2,20 @@ import { useEffect } from "react"
 
 import { useNavigate } from "react-router-dom"
 
+import { RegistrationMode } from "../context/registration-reducer"
 import { ClubEvent } from "../models/club-event"
 import { Registration } from "../models/registration"
-import { useMyRegistrationStatus } from "./use-my-registration-status"
 
-export function useEventRegistrationGuard(clubEvent: ClubEvent, registration: Registration | null) {
+export function useEventRegistrationGuard(
+  clubEvent: ClubEvent,
+  registration: Registration | null,
+  mode: RegistrationMode = "new",
+) {
   const navigate = useNavigate()
-  const hasSignedUp = useMyRegistrationStatus(clubEvent.id)
 
   useEffect(() => {
-    if (!registration?.id || hasSignedUp) {
+    if (!registration?.id || mode === "idle" || !clubEvent.paymentsAreOpen()) {
       navigate(clubEvent.eventUrl)
     }
-  }, [hasSignedUp, navigate, clubEvent.eventUrl, registration?.id])
+  }, [navigate, clubEvent.eventUrl, registration?.id, mode, clubEvent])
 }
