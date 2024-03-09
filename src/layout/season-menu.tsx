@@ -7,11 +7,12 @@ import { currentSeason } from "../utils/app-config"
 
 interface SeasonMenuProps {
   baseUrl: string
+  includeAll: boolean
   season: number
   startAt?: number
 }
 
-export function SeasonMenu({ baseUrl, season, startAt }: SeasonMenuProps) {
+export function SeasonMenu({ baseUrl, includeAll, season, startAt }: SeasonMenuProps) {
   const [showMenu, setShowMenu] = useState(false)
   const startingYear = startAt ?? 2013
 
@@ -30,7 +31,7 @@ export function SeasonMenu({ baseUrl, season, startAt }: SeasonMenuProps) {
       onKeyDown={() => setShowMenu(!showMenu)}
     >
       <div className="dropdown">
-        <span className="test-success-emphasis fw-bold">{season}</span>{" "}
+        <span className="test-success-emphasis fw-bold">{season === 0 ? "All" : season}</span>{" "}
         <i className="actions__item text-success" title="Change Season">
           <FaCalendarAlt />
         </i>
@@ -49,6 +50,16 @@ export function SeasonMenu({ baseUrl, season, startAt }: SeasonMenuProps) {
                 </Link>
               )
             })}
+          {includeAll && (
+            <Link
+              key={"All"}
+              onClick={() => setShowMenu(false)}
+              to={`${baseUrl}/all`}
+              className="dropdown-item"
+            >
+              All
+            </Link>
+          )}
         </div>
       </div>
     </div>
