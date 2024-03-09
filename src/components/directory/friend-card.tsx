@@ -4,30 +4,24 @@ import { PiWarningFill } from "react-icons/pi"
 
 import { Player } from "../../models/player"
 
-interface FriendCardProps extends Omit<ComponentPropsWithoutRef<"div">, "onSelect"> {
+interface FriendCardProps extends Omit<ComponentPropsWithoutRef<"button">, "onClick"> {
   friend: Player
-  onSelect: (friend: Player) => void
+  onClick: (friend: Player) => void
 }
 
-export function FriendCard({ friend, onSelect, ...rest }: FriendCardProps) {
+export function FriendCard({ friend, onClick, ...rest }: FriendCardProps) {
   return (
-    <div
-      className="friend"
-      role="button"
-      style={{ cursor: "pointer" }}
-      onClick={() => onSelect(friend)}
-      onKeyDown={() => onSelect(friend)}
-      tabIndex={0}
+    <button
+      onClick={() => onClick(friend)}
+      className="list-group-item list-group-item-action text-start"
       {...rest}
     >
-      <p className="m-0">
-        {friend.name}
-        {!friend.isMember && (
-          <span className="text-warning">
-            <PiWarningFill />
-          </span>
-        )}
-      </p>
-    </div>
+      {!friend.isMember && (
+        <span className="text-warning">
+          <PiWarningFill />
+        </span>
+      )}
+      {friend.name}
+    </button>
   )
 }

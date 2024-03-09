@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom"
 
 import { ConfirmDialog } from "../components/dialog/confirm"
 import { Dialog } from "../components/dialog/dialog"
-import { FriendPicker } from "../components/directory/friend-picker"
+import { FriendPickerCard } from "../components/directory/friend-picker-card"
+import { FriendPickerPullout } from "../components/directory/friend-picker-pullout"
 import { PeoplePicker } from "../components/directory/people-picker"
 import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { RegistrationAmountDue } from "../components/event-registration/registration-amount-due"
@@ -109,7 +110,12 @@ export function RegisterScreen() {
             {error && (
               <ErrorDisplay error={error?.message} delay={5000} onClose={() => setError(null)} />
             )}
-            <p className="text-info fst-italic">{registration?.selectedStart}</p>
+            <div className="d-flex justify-content-between">
+              <p className="text-info fst-italic">{registration?.selectedStart}</p>
+              {showPickers && (
+                <FriendPickerPullout clubEvent={clubEvent} onSelect={handleFriendSelect} />
+              )}
+            </div>
             {payment && registration && (
               <RegistrationSlotGroup
                 eventFees={clubEvent.fees}
@@ -163,12 +169,8 @@ export function RegisterScreen() {
           </div>
         </div>
       </div>
-      <div className="col-12 col-md-6">
-        {showPickers && (
-          <div className="col-12 col-md-3">
-            <FriendPicker clubEvent={clubEvent} onSelect={handleFriendSelect} />
-          </div>
-        )}
+      <div className="col-12 col-md-3">
+        {showPickers && <FriendPickerCard clubEvent={clubEvent} onSelect={handleFriendSelect} />}
         <ConfirmDialog
           show={showCancelDialog}
           title="Cancel Registration?"
