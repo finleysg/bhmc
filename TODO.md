@@ -27,12 +27,10 @@
 
 ## Would Like To Do
 
-- [ ] Select "All" on my scores.
+- [x] Select "All" on my scores.
 - [ ] Export scores from my scores.
 - [ ] Import Chicago scores.
 - [ ] Anchors on the policy page for direct links to specific policies.
-- [ ] View points by event.
-- [ ] View my points by year.
 - [ ] Standard "view more" on long lists.
 - [ ] Tables with sorting (reports and list of registered players).
 - [ ] Server-side validation of payment overrides.
@@ -45,10 +43,10 @@
 - [ ] Remove images no longer selected.
 - [ ] View season long points by event.
 - [ ] View season long points by player.
+- [ ] View my season long points by year.
 - [ ] Hide the event documents card when no documents are found.
 - [ ] Refresh the event scoring document.
 - [ ] Manage a version number and render in the footer.
-- [ ] Bug - admin header menu does not render well on mobile.
 - [ ] Improve payment report with better currency and date formatting.
 
 ## Bugs
@@ -59,3 +57,4 @@
 - [x] Bug - refund amounts must reflect override amount if that applies.
 - [ ] Bug - on the edit flow, existing checked fees should render as disabled.
 - [ ] Bug - Dates on the detail page not rendering well on mobile.
+- [ ] Bug - admin header menu does not render well on mobile.

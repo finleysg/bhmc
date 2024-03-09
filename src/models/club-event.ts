@@ -40,7 +40,7 @@ export const ClubEventApiSchema = z.object({
   name: z.string(),
   notes: z.string().optional(),
   payments_end: z.coerce.date().nullish(),
-  portal_url: z.string().url().nullish(),
+  portal_url: z.string().nullish(),
   priority_signup_start: z.coerce.date().nullish(),
   registration_maximum: z.number().nullish(),
   registration_type: z.string(),

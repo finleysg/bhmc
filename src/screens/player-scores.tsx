@@ -8,11 +8,16 @@ import { currentSeason } from "../utils/app-config"
 
 export function PlayerScoresScreen() {
   const { scoreType, season } = useParams()
-  const year = season ? +season : currentSeason
+  const year = season === "all" ? 0 : season ? +season : currentSeason
 
   return (
     <div className="content__inner">
-      <SeasonMenu baseUrl={`/my-scores/${scoreType}`} season={year} startAt={2021} />
+      <SeasonMenu
+        baseUrl={`/my-scores/${scoreType}`}
+        includeAll={true}
+        season={year}
+        startAt={2021}
+      />
       <div>
         <Tabs>
           <Tab to={`/my-scores/gross/${season}`}>Gross Scores</Tab>

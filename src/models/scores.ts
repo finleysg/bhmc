@@ -108,7 +108,7 @@ export const LoadRounds = (courses: Course[], events: ClubEvent[], scores: Score
   return rounds
 }
 
-// TODO: this can probably be improved
+// TODO: this can be improved
 const getCourse = (courses: Course[], firstHole: Hole) => {
   return courses?.find((course) => course.holes.findIndex((hole) => hole.id === firstHole.id) >= 0)
 }
