@@ -1,4 +1,6 @@
-import React from "react"
+import React, { useEffect, useRef } from "react"
+
+import { useLocation } from "react-router-dom"
 
 import { usePolicies } from "../../hooks/use-policies"
 import { PolicyType } from "../../models/codes"
@@ -28,6 +30,21 @@ interface PolicyListProps {
 
 export function PolicyList({ stub }: PolicyListProps) {
   const { data: policies, isLoading } = usePolicies(policyCode(stub))
+  const location = useLocation()
+  const lastHashRef = useRef<string>("")
+
+  useEffect(() => {
+    if (location.hash) {
+      lastHashRef.current = location.hash.slice(1)
+    }
+
+    if (!isLoading && lastHashRef.current && document.getElementById(lastHashRef.current)) {
+      document.getElementById(lastHashRef.current)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      })
+    }
+  }, [isLoading, location])
 
   return (
     <React.Fragment>

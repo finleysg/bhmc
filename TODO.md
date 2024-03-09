@@ -30,7 +30,7 @@
 - [x] Select "All" on my scores.
 - [ ] Export scores from my scores.
 - [ ] Import Chicago scores.
-- [ ] Anchors on the policy page for direct links to specific policies.
+- [x] Anchors on the policy page for direct links to specific policies.
 - [ ] Standard "view more" on long lists.
 - [ ] Tables with sorting (reports and list of registered players).
 - [ ] Server-side validation of payment overrides.
@@ -58,3 +58,4 @@
 - [ ] Bug - on the edit flow, existing checked fees should render as disabled.
 - [ ] Bug - Dates on the detail page not rendering well on mobile.
 - [ ] Bug - admin header menu does not render well on mobile.
+- [ ] Bug - champions page has key collisions (warning in dev tools).
