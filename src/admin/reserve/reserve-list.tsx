@@ -8,6 +8,7 @@ import { Registration } from "../../models/registration"
 import { ConvertRegistrationsToReservations, Reservation, ReserveSlot } from "../../models/reserve"
 import { AddPlayer } from "./add-player"
 import { DropPlayers } from "./drop-players"
+import { EditNotes } from "./edit-notes"
 import { ReservationAdmin } from "./reservation"
 import { SwapPlayers } from "./swap-players"
 
@@ -17,6 +18,7 @@ interface ReserveListAdminProps extends Omit<ComponentPropsWithoutRef<"div">, "o
   onRegister: (playerId: number, feeIds: number[], isMoneyOwed: boolean, notes: string) => void
   onDrop: (registrationId: number, slotIds: number[], refunds: Map<number, RefundData>) => void
   onSwap: (slot: ReserveSlot, newPlayerId: number) => void
+  onNotesEdit: (registrationId: number, notes: string) => void
 }
 
 /**
@@ -30,6 +32,7 @@ export function ReserveListAdmin({
   onRegister,
   onDrop,
   onSwap,
+  onNotesEdit,
   ...rest
 }: ReserveListAdminProps) {
   const [selectedSlotId, setSelectedSlotId] = useState(-1)
@@ -38,11 +41,18 @@ export function ReserveListAdmin({
   const [showAdd, setShowAdd] = useState(false)
   const [showDrop, setShowDrop] = useState(false)
   const [showSwap, setShowSwap] = useState(false)
+  const [showNotes, setShowNotes] = useState(false)
 
   const reservations = ConvertRegistrationsToReservations(registrations ?? [])
+  const notes = new Map(registrations.map((r) => [r.id, r.notes]))
 
   const handleSlotSelect = (reservation: Reservation) => {
-    setSelectedRegistrationId(-1)
+    if (selectedRegistrationId === reservation.registrationId) {
+      setSelectedRegistrationId(-1)
+    } else {
+      setSelectedRegistrationId(reservation.registrationId)
+    }
+
     if (selectedSlotId === reservation.slotId) {
       setSelectedSlotId(-1)
     } else {
@@ -148,6 +158,28 @@ export function ReserveListAdmin({
     setSelectedRegistrationId(-1)
   }
 
+  const handleEditNotes = () => {
+    if (selectedSlots?.length > 0) {
+      setShowNotes(true)
+    }
+  }
+
+  const handleEditNotesConfirm = (notes: string) => {
+    try {
+      onNotesEdit(selectedRegistrationId, notes)
+    } finally {
+      setShowNotes(false)
+      setSelectedSlotId(-1)
+      setSelectedRegistrationId(-1)
+    }
+  }
+
+  const handleEditNotesCancel = () => {
+    setShowNotes(false)
+    setSelectedSlotId(-1)
+    setSelectedRegistrationId(-1)
+  }
+
   return (
     <div className="row">
       <div className="col-6 col-md-12">
@@ -170,6 +202,7 @@ export function ReserveListAdmin({
                 onGroupSelect={handleGroupSelect}
                 onDrop={handleDrop}
                 onSwap={handleSwap}
+                onEditNotes={handleEditNotes}
               />
             ))}
             <Modal show={showDrop}>
@@ -198,6 +231,18 @@ export function ReserveListAdmin({
                 onCancel={handleAddCancel}
                 onAdd={handleAddConfirm}
               />
+            </Modal>
+            <Modal show={showNotes}>
+              {selectedRegistrationId && (
+                <EditNotes
+                  signedUpBy={
+                    registrations.find((r) => r.id === selectedRegistrationId)?.signedUpBy ?? ""
+                  }
+                  registrationNotes={notes.get(selectedRegistrationId) ?? ""}
+                  onEdit={handleEditNotesConfirm}
+                  onCancel={handleEditNotesCancel}
+                />
+              )}
             </Modal>
           </div>
         </div>
