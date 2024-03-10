@@ -34,6 +34,16 @@ export function SkinsReportCard() {
   )
 }
 
+export function RegistrationNotesCard() {
+  return (
+    <AdminCard
+      title="Registration Notes"
+      action={"registration-notes"}
+      description="View and/or download all registration notes collected for this event."
+    />
+  )
+}
+
 export function ManagePlayersCard() {
   return (
     <AdminCard

@@ -36,8 +36,8 @@ export function RenderReportData({
 }: RenderReportDataProps) {
   const getDownloadFile = () => {
     const rows = []
-    rows.push(reportHeader.join(","))
-    reportData.forEach((row) => rows.push(row.join(",")))
+    rows.push(reportHeader.map((r) => `"${r}"`).join(","))
+    reportData.forEach((row) => rows.push(row.map((r) => `"${r !== null ? r : ""}"`).join(",")))
     return rows.join("\r\n")
   }
 

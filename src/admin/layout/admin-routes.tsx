@@ -8,6 +8,8 @@ import { ImportPointsScreen } from "../screens/import-points"
 import { ImportScoresScreen } from "../screens/import-scores"
 import { ManagePlayersScreen } from "../screens/manage-players"
 import { PaymentReportScreen } from "../screens/payment-report"
+import { RegistrationNotesScreen } from "../screens/registration-notes"
+import { SkinsReportScreen } from "../screens/skins-report"
 import { UpdatePortalScreen } from "../screens/update-portal"
 import { UploadPhotoScreen } from "../screens/upload-photo"
 import { ViewSlotsScreen } from "../screens/view-slots"
@@ -37,7 +39,8 @@ export const adminRoutes = () => [
           { element: <EventAdminMenu />, index: true },
           { path: "event-report", element: <EventReportScreen /> },
           { path: "payment-report", element: <PaymentReportScreen /> },
-          { path: "skins-report", element: <div>TODO: skins report</div> },
+          { path: "skins-report", element: <SkinsReportScreen /> },
+          { path: "registration-notes", element: <RegistrationNotesScreen /> },
           { path: "manage-players", element: <ManagePlayersScreen /> },
           { path: "update-portal", element: <UpdatePortalScreen /> },
           { path: "manage-documents", element: <EventDocumentsScreen /> },

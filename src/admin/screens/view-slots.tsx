@@ -3,6 +3,7 @@ import { useState } from "react"
 import { ConfirmDialog } from "../../components/dialog/confirm"
 import { ReservedGrid } from "../../components/reserve/reserved-grid"
 import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
+import { EventRegistrationProvider } from "../../context/registration-context"
 import { useCreateEventSlots } from "../../hooks/use-create-event-slots"
 import { useEventAdmin } from "../layout/event-admin"
 
@@ -33,7 +34,9 @@ export function ViewSlotsScreen() {
         message="This action will delete all existing sign-up slots and recreate them using the current event settings. Continue?"
         onClose={handleConfirm}
       />
-      <ReservedGrid key={refreshKey} clubEvent={clubEvent} />
+      <EventRegistrationProvider clubEvent={clubEvent}>
+        <ReservedGrid key={refreshKey} clubEvent={clubEvent} />
+      </EventRegistrationProvider>
       <OverlaySpinner loading={status === "pending"} />
     </div>
   )

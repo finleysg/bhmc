@@ -9,6 +9,7 @@ import {
   ManageDocumentsCard,
   ManagePlayersCard,
   PaymentReportCard,
+  RegistrationNotesCard,
   SkinsReportCard,
   UpdatePortalCard,
   ValidateSlotsCard,
@@ -28,6 +29,9 @@ export function EventAdminMenu() {
         </div>
         <div className="col">
           <SkinsReportCard />
+        </div>
+        <div className="col">
+          <RegistrationNotesCard />
         </div>
         <div className="col">
           <ManagePlayersCard />
