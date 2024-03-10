@@ -24,9 +24,10 @@
 - [x] In the rates card, show the override fees as well.
 - [x] Mobile formatting review and repair.
 - [x] Convert to typescript
-- [ ] Skins report
+- [x] Skins report
 - [x] Player registration notes (admin)
-- [ ] Registration notes report
+- [x] Registration notes report
+- [ ] Can-choose admin: TODO: Need to support the 'isMoneyOwed' flag
 
 ## Would Like To Do
 

@@ -1,23 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react"
 
-import { ClubEvent, slugify } from "../../models/club-event"
+import { slugify } from "../../models/club-event"
+import { ClubEventProps } from "../../models/common-props"
 import { httpClient } from "../../utils/api-client"
 import { apiUrl } from "../../utils/api-utils"
 import { RenderReportData } from "./render-report-data"
 import { getSkinsReportHeader, getSkinsReportRows } from "./report-utils"
 
-interface SkinsReportProps {
-  eventId: number
-  clubEvent: ClubEvent
-}
-
-export function SkinsReport({ eventId, clubEvent }: SkinsReportProps) {
+export function SkinsReport({ clubEvent }: ClubEventProps) {
   const [data, setData] = useState<any[]>([])
 
   useEffect(() => {
-    httpClient(apiUrl(`events/${eventId}/skins-report/`)).then((json) => setData(json))
-  }, [eventId])
+    httpClient(apiUrl(`events/${clubEvent.id}/skins-report/`)).then((json) => setData(json))
+  }, [clubEvent.id])
 
   const reportName = `${slugify(clubEvent.name)}-skins-report.csv`
   const reportHeader = getSkinsReportHeader()
