@@ -131,4 +131,18 @@ export class Registration {
   addSlots = (slots: RegistrationSlot[]) => {
     this.slots = [...slots]
   }
+
+  static emptyRegistration = () => {
+    return new Registration({
+      id: 0,
+      event: 0,
+      signed_up_by: "",
+      expires: new Date(),
+      starting_hole: 0,
+      starting_order: 0,
+      created_date: new Date(),
+      slots: [],
+      notes: "",
+    })
+  }
 }

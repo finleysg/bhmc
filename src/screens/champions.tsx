@@ -25,7 +25,7 @@ export function ChampionsScreen() {
 
   return (
     <div className="content__inner">
-      <SeasonMenu baseUrl={`/champions`} season={year} startAt={2017} />
+      <SeasonMenu baseUrl={`/champions`} includeAll={false} season={year} startAt={2017} />
       <div className="card">
         <OverlaySpinner loading={status === "pending"} />
         <div className="card-body">

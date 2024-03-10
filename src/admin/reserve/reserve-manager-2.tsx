@@ -8,6 +8,7 @@ import { useDropPlayers } from "../../hooks/use-drop-players"
 import { useEventRegistrations } from "../../hooks/use-event-registrations"
 import { useIssueMultipleRefunds } from "../../hooks/use-issue-refunds"
 import { useRegisterPlayer } from "../../hooks/use-register-player"
+import { useRegistrationUpdate } from "../../hooks/use-registration-update"
 import { useSwapPlayers } from "../../hooks/use-swap-players"
 import { ClubEventProps } from "../../models/common-props"
 import { RefundData } from "../../models/refund"
@@ -28,6 +29,7 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
   } = useRegisterPlayer(clubEvent.id)
   const { mutateAsync: dropPlayers, status: dropStatus, error: dropError } = useDropPlayers()
   const { mutateAsync: swapPlayers, status: swapStatus, error: swapError } = useSwapPlayers()
+  const { mutateAsync: updateNotes, status: noteStatus, error: noteError } = useRegistrationUpdate()
   const issueRefunds = useIssueMultipleRefunds()
 
   const handleRegister = async (
@@ -69,6 +71,11 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
     toast.success("Player swap was successful.")
   }
 
+  const handleEditNotes = async (registrationId: number, notes: string) => {
+    await updateNotes({ registrationId, notes })
+    toast.success("Notes were updated.")
+  }
+
   return (
     <div>
       <OverlaySpinner
@@ -77,19 +84,22 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
           status === "pending" ||
           dropStatus === "pending" ||
           swapStatus === "pending" ||
-          registerStatus === "pending"
+          registerStatus === "pending" ||
+          noteStatus === "pending"
         }
       />
       {error && <ErrorDisplay error={error.message} delay={5000} />}
       {dropError && <ErrorDisplay error={dropError.message} delay={5000} />}
       {swapError && <ErrorDisplay error={swapError.message} delay={5000} />}
       {registerError && <ErrorDisplay error={registerError.message} delay={5000} />}
+      {noteError && <ErrorDisplay error={noteError.message} delay={5000} />}
       <ReserveListAdmin
         clubEvent={clubEvent}
         registrations={registrations ?? []}
         onRegister={handleRegister}
         onDrop={handleDrop}
         onSwap={handleSwap}
+        onNotesEdit={handleEditNotes}
       />
     </div>
   )
