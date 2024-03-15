@@ -7,7 +7,7 @@
 - [x] Server-side: register.utils is using a hard-coded tee time split. Needs to be dynamic.
 - [x] Refactor registration edit to work within new routing.
 - [x] Rework membership report to show returning vs new members.
-- [ ] Refresh the event signup document.
+- [x] Refresh the event signup document.
 - [x] Add a warning to event report if payment is not confirmed. (Notify treasurer that player owes
       us money.) For now, rely on $0 paid. Revisit in April/May.
 - [x] Add a payment detail screen to assist researching payment issues/history.

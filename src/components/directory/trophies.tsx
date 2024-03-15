@@ -9,7 +9,7 @@ interface ChampionshipProps {
   championships: MajorChampion[]
 }
 
-const limit = 5
+const limit = 10
 
 function HasMore({ championships }: ChampionshipProps) {
   const [show, setShow] = useState(false)
@@ -24,7 +24,7 @@ function HasMore({ championships }: ChampionshipProps) {
         </h6>
         <Dialog show={show} onClose={() => setShow(false)} title="First Place Finishes">
           {championships.map((c) => (
-            <h6 key={c.id} className="text-indigo" style={{ marginBottom: ".8rem" }}>
+            <h6 key={c.id} className="text-info mb-2">
               <strong>{c.season}</strong> {c.eventName} ({c.flight})
             </h6>
           ))}
@@ -43,7 +43,7 @@ export function Trophies({ championships }: ChampionshipProps) {
   return (
     <div>
       {mostRecent().map((c) => (
-        <h6 key={c.id} className="text-indigo" style={{ marginBottom: ".8rem" }}>
+        <h6 key={c.id} className="text-info mb-2">
           🏆 {c.season} {c.eventName}
         </h6>
       ))}

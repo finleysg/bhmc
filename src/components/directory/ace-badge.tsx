@@ -12,8 +12,9 @@ export function AceBadge({ aces }: AceProps) {
     return (
       <div>
         {aces.map((a) => (
-          <h6 key={a.id} className="text-dark" style={{ marginBottom: ".8rem" }}>
-            <GiFireAce style={{ color: "red" }} /> {a.hole} ({format(a.shotDate, "yyyy-MM-dd")})
+          <h6 key={a.id} className="text-info" style={{ marginBottom: ".8rem" }}>
+            <GiFireAce style={{ color: "red" }} title="Hole in One!" /> {a.hole} (
+            {format(a.shotDate, "yyyy-MM-dd")})
           </h6>
         ))}
       </div>
