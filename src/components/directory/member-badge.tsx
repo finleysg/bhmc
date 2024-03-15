@@ -4,7 +4,7 @@ import { currentSeason } from "../../utils/app-config"
 export function MemberBadge({ player }: PlayerProps) {
   if (player.isMember) {
     return (
-      <h6 className="text-teal" style={{ marginBottom: "1rem" }}>
+      <h6 className="text-info" style={{ marginBottom: "1rem" }}>
         🏌️‍♂️ {currentSeason} Member
       </h6>
     )

@@ -6,7 +6,6 @@ import { toast } from "react-toastify"
 import { Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import { FullPageSpinner } from "./components/spinners/full-screen-spinner"
 import { AuthProvider } from "./context/auth-context"
@@ -77,7 +76,7 @@ export function App() {
           </Elements>
         </AuthProvider>
       </LayoutProvider>
-      <ReactQueryDevtools />
+      {/* <ReactQueryDevtools /> */}
     </QueryClientProvider>
   )
 }

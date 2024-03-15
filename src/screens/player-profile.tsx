@@ -18,9 +18,7 @@ export function PlayerProfileScreen() {
 
   return (
     <div className="content__inner">
-      <div className="row">
-        <div className="col-12">{playerId && <PlayerProfile playerId={+playerId} />}</div>
-      </div>
+      <div style={{ maxWidth: "900px" }}>{playerId && <PlayerProfile playerId={+playerId} />}</div>
     </div>
   )
 }
