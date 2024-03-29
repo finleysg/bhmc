@@ -27,7 +27,7 @@
 - [x] Skins report
 - [x] Player registration notes (admin)
 - [x] Registration notes report
-- [ ] Can-choose admin: TODO: Need to support the 'isMoneyOwed' flag
+- [x] Can-choose admin: TODO: Need to support the 'isMoneyOwed' flag
 
 ## Would Like To Do
 
@@ -51,7 +51,7 @@
 - [ ] Hide the event documents card when no documents are found.
 - [ ] Refresh the event scoring document.
 - [ ] Manage a version number and render in the footer.
-- [ ] Improve payment report with better currency and date formatting.
+- [x] Improve payment report with better currency and date formatting.
 
 ## Bugs
 
@@ -63,3 +63,4 @@
 - [ ] Bug - Dates on the detail page not rendering well on mobile.
 - [ ] Bug - admin header menu does not render well on mobile.
 - [ ] Bug - champions page has key collisions (warning in dev tools).
+- [ ] Bug - registration-slot-line-item: existing fees should be a map. Expression is not right.

@@ -31,7 +31,7 @@ export function SeasonLongPointsScreen() {
               selectedIndex={selectedCategory === "gross" ? 0 : 1}
               onSelect={() => updateSelectedCategory("gross")}
             >
-              Top 20 Gross
+              Top 50 Gross
             </IndexTab>
             <IndexTab
               key="net"
@@ -39,10 +39,10 @@ export function SeasonLongPointsScreen() {
               selectedIndex={selectedCategory === "gross" ? 0 : 1}
               onSelect={() => updateSelectedCategory("net")}
             >
-              Top 20 Net
+              Top 50 Net
             </IndexTab>
           </Tabs>
-          <TopPoints category={selectedCategory} topN={20} />
+          <TopPoints category={selectedCategory} topN={50} />
         </div>
         <div className="col-xl-6 col-12">
           <CardContent contentKey="season-long-points" />

@@ -8,7 +8,7 @@ import { IndexTab } from "../../components/tab/index-tab"
 import { Tabs } from "../../components/tab/tabs"
 import { useDropPlayers } from "../../hooks/use-drop-players"
 import { useEventRegistrationSlots } from "../../hooks/use-event-registration-slots"
-import { useIssueRefunds } from "../../hooks/use-issue-refunds"
+import { useIssueMultipleRefunds } from "../../hooks/use-issue-refunds"
 import { useMovePlayers } from "../../hooks/use-move-players"
 import { useRegisterPlayer } from "../../hooks/use-register-player"
 import { useSwapPlayers } from "../../hooks/use-swap-players"
@@ -33,7 +33,7 @@ export function ReserveManager1({ clubEvent }: ClubEventProps) {
   const { mutateAsync: movePlayers, status: moveStatus, error: moveError } = useMovePlayers()
   const { mutateAsync: dropPlayers, status: dropStatus, error: dropError } = useDropPlayers()
   const { mutateAsync: swapPlayers, status: swapStatus, error: swapError } = useSwapPlayers()
-  const issueRefunds = useIssueRefunds()
+  const issueRefunds = useIssueMultipleRefunds()
 
   const reserveTables = LoadReserveTables(clubEvent, slots ?? [])
 
@@ -44,7 +44,6 @@ export function ReserveManager1({ clubEvent }: ClubEventProps) {
     isMoneyOwed: boolean,
     notes: string,
   ) => {
-    // TODO: Need to support the 'isMoneyOwed' flag
     await registerPlayer({ playerId, fees: feeIds, isMoneyOwed, slotId: slot.id, notes })
     toast.success("Player registration was successful.")
   }

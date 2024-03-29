@@ -22,9 +22,11 @@ export function ContactUsView({ form, onCancel, onSubmit }: ContactUsViewProps) 
   const { errors: formErrors, isSubmitting } = formState
 
   const submit = (data: ContactMessageData) => {
-    if (formState.isValid) {
-      onSubmit(data)
+    // formState.isValid is always false
+    if (formErrors.full_name || formErrors.email || formErrors.message_text) {
+      return
     }
+    onSubmit(data)
   }
 
   return (
