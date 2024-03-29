@@ -15,9 +15,9 @@ export function RenderDetailData({
   title,
 }: RenderDetailDataProps) {
   return (
-    <div className="ms-5 me-5">
+    <div className="ms-5 me-5 flex-grow-1">
       <OverlaySpinner loading={loading} />
-      <h5 className="card-title text-primary flex-grow-1">{title}</h5>
+      <h5 className="card-title text-primary">{title}</h5>
       <div style={{ overflowY: "auto" }}>
         <table className="table table-striped table-sm">
           <thead>

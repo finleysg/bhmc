@@ -36,6 +36,13 @@ const canChooseHeader = [
   "Signup Date",
 ]
 
+/**
+ * Format a cell value as currency.
+ */
+const currencyFormat = (value: number) => {
+  return `$${value.toFixed(2)}`
+}
+
 const getStandardEventReportRow = (index: number, fees: EventFee[], obj: any) => {
   const values = []
   values.push(index)
@@ -100,9 +107,9 @@ const getPaymentReportRow = (obj: any) => {
   } else {
     values.push("n/a")
   }
-  values.push(paymentAmount.toFixed(2))
-  values.push(transactionFee.toFixed(2))
-  values.push(refundAmount.toFixed(2))
+  values.push(currencyFormat(paymentAmount))
+  values.push(currencyFormat(transactionFee))
+  values.push(currencyFormat(refundAmount))
   return values
 }
 
@@ -151,11 +158,11 @@ const getPaymentReportHeader = () => {
 }
 
 const getPaymentDetailHeader = () => {
-  return ["Event Fee", "Paid", "Amount Paid", "Player"]
+  return ["Event Fee", "Amount", "Player", "Paid"]
 }
 
 const getRefundDetailHeader = () => {
-  return ["Refund Amount", "Date", "Confirmed", "Issuer", "Notes"]
+  return ["Amount", "Date", "Issuer", "Code", "Notes", "Confirmed"]
 }
 
 const getMembershipReportHeader = () => {
@@ -194,9 +201,9 @@ const getPaymentDetailRows = (reportData: any[]) => {
     reportData?.map((obj: any) => {
       const values = []
       values.push(obj.event_fee)
-      values.push(obj.is_paid ? "✔️" : "")
-      values.push(obj.amount_paid)
+      values.push(currencyFormat(!isNaN(obj.amount_paid) ? +obj.amount_paid : 0))
       values.push(`${obj.first_name} ${obj.last_name}`)
+      values.push(obj.is_paid ? "✔️" : "")
       return values
     }) ?? []
   )
@@ -206,11 +213,12 @@ const getRefundDetailRows = (reportData: any[]) => {
   return (
     reportData?.map((obj: any) => {
       const values = []
-      values.push(obj.refund_amount)
+      values.push(currencyFormat(!isNaN(obj.refund_amount) ? +obj.refund_amount : 0))
       values.push(sortableDateAndTimeFormat(parseISO(obj.refund_date)))
-      values.push(obj.confirmed ? "✔️" : "")
-      values.push(obj.issuer)
+      values.push(obj.issuer_last_name)
+      values.push(obj.refund_code)
       values.push(obj.notes)
+      values.push(obj.confirmed ? "✔️" : "")
       return values
     }) ?? []
   )
