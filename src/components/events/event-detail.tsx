@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm"
 
 import { useMyRegistrationStatus } from "../../hooks/use-my-registration-status"
 import { ClubEvent } from "../../models/club-event"
-import { getRegistrationTypeName, getStartTypeName } from "../../models/codes"
+import { EventStatusType, getRegistrationTypeName, getStartTypeName } from "../../models/codes"
 import { dayAndDateFormat, dayDateAndTimeFormat } from "../../utils/date-utils"
 import { EditRegistrationButton } from "../buttons/edit-registration-button"
 import { EventAdminButton } from "../buttons/event-admin-button"
@@ -49,7 +49,9 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
           </div>
         </div>
         <div className="card-text">
-          {clubEvent.status === "Canceled" ? <h4 className="text-danger">Canceled</h4> : null}
+          {clubEvent.status === EventStatusType.Canceled ? (
+            <h4 className="text-danger">Canceled</h4>
+          ) : null}
           <div className="registration-start-item">
             <div className="label">Event date:</div>
             <div className="value text-primary-emphasis fw-bold">

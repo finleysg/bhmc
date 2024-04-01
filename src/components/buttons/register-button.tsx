@@ -4,7 +4,7 @@ import { differenceInMinutes, isBefore } from "date-fns"
 
 import { useCounter } from "../../hooks/use-counter"
 import { useMyPlayerRecord } from "../../hooks/use-my-player-record"
-import { RegistrationType } from "../../models/codes"
+import { EventStatusType, RegistrationType } from "../../models/codes"
 import { ClubEventProps } from "../../models/common-props"
 
 interface RegisterButtonProps extends ComponentPropsWithoutRef<"button"> {
@@ -29,7 +29,8 @@ export function RegisterButton({
   if (
     hasSignedUp ||
     clubEvent.registrationType === RegistrationType.None ||
-    clubEvent.registrationWindow === "past"
+    clubEvent.registrationWindow === "past" ||
+    clubEvent.status === EventStatusType.Canceled
   ) {
     return null
   }
