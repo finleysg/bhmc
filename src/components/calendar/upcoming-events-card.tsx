@@ -2,6 +2,7 @@ import { addDays, isWithinInterval, subDays } from "date-fns"
 import { Link } from "react-router-dom"
 
 import { useClubEvents } from "../../hooks/use-club-events"
+import { EventStatusType } from "../../models/codes"
 import { ClubEventProps } from "../../models/common-props"
 import { dayAndDateFormat } from "../../utils/date-utils"
 import { AdminLinkButton } from "../buttons/admin-link-button"
@@ -11,7 +12,9 @@ function UpcomingEvent({ clubEvent }: ClubEventProps) {
   return (
     <Link className="listview__item mb-3" to={clubEvent.eventUrl}>
       <i className={`avatar-char ${clubEvent.eventTypeClass}`}>{clubEvent.name[0]}</i>
-      <div className={`listview__content ${clubEvent.status === "Canceled" ? "canceled" : ""}`}>
+      <div
+        className={`listview__content ${clubEvent.status === EventStatusType.Canceled ? "canceled" : ""}`}
+      >
         <div className="listview__heading">{clubEvent.name}</div>
         <p className="text-secondary">{dayAndDateFormat(clubEvent.startDate)}</p>
       </div>
