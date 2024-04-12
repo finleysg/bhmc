@@ -31,10 +31,10 @@ export function EditRegistrationScreen() {
   } = useEventRegistration()
 
   const [notes, setNotes] = useState<string>(registration?.notes ?? "")
+  const [isBusy, setIsBusy] = useState(false)
 
   useEventRegistrationGuard(clubEvent, registration, "edit")
 
-  const isBusy = !registration?.id
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
   const layout =
     clubEvent?.maximumSignupGroupSize === 1
@@ -51,12 +51,22 @@ export function EditRegistrationScreen() {
     navigate("../")
   }
 
-  const handleNextStep = () => {
-    updateRegistrationNotes(notes)
-    savePayment(() => {
+  const handleNextStep = async () => {
+    setIsBusy(true)
+    setTimeout(() => {
+      console.log("Saving payment record from edit screen...")
+    }, 50)
+
+    try {
+      updateRegistrationNotes(notes)
+      await savePayment()
       updateStep(ReviewStep)
-      navigate("../review")
-    })
+      navigate("../review", { replace: true })
+    } catch (err) {
+      setError(err as Error)
+    } finally {
+      setIsBusy(false)
+    }
   }
 
   return (
