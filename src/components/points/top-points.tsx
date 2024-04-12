@@ -17,7 +17,7 @@ export function TopPoints({ category, topN }: TopPointsProps) {
       return take(
         sortBy(points, [
           function (p) {
-            return category === "gross" ? p.grossPoints : p.netPoints
+            return category === "gross" ? p.grossPoints * -1 : p.netPoints * -1
           },
         ]),
         topN,

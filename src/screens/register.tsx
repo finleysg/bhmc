@@ -14,7 +14,6 @@ import { ErrorDisplay } from "../components/feedback/error-display"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { ReviewStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
 import { useAddFriend } from "../hooks/use-my-friends"
 import { NoAmount } from "../models/payment"
 import { Player } from "../models/player"
@@ -41,13 +40,13 @@ export function RegisterScreen() {
     updateStep,
   } = useEventRegistration()
 
+  const [isBusy, setIsBusy] = useState(false)
   const [notes, setNotes] = useState<string>(registration?.notes ?? "")
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [showPriorityDialog, setShowPriorityDialog] = useState(false)
 
-  useEventRegistrationGuard(clubEvent, registration)
+  // useEventRegistrationGuard(clubEvent, registration)
 
-  const isBusy = !registration?.id
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
   const layout =
     clubEvent?.maximumSignupGroupSize === 1
@@ -82,16 +81,27 @@ export function RegisterScreen() {
     setNotes(e.target.value)
   }
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (!canRegister()) {
       setShowPriorityDialog(true)
       return
     }
-    updateRegistrationNotes(notes)
-    savePayment(() => {
+
+    setIsBusy(true)
+    setTimeout(() => {
+      console.log("Saving payment record...")
+    }, 50)
+
+    try {
+      updateRegistrationNotes(notes)
+      await savePayment()
       updateStep(ReviewStep)
       navigate("../review")
-    })
+    } catch (err) {
+      setError(err as Error)
+    } finally {
+      setIsBusy(false)
+    }
   }
 
   return (

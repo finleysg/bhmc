@@ -43,7 +43,7 @@ export interface IRegistrationContext {
   cancelRegistration: () => void
   canRegister: () => boolean
   completeRegistration: () => void
-  confirmPayment: (paymentMethod: string, saveCard: boolean, callback?: () => void) => void
+  confirmPayment: (paymentMethod: string, saveCard: boolean) => Promise<void>
   createRegistration: (
     course?: Course,
     slots?: RegistrationSlot[],
@@ -53,7 +53,7 @@ export interface IRegistrationContext {
   loadRegistration: (player: Player) => Promise<void>
   removeFee: (slot: RegistrationSlot, eventFee: EventFee) => void
   removePlayer: (slot: RegistrationSlot) => void
-  savePayment: (callback?: () => void) => void
+  savePayment: () => Promise<void>
   setError: (error: Error | null) => void
   updateRegistrationNotes: (notes: string) => void
   updateStep: (step: IRegistrationStep) => void
@@ -76,7 +76,7 @@ export function EventRegistrationProvider({
     dispatch({ type: "load-event", payload: { clubEvent: clubEvent } })
   }, [clubEvent])
 
-  const { mutate: _createPayment } = useMutation({
+  const { mutateAsync: _createPayment } = useMutation({
     mutationFn: (payment: Partial<Payment>) => {
       return httpClient(apiUrl("payments"), {
         body: JSON.stringify({
@@ -102,7 +102,7 @@ export function EventRegistrationProvider({
     },
   })
 
-  const { mutate: _updatePayment } = useMutation({
+  const { mutateAsync: _updatePayment } = useMutation({
     mutationFn: (payment: Payment) => {
       return httpClient(apiUrl(`payments/${payment.id}`), {
         method: "PUT",
@@ -129,7 +129,7 @@ export function EventRegistrationProvider({
     },
   })
 
-  const { mutate: _confirmPayment } = useMutation({
+  const { mutateAsync: _confirmPayment } = useMutation({
     mutationFn: ({ paymentMethod, saveCard }: { paymentMethod: string; saveCard: boolean }) => {
       return httpClient(apiUrl(`payments/${state.payment?.id}/confirm/`), {
         method: "PUT",
@@ -391,36 +391,21 @@ export function EventRegistrationProvider({
    * Confirms that a payment with the given method is valid. We call Stripe to
    * validate the payment method.
    */
-  const confirmPayment = useCallback(
-    (paymentMethod: string, saveCard: boolean, callback?: () => void) => {
-      _confirmPayment(
-        { paymentMethod, saveCard },
-        {
-          onSuccess: () => callback?.(),
-        },
-      )
-    },
-    [_confirmPayment],
-  )
+  const confirmPayment = (paymentMethod: string, saveCard: boolean) => {
+    return _confirmPayment({ paymentMethod, saveCard })
+  }
 
   /**
    * Saves the current payment record.
    */
-  const savePayment = useCallback(
-    (callback?: () => void) => {
-      if (state.payment?.id) {
-        _updatePayment(state.payment, {
-          onSuccess: () => callback?.(),
-        })
-      } else {
-        const payment = { ...state.payment }
-        _createPayment(payment, {
-          onSuccess: () => callback?.(),
-        })
-      }
-    },
-    [state?.payment, _createPayment, _updatePayment],
-  )
+  const savePayment = () => {
+    if (state.payment?.id) {
+      return _updatePayment(state.payment)
+    } else {
+      const payment = { ...state.payment }
+      return _createPayment(payment)
+    }
+  }
 
   /**
    * Add a player to a given registration slot.
