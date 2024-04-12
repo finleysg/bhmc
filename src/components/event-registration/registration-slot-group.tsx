@@ -9,7 +9,7 @@ import { RegistrationSlotLineItem } from "./registration-slot-line-item"
 
 interface RegistrationSlotGroupProps {
   eventFees: EventFee[]
-  existingFees: RegistrationFee[]
+  existingFees: Map<string, RegistrationFee> | null
   layout: "horizontal" | "vertical"
   mode: RegistrationMode
   payment: Payment
@@ -63,7 +63,7 @@ export function RegistrationSlotGroup({
             payment={payment}
             player={player}
             eventFees={eventFees}
-            existingFees={existingFees.filter((f) => f.registrationSlotId === slot.id)} // TODO: a map would be better
+            existingFees={existingFees}
             onRemovePlayer={handleRemovePlayer}
             onToggleFee={handleToggleFee}
             team={slot.getTeamNumber(teamSize)}

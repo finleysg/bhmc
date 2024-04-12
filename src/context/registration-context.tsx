@@ -33,7 +33,7 @@ export interface IRegistrationContext {
   clubEvent: ClubEvent | null // TODO: consider removing this from the context
   currentStep: IRegistrationStep
   error: Error | null
-  existingFees: RegistrationFee[]
+  existingFees: Map<string, RegistrationFee> | null
   mode: RegistrationMode
   payment: Payment | null
   registration: Registration | null

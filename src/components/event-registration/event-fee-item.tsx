@@ -15,7 +15,7 @@ interface EventFeeItemProps {
 export function EventFeeItem({
   fee,
   playerAmount,
-  mode,
+  // mode,
   selected,
   disabled,
   onToggleFee,
@@ -29,7 +29,7 @@ export function EventFeeItem({
           isRequired={fee.isRequired}
           isSelected={isSelected}
           onChange={() => onToggleFee(fee, isSelected)}
-          disabled={(mode !== "edit" && disabled) || fee.isRequired}
+          disabled={disabled || fee.isRequired}
         />
       </div>
       <div className="fee-item fee-item--description">

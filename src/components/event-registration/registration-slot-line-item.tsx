@@ -12,7 +12,7 @@ import { RegistrationSlotPlayer } from "./registration-slot-player"
 
 interface RegistrationSlotLineItemProps {
   eventFees: EventFee[]
-  existingFees: RegistrationFee[]
+  existingFees: Map<string, RegistrationFee> | null
   mode: RegistrationMode
   payment: Payment
   player?: Player
@@ -94,8 +94,9 @@ export function RegistrationSlotLineItem({
       <div className="fees">
         {eventFees.map((eventFee) => {
           // TODO: a map would be more efficient
-          const existing =
-            existingFees?.findIndex((fee) => fee.eventFeeId === eventFee.id) >= 0 ?? false
+          const existing = existingFees?.get(`${slot.id}-${eventFee.id}`) !== undefined
+          console.log(`fee ${slot.id}-${eventFee.id} exists: ${existing}`)
+          //existingFees?.findIndex((fee) => fee.eventFeeId === eventFee.id) >= 0 ?? false
           return (
             <EventFeeItem
               key={eventFee.id * slot.id}
