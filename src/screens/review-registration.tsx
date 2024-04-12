@@ -9,7 +9,6 @@ import { ErrorDisplay } from "../components/feedback/error-display"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { CompleteStep, PaymentStep, RegisterStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
 import { NoAmount } from "../models/payment"
 import { useCurrentEvent } from "./event-detail"
 
@@ -29,14 +28,12 @@ export function ReviewRegistrationScreen() {
 
   const navigate = useNavigate()
 
-  useEventRegistrationGuard(clubEvent, registration, mode)
-
   const isBusy = !payment?.hasPaymentDetails()
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
 
   const handleBack = () => {
     updateStep(RegisterStep)
-    navigate(-1)
+    navigate("../register", { replace: true })
   }
 
   const handleCancel = () => {
@@ -52,7 +49,7 @@ export function ReviewRegistrationScreen() {
     } else {
       updateStep(CompleteStep)
     }
-    navigate("../payment")
+    navigate("../payment", { replace: true })
   }
 
   return (
