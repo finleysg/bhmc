@@ -45,8 +45,6 @@ export function RegisterScreen() {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [showPriorityDialog, setShowPriorityDialog] = useState(false)
 
-  // useEventRegistrationGuard(clubEvent, registration)
-
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
   const layout =
     clubEvent?.maximumSignupGroupSize === 1
@@ -96,7 +94,7 @@ export function RegisterScreen() {
       updateRegistrationNotes(notes)
       await savePayment()
       updateStep(ReviewStep)
-      navigate("../review")
+      navigate("../review", { replace: true })
     } catch (err) {
       setError(err as Error)
     } finally {

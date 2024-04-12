@@ -43,8 +43,6 @@ export function PaymentScreen() {
   const elements = useElements()
   const navigate = useNavigate()
 
-  // useEventRegistrationGuard(clubEvent, registration, mode)
-
   useEffect(() => {
     if (myCards === undefined || myCards.length === 0) {
       setCardUsed("new")
@@ -57,7 +55,7 @@ export function PaymentScreen() {
 
   const handleBack = () => {
     updateStep(ReviewStep)
-    navigate(-1)
+    navigate("../review", { replace: true })
   }
 
   const handleCancel = () => {
@@ -75,6 +73,8 @@ export function PaymentScreen() {
       throw new Error("Inconceivable! Button ref not found.")
     }
 
+    // It's unlikely we need to do both of these, but we really,
+    // really, really don't want to leave the "Pay" button enabled.
     buttonRef.current.disabled = true
     setIsBusy(true)
 
@@ -86,7 +86,7 @@ export function PaymentScreen() {
       const method = await getPaymentMethod()
       await confirmPayment(method, cardUsed === "new" && saveCard)
       updateStep(CompleteStep)
-      navigate("../complete")
+      navigate("../complete", { replace: true })
     } catch (err) {
       setError(err as Error)
     } finally {
