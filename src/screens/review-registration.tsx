@@ -33,7 +33,11 @@ export function ReviewRegistrationScreen() {
 
   const handleBack = () => {
     updateStep(RegisterStep)
-    navigate("../register", { replace: true })
+    if (mode === "edit") {
+      navigate("../edit", { replace: true })
+    } else {
+      navigate("../register", { replace: true })
+    }
   }
 
   const handleCancel = () => {
