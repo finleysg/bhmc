@@ -21,7 +21,7 @@ export interface IRegistrationState {
   readonly registration: Registration | null
   readonly payment: Payment | null
   readonly selectedFees: EventFee[]
-  readonly existingFees: RegistrationFee[] // needed for edit mode
+  readonly existingFees: Map<string, RegistrationFee> | null // needed for edit mode
   readonly error: Error | null
   readonly currentStep: IRegistrationStep
 }
@@ -83,7 +83,7 @@ export const defaultRegistrationState: IRegistrationState = {
   registration: null,
   payment: null,
   selectedFees: [],
-  existingFees: [],
+  existingFees: null,
   error: null,
   currentStep: PendingStep,
 }
@@ -95,6 +95,7 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
       draft.clubEvent = payload.clubEvent
       draft.registration = null
       draft.payment = null
+      draft.existingFees = null
       draft.selectedFees = []
       draft.error = null
       draft.mode = "idle"
@@ -109,7 +110,9 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
       draft.mode = "edit"
       draft.currentStep = RegisterStep
       draft.registration = payload.registration
-      draft.existingFees = payload.existingFees
+      draft.existingFees = new Map(
+        payload.existingFees.map((fee) => [`${fee.registrationSlotId}-${fee.eventFeeId}`, fee]),
+      )
       draft.payment = payload.payment
       return
     }
@@ -134,6 +137,7 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
     case "cancel-registration": {
       draft.registration = null
       draft.payment = null
+      draft.existingFees = null
       draft.selectedFees = []
       draft.error = null
       draft.mode = "idle"
@@ -144,6 +148,7 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
     case "complete-registration": {
       draft.registration = null
       draft.payment = null
+      draft.existingFees = null
       draft.selectedFees = []
       draft.error = null
       draft.mode = "idle"
@@ -208,7 +213,7 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
         const index = draft.payment.details.findIndex(
           (p) => p.eventFeeId === payload.eventFeeId && p.slotId === payload.slotId,
         )
-        if (index && index >= 0) {
+        if (index >= 0) {
           draft.payment.details.splice(index, 1)
         }
       }

@@ -127,7 +127,7 @@ export function RegisterScreen() {
             {payment && registration && (
               <RegistrationSlotGroup
                 eventFees={clubEvent.fees}
-                existingFees={[]}
+                existingFees={null}
                 registration={registration}
                 payment={payment}
                 removePlayer={removePlayer}

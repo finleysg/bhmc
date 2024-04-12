@@ -59,8 +59,9 @@
 - [x] Bug - photo gallery / infinite scroll not working.
 - [x] Bug - navigate directly to a controlled page doesn't work (sent home).
 - [x] Bug - refund amounts must reflect override amount if that applies.
-- [ ] Bug - on the edit flow, existing checked fees should render as disabled.
+- [x] Bug - on the edit flow, existing checked fees should render as disabled.
 - [ ] Bug - Dates on the detail page not rendering well on mobile.
 - [ ] Bug - admin header menu does not render well on mobile.
 - [ ] Bug - champions page has key collisions (warning in dev tools).
-- [ ] Bug - registration-slot-line-item: existing fees should be a map. Expression is not right.
+- [x] Bug - registration-slot-line-item: existing fees should be a map. Expression is not right.
+- [x] Bug - registration flow not displaying spinner feedback and disabling buttons as expected.
