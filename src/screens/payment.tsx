@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useRef, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
 
@@ -14,7 +14,6 @@ import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { CompleteStep, ReviewStep } from "../context/registration-reducer"
 import { useAuth } from "../hooks/use-auth"
 import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
 import { useMyCards } from "../hooks/use-my-cards"
 import { NoAmount } from "../models/payment"
 import { useCurrentEvent } from "./event-detail"
@@ -24,6 +23,7 @@ export function PaymentScreen() {
   const [isBusy, setIsBusy] = useState(false)
   const [saveCard, setSaveCard] = useState(false)
   const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   const { user } = useAuth()
   const { clubEvent } = useCurrentEvent()
@@ -43,7 +43,7 @@ export function PaymentScreen() {
   const elements = useElements()
   const navigate = useNavigate()
 
-  useEventRegistrationGuard(clubEvent, registration, mode)
+  // useEventRegistrationGuard(clubEvent, registration, mode)
 
   useEffect(() => {
     if (myCards === undefined || myCards.length === 0) {
@@ -71,40 +71,60 @@ export function PaymentScreen() {
   }
 
   const handlePaymentClick = async () => {
+    if (!buttonRef.current) {
+      throw new Error("Inconceivable! Button ref not found.")
+    }
+
+    buttonRef.current.disabled = true
     setIsBusy(true)
-    if (cardUsed === "new" || !cardUsed) {
-      const cardElement = elements?.getElement(CardElement)
-      if (stripe && cardElement) {
-        const { error, paymentMethod } = await stripe.createPaymentMethod({
-          type: "card",
-          card: cardElement,
-          billing_details: {
-            email: user.email,
-            name: user.name,
-          },
-        })
-        if (error) {
-          console.error(error)
-          setError(new Error(error.message))
-          setIsBusy(false)
-        } else {
-          finishPayment(paymentMethod.id)
-        }
-      }
-    } else {
-      finishPayment(cardUsed)
+
+    setTimeout(() => {
+      console.log("Payment processing...")
+    }, 50)
+
+    try {
+      const method = await getPaymentMethod()
+      await confirmPayment(method, cardUsed === "new" && saveCard)
+      updateStep(CompleteStep)
+      navigate("../complete")
+    } catch (err) {
+      setError(err as Error)
+    } finally {
+      buttonRef.current.disabled = false
+      setIsBusy(false)
     }
   }
 
-  const finishPayment = (method: string) => {
-    try {
-      confirmPayment(method, cardUsed === "new" && saveCard, () => {
-        updateStep(CompleteStep)
-        navigate("../complete")
-      })
-    } finally {
-      setIsBusy(false)
+  const getPaymentMethod = async () => {
+    // Using a saved card
+    if (cardUsed !== "new" && cardUsed) {
+      return cardUsed
     }
+
+    if (!stripe) {
+      throw new Error("Stripe is not initialized")
+    }
+
+    const cardElement = elements?.getElement(CardElement)
+    if (!cardElement) {
+      throw new Error("Card element not found")
+    }
+
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: "card",
+      card: cardElement,
+      billing_details: {
+        email: user.email,
+        name: user.name,
+      },
+    })
+
+    // Invalid card, expired card, etc.
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return paymentMethod.id
   }
 
   return (
@@ -147,11 +167,7 @@ export function PaymentScreen() {
               <button className="btn btn-secondary ms-2" onClick={() => setShowCancelDialog(true)}>
                 Cancel
               </button>
-              <button
-                className="btn btn-primary ms-2"
-                disabled={isBusy}
-                onClick={handlePaymentClick}
-              >
+              <button className="btn btn-primary ms-2" ref={buttonRef} onClick={handlePaymentClick}>
                 Submit Payment
               </button>
             </div>
