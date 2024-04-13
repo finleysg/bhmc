@@ -1,10 +1,10 @@
-import { immerable } from "immer"
 import { expect, test, vi } from "vitest"
 
 import userEvent from "@testing-library/user-event"
 
 import { RegistrationMode } from "../../../context/registration-reducer"
 import { SkinsType } from "../../../models/codes"
+import { RegistrationFee } from "../../../models/registration"
 import { buildAdminUser, buildUser } from "../../../test/data/auth"
 import {
   cartFee,
@@ -34,7 +34,7 @@ test("renders registration slot for default player", () => {
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
-        existingFees={[]}
+        existingFees={null}
         payment={payment}
         team={0}
         skinsType={SkinsType.Individual}
@@ -84,7 +84,7 @@ test("renders registration slot for the non-default player", async () => {
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
-        existingFees={[]}
+        existingFees={null}
         payment={payment}
         team={0}
         skinsType={SkinsType.Individual}
@@ -134,7 +134,7 @@ test("renders a team number if provided", () => {
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
-        existingFees={[]}
+        existingFees={null}
         payment={payment}
         team={1}
         skinsType={SkinsType.Individual}
@@ -171,7 +171,7 @@ test.each([
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
-        existingFees={[]}
+        existingFees={null}
         payment={payment}
         team={teamNumber}
         skinsType={SkinsType.Team}
@@ -215,7 +215,7 @@ test.each([
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
-        existingFees={[]}
+        existingFees={null}
         payment={payment}
         team={teamNumber}
         skinsType={SkinsType.Team}
@@ -269,7 +269,7 @@ test("a selected optional fee is rendered as checked and can be removed", async 
       <RegistrationSlotLineItem
         slot={slot}
         eventFees={fees}
-        existingFees={[]}
+        existingFees={null}
         payment={payment}
         skinsType={SkinsType.Individual}
         mode="new"
@@ -307,17 +307,18 @@ test.each([["new", "edit"]])("a paid fee can only be removed when not in edit mo
       is_member: true,
     },
   })
-  const existingFees = [
-    {
-      [immerable]: true,
-      id: 1,
-      eventFeeId: 2,
-      registrationSlotId: slot.id,
-      paymentId: 1,
-      isPaid: true,
-      amount: 100,
-    },
-  ]
+  const existingFees = new Map(
+    [
+      new RegistrationFee({
+        id: 1,
+        event_fee: 2,
+        registration_slot: slot.id,
+        payment: 1,
+        is_paid: true,
+        amount: "100",
+      }),
+    ].map((fee) => [`${fee.registrationSlotId}-${fee.eventFeeId}`, fee]),
+  )
   const onToggleFee = vi.fn()
 
   render(
