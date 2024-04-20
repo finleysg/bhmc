@@ -1,29 +1,20 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { Points, PointsApiSchema, PointsData } from "../models/points"
+import { TopPoints, TopPointsData, TopPointsSchema } from "../models/points"
 import { getMany } from "../utils/api-client"
 
 interface SeasonLongPointsArgs {
-  season?: number
-  eventId?: number
-  playerId?: number
+  season: number
+  topN: number
+  category: "gross" | "net"
 }
 
-export function useSeasonLongPoints({ season, eventId, playerId }: SeasonLongPointsArgs) {
-  let endpoint = "season-long-points/"
-  if (season) {
-    endpoint += `?season=${season}` + (playerId ? `&player=${playerId}` : "")
-  } else if (eventId) {
-    endpoint += `?event=${eventId}`
-  } else {
-    throw new Error(
-      "You must provide either a season or an eventId to retrieve season long points.",
-    )
-  }
+export function useSeasonLongPoints({ season, topN, category }: SeasonLongPointsArgs) {
+  const endpoint = `points/${season}/${category}/${topN}/`
 
   return useQuery({
-    queryKey: ["season-long-points", season ?? 0, playerId ?? 0, eventId ?? 0],
-    queryFn: () => getMany<PointsData>(endpoint, PointsApiSchema),
-    select: (data) => data.map((pt) => new Points(pt)),
+    queryKey: ["season-long-points", season, category, topN],
+    queryFn: () => getMany<TopPointsData>(endpoint, TopPointsSchema),
+    select: (data) => data.map((pt) => new TopPoints(pt)),
   })
 }
