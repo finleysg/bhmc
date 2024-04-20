@@ -1,6 +1,7 @@
 import { useState } from "react"
 
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 
 import { useQueryClient } from "@tanstack/react-query"
 
@@ -22,10 +23,32 @@ export function ReserveScreen() {
   const { data: slots } = useEventRegistrationSlots(clubEvent.id)
   const { createRegistration, error } = useEventRegistration()
 
+  // Simple guard.
+  const currentTime = new Date()
+  if (!clubEvent.paymentsAreOpen(currentTime)) {
+    navigate("../")
+    return null
+  }
+
   const reserveTables = LoadReserveTables(clubEvent, slots ?? [])
 
   const handleReserve = async (course: Course, groupName: string, slots: ReserveSlot[]) => {
-    const registationSlots = slots.map((slot) => slot.toRegistrationSlot())
+    const selectedSlots = slots.map((slot) => slot.toRegistrationSlot())
+    const registationSlots = selectedSlots.filter((slot) => !slot.playerId)
+    // Error triggered by Brad F. for the 2024-04-17 event indicates the create registration POST
+    // included slots that had one or more players already assigned. This is not expected -- the
+    // player on an available slot should always be null.
+    if (registationSlots.length === 0) {
+      toast.error(
+        "The selected spots are not fully empty as expected. Please report this issue to secretary@bhmc.org. Try refreshing the page.",
+        { delay: 7000 },
+      )
+      return
+    } else if (registationSlots.length !== selectedSlots.length) {
+      toast.warn(
+        "The selected spots are not fully empty as expected. Please report this issue to secretary@bhmc.org.",
+      )
+    }
     await createRegistration(
       course,
       registationSlots,

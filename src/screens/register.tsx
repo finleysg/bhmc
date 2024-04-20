@@ -45,6 +45,12 @@ export function RegisterScreen() {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [showPriorityDialog, setShowPriorityDialog] = useState(false)
 
+  // Simple guard.
+  if (!registration?.id) {
+    navigate("../")
+    return null
+  }
+
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
   const layout =
     clubEvent?.maximumSignupGroupSize === 1
