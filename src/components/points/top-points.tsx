@@ -10,14 +10,14 @@ interface TopPointsProps {
 }
 
 export function TopPoints({ category, topN }: TopPointsProps) {
-  const { data: points, isLoading } = useSeasonLongPoints({ season: currentSeason })
+  const { data: points, isLoading } = useSeasonLongPoints({ season: currentSeason, category, topN })
 
   const pointsToRender = () => {
     if (points) {
       return take(
         sortBy(points, [
           function (p) {
-            return category === "gross" ? p.grossPoints * -1 : p.netPoints * -1
+            return p.points * -1
           },
         ]),
         topN,
@@ -44,7 +44,7 @@ export function TopPoints({ category, topN }: TopPointsProps) {
                   return (
                     <tr key={row.id}>
                       <td>{row.name}</td>
-                      <td>{category === "gross" ? row.grossPoints : row.netPoints}</td>
+                      <td>{row.points}</td>
                     </tr>
                   )
                 })}
