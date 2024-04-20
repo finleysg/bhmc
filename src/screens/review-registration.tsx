@@ -28,6 +28,12 @@ export function ReviewRegistrationScreen() {
 
   const navigate = useNavigate()
 
+  // Simple guard.
+  if (!registration?.id) {
+    navigate("../")
+    return null
+  }
+
   const isBusy = !payment?.hasPaymentDetails()
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
 

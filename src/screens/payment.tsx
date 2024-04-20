@@ -51,6 +51,12 @@ export function PaymentScreen() {
     }
   }, [myCards])
 
+  // Simple guard.
+  if (!registration?.id) {
+    navigate("../")
+    return null
+  }
+
   const amountDue = payment?.getAmountDue(clubEvent.feeMap) ?? NoAmount
 
   const handleBack = () => {

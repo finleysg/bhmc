@@ -8,7 +8,6 @@ import { ErrorDisplay } from "../components/feedback/error-display"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { ReviewStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
 import { NoAmount } from "../models/payment"
 import { useCurrentEvent } from "./event-detail"
 
@@ -33,7 +32,11 @@ export function EditRegistrationScreen() {
   const [notes, setNotes] = useState<string>(registration?.notes ?? "")
   const [isBusy, setIsBusy] = useState(false)
 
-  useEventRegistrationGuard(clubEvent, registration, "edit")
+  // Simple guard.
+  if (!registration?.id) {
+    navigate("../")
+    return null
+  }
 
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
   const layout =
