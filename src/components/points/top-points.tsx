@@ -1,6 +1,6 @@
 import { sortBy, take } from "lodash"
 
-import { useSeasonLongPoints } from "../../hooks/use-season-long-points"
+import { useTopPoints } from "../../hooks/use-season-long-points"
 import { currentSeason } from "../../utils/app-config"
 import { OverlaySpinner } from "../spinners/overlay-spinner"
 
@@ -10,7 +10,7 @@ interface TopPointsProps {
 }
 
 export function TopPoints({ category, topN }: TopPointsProps) {
-  const { data: points, isLoading } = useSeasonLongPoints({ season: currentSeason, category, topN })
+  const { data: points, isLoading } = useTopPoints({ season: currentSeason, category, topN })
 
   const pointsToRender = () => {
     if (points) {
