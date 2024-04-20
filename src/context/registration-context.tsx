@@ -48,8 +48,7 @@ export interface IRegistrationContext {
     course?: Course,
     slots?: RegistrationSlot[],
     selectedStart?: string,
-    cb?: () => void,
-  ) => void
+  ) => Promise<void>
   loadRegistration: (player: Player) => Promise<void>
   removeFee: (slot: RegistrationSlot, eventFee: EventFee) => void
   removePlayer: (slot: RegistrationSlot) => void
@@ -198,7 +197,7 @@ export function EventRegistrationProvider({
     },
   })
 
-  const { mutate: _createRegistration } = useMutation({
+  const { mutateAsync: _createRegistration } = useMutation({
     mutationFn: ({
       courseId,
       slots,
@@ -343,19 +342,13 @@ export function EventRegistrationProvider({
   /**
    * Creates a new registration record for the current user.
    */
-  const createRegistration = useCallback(
-    (course?: Course, slots?: RegistrationSlot[], selectedStart?: string, cb?: () => void) => {
-      _createRegistration(
-        { courseId: course?.id, slots, selectedStart },
-        {
-          onSuccess: () => {
-            if (cb) cb()
-          },
-        },
-      )
-    },
-    [_createRegistration],
-  )
+  const createRegistration = (
+    course?: Course,
+    slots?: RegistrationSlot[],
+    selectedStart?: string,
+  ) => {
+    return _createRegistration({ courseId: course?.id, slots, selectedStart })
+  }
 
   /**
    * Updates the current registration record with notes.

@@ -3,7 +3,7 @@ import { expect, test, vi } from "vitest"
 import {
   cartFee,
   createEmptyPayment,
-  createRegistration,
+  createTestRegistration,
   eventFee,
   skinFee,
 } from "../../../test/data/registration"
@@ -12,7 +12,7 @@ import { RegistrationSlotGroup } from "../registration-slot-group"
 
 test("renders registration group", async () => {
   const fees = [eventFee(), skinFee(), cartFee()]
-  const registration = createRegistration()
+  const registration = createTestRegistration()
   const payment = createEmptyPayment()
 
   const addFeeSpy = vi.fn()

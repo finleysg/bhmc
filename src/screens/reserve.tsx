@@ -24,16 +24,14 @@ export function ReserveScreen() {
 
   const reserveTables = LoadReserveTables(clubEvent, slots ?? [])
 
-  const handleReserve = (course: Course, groupName: string, slots: ReserveSlot[]) => {
+  const handleReserve = async (course: Course, groupName: string, slots: ReserveSlot[]) => {
     const registationSlots = slots.map((slot) => slot.toRegistrationSlot())
-    createRegistration(
+    await createRegistration(
       course,
       registationSlots,
       `${clubEvent.name}: ${course.name} ${groupName}`,
-      () => {
-        navigate("../register", { replace: true })
-      },
     )
+    navigate("../register", { replace: true })
   }
 
   const handleRefresh = () => {
