@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import { toast } from "react-toastify"
 
 import { EventDocuments } from "../components/document/event-documents"
 import { EventDetail } from "../components/events/event-detail"
@@ -15,23 +16,25 @@ export function EventViewScreen() {
   const { data: player } = useMyPlayerRecord()
   const navigate = useNavigate()
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (clubEvent.canChoose) {
       updateStep(ReserveStep)
       navigate("reserve")
     } else {
-      createRegistration(undefined, [], undefined, () => {
+      try {
+        await createRegistration(undefined, [], undefined)
         updateStep(RegisterStep)
         navigate("register")
-      })
+      } catch (error: unknown) {
+        toast.error(error instanceof Error ? error.message : "Failed to start registration")
+      }
     }
   }
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     if (player) {
-      loadRegistration(player).then(() => {
-        navigate("edit")
-      })
+      await loadRegistration(player)
+      navigate("edit")
     }
   }
 

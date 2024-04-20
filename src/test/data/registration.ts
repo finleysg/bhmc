@@ -75,7 +75,7 @@ export const cartFee = (fee?: Partial<EventFeeData>) => {
   )
 }
 
-export const createRegistration = (registration?: Partial<RegistrationData>) => {
+export const createTestRegistration = (registration?: Partial<RegistrationData>) => {
   return new Registration(
     merge(
       {},
