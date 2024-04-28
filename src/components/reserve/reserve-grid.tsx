@@ -1,9 +1,10 @@
-import React, { ComponentPropsWithoutRef } from "react"
+import React, { ComponentPropsWithoutRef, useEffect } from "react"
+
+import { toast } from "react-toastify"
 
 import { useEventRegistration } from "../../hooks/use-event-registration"
 import { Course } from "../../models/course"
 import { ReserveSlot, ReserveTable } from "../../models/reserve"
-import { ErrorDisplay } from "../feedback/error-display"
 import { OverlaySpinner } from "../spinners/overlay-spinner"
 import { ReserveRow } from "./reserve-row"
 
@@ -18,10 +19,13 @@ export function ReserveGrid({ table, mode, onReserve, ...rest }: ReserveGridProp
   const [selectedSlots, updateSelectedSlots] = React.useState<ReserveSlot[]>([])
   const { error, setError } = useEventRegistration()
 
-  const handleErrorClose = () => {
-    setError(null)
-    updateSelectedSlots([])
-  }
+  useEffect(() => {
+    if (error) {
+      updateSelectedSlots([])
+      toast.error(error.message, { autoClose: 3000 })
+      setError(null)
+    }
+  }, [error, setError])
 
   const handleSingleSelect = (slot: ReserveSlot) => {
     if (mode === "view") {
@@ -72,7 +76,6 @@ export function ReserveGrid({ table, mode, onReserve, ...rest }: ReserveGridProp
   return (
     <div className="card mt-4" {...rest}>
       <div className="card-body">
-        {error && <ErrorDisplay error={error?.message} delay={5000} onClose={handleErrorClose} />}
         <OverlaySpinner loading={!table} />
         {Boolean(table) &&
           table.groups.map((group) => (

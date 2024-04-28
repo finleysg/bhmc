@@ -1,21 +1,15 @@
-import { useEffect } from "react"
+import { useLayoutEffect } from "react"
 
 import { useNavigate } from "react-router-dom"
 
-import { RegistrationMode } from "../context/registration-reducer"
-import { ClubEvent } from "../models/club-event"
 import { Registration } from "../models/registration"
 
-export function useEventRegistrationGuard(
-  clubEvent: ClubEvent,
-  registration: Registration | null,
-  mode: RegistrationMode = "new",
-) {
+export function useEventRegistrationGuard(registration: Registration | null) {
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (!registration?.id || mode === "idle" || !clubEvent.paymentsAreOpen()) {
-      navigate(clubEvent.eventUrl)
+  useLayoutEffect(() => {
+    if (!registration?.id) {
+      navigate("../")
     }
-  }, [navigate, clubEvent.eventUrl, registration?.id, mode, clubEvent])
+  }, [navigate, registration?.id])
 }

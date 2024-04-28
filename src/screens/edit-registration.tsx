@@ -2,12 +2,14 @@ import { ChangeEvent, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
 
+import { CancelButton } from "../components/event-registration/cancel-button"
 import { RegistrationAmountDue } from "../components/event-registration/registration-amount-due"
 import { RegistrationSlotGroup } from "../components/event-registration/registration-slot-group"
 import { ErrorDisplay } from "../components/feedback/error-display"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { ReviewStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
 import { NoAmount } from "../models/payment"
 import { useCurrentEvent } from "./event-detail"
 
@@ -28,15 +30,10 @@ export function EditRegistrationScreen() {
     updateRegistrationNotes,
     updateStep,
   } = useEventRegistration()
+  useEventRegistrationGuard(registration)
 
   const [notes, setNotes] = useState<string>(registration?.notes ?? "")
   const [isBusy, setIsBusy] = useState(false)
-
-  // Simple guard.
-  if (!registration?.id) {
-    navigate("../")
-    return null
-  }
 
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
   const layout =
@@ -50,15 +47,11 @@ export function EditRegistrationScreen() {
     setNotes(e.target.value)
   }
 
-  const handleCancel = () => {
-    navigate("../")
-  }
-
   const handleNextStep = async () => {
     setIsBusy(true)
     setTimeout(() => {
       console.log("Saving payment record from edit screen...")
-    }, 50)
+    }, 10)
 
     try {
       updateRegistrationNotes(notes)
@@ -100,29 +93,25 @@ export function EditRegistrationScreen() {
             )}
             <RegistrationAmountDue amountDue={amountDue} />
             <hr />
-            {registration && (
-              <div className="row">
-                <div className="col-12">
-                  <label className="text-primary" htmlFor="notes">
-                    Notes / Special Requests
-                  </label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    className="form-control fc-alt"
-                    defaultValue={registration.notes ?? ""}
-                    onChange={handleNotesChange}
-                    readOnly={false}
-                    rows={5}
-                  ></textarea>
-                </div>
+            <div className="row">
+              <div className="col-12">
+                <label className="text-primary" htmlFor="notes">
+                  Notes / Special Requests
+                </label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  className="form-control fc-alt"
+                  defaultValue={registration?.notes ?? ""}
+                  onChange={handleNotesChange}
+                  readOnly={false}
+                  rows={5}
+                ></textarea>
               </div>
-            )}
+            </div>
             <div className="row mt-2" style={{ textAlign: "right" }}>
               <div className="col-12">
-                <button className="btn btn-secondary" disabled={isBusy} onClick={handleCancel}>
-                  Cancel
-                </button>
+                <CancelButton mode="edit" />
                 <button className="btn btn-primary ms-2" disabled={isBusy} onClick={handleNextStep}>
                   Continue
                 </button>

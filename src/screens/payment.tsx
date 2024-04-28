@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
 
-import { ConfirmDialog } from "../components/dialog/confirm"
+import { CancelButton } from "../components/event-registration/cancel-button"
 import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { ErrorDisplay } from "../components/feedback/error-display"
 import { Checkbox } from "../components/forms/checkbox"
@@ -14,6 +14,7 @@ import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { CompleteStep, ReviewStep } from "../context/registration-reducer"
 import { useAuth } from "../hooks/use-auth"
 import { useEventRegistration } from "../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
 import { useMyCards } from "../hooks/use-my-cards"
 import { NoAmount } from "../models/payment"
 import { useCurrentEvent } from "./event-detail"
@@ -22,23 +23,15 @@ export function PaymentScreen() {
   const [cardUsed, setCardUsed] = useState<string | undefined>()
   const [isBusy, setIsBusy] = useState(false)
   const [saveCard, setSaveCard] = useState(false)
-  const [showCancelDialog, setShowCancelDialog] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const { user } = useAuth()
   const { clubEvent } = useCurrentEvent()
-  const {
-    currentStep,
-    error,
-    mode,
-    payment,
-    registration,
-    cancelRegistration,
-    confirmPayment,
-    setError,
-    updateStep,
-  } = useEventRegistration()
   const { data: myCards } = useMyCards()
+  const { currentStep, error, mode, payment, registration, confirmPayment, setError, updateStep } =
+    useEventRegistration()
+  useEventRegistrationGuard(registration)
+
   const stripe = useStripe()
   const elements = useElements()
   const navigate = useNavigate()
@@ -51,23 +44,11 @@ export function PaymentScreen() {
     }
   }, [myCards])
 
-  // Simple guard.
-  if (!registration?.id) {
-    navigate("../")
-    return null
-  }
-
   const amountDue = payment?.getAmountDue(clubEvent.feeMap) ?? NoAmount
 
   const handleBack = () => {
     updateStep(ReviewStep)
     navigate("../review", { replace: true })
-  }
-
-  const handleCancel = () => {
-    setShowCancelDialog(false)
-    cancelRegistration()
-    navigate("../")
   }
 
   const handleSaveCard = (e: ChangeEvent<HTMLInputElement>) => {
@@ -84,9 +65,10 @@ export function PaymentScreen() {
     buttonRef.current.disabled = true
     setIsBusy(true)
 
+    // Without this the spinner doesn't show up.
     setTimeout(() => {
       console.log("Payment processing...")
-    }, 50)
+    }, 10)
 
     try {
       const method = await getPaymentMethod()
@@ -166,27 +148,17 @@ export function PaymentScreen() {
             )}
             <hr />
             <div style={{ textAlign: "right" }}>
-              {mode === "new" && <RegisterCountdown />}
+              <RegisterCountdown doCountdown={mode === "new"} />
               <button className="btn btn-secondary" disabled={isBusy} onClick={handleBack}>
                 Back
               </button>
-              <button className="btn btn-secondary ms-2" onClick={() => setShowCancelDialog(true)}>
-                Cancel
-              </button>
+              <CancelButton mode={mode} />
               <button className="btn btn-primary ms-2" ref={buttonRef} onClick={handlePaymentClick}>
                 Submit Payment
               </button>
             </div>
           </div>
         </div>
-      </div>
-      <div className="col-12 col-md-3">
-        <ConfirmDialog
-          show={showCancelDialog}
-          title="Cancel Registration?"
-          message="Cancel this registration and return to the event detail page."
-          onClose={(result) => (result ? handleCancel() : setShowCancelDialog(false))}
-        />
       </div>
     </div>
   )

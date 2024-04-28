@@ -2,11 +2,11 @@ import { ChangeEvent, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
 
-import { ConfirmDialog } from "../components/dialog/confirm"
 import { Dialog } from "../components/dialog/dialog"
 import { FriendPickerCard } from "../components/directory/friend-picker-card"
 import { FriendPickerPullout } from "../components/directory/friend-picker-pullout"
 import { PeoplePicker } from "../components/directory/people-picker"
+import { CancelButton } from "../components/event-registration/cancel-button"
 import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { RegistrationAmountDue } from "../components/event-registration/registration-amount-due"
 import { RegistrationSlotGroup } from "../components/event-registration/registration-slot-group"
@@ -14,6 +14,7 @@ import { ErrorDisplay } from "../components/feedback/error-display"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { ReviewStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
 import { useAddFriend } from "../hooks/use-my-friends"
 import { NoAmount } from "../models/payment"
 import { Player } from "../models/player"
@@ -28,7 +29,6 @@ export function RegisterScreen() {
     error,
     payment,
     registration,
-    cancelRegistration,
     canRegister,
     addFee,
     addPlayer,
@@ -39,17 +39,11 @@ export function RegisterScreen() {
     updateRegistrationNotes,
     updateStep,
   } = useEventRegistration()
+  useEventRegistrationGuard(registration)
 
   const [isBusy, setIsBusy] = useState(false)
   const [notes, setNotes] = useState<string>(registration?.notes ?? "")
-  const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [showPriorityDialog, setShowPriorityDialog] = useState(false)
-
-  // Simple guard.
-  if (!registration?.id) {
-    navigate("../")
-    return null
-  }
 
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
   const layout =
@@ -73,12 +67,6 @@ export function RegisterScreen() {
       addPlayer(slot, player)
       addFriend(player.id)
     }
-  }
-
-  const handleCancel = () => {
-    setShowCancelDialog(false)
-    cancelRegistration()
-    navigate("../")
   }
 
   const handleNotesChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -147,34 +135,26 @@ export function RegisterScreen() {
             )}
             <RegistrationAmountDue amountDue={amountDue} />
             <hr />
-            {registration && (
-              <div className="row">
-                <div className="col-12">
-                  <label className="text-primary" htmlFor="notes">
-                    Notes / Special Requests
-                  </label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    className="form-control fc-alt"
-                    defaultValue={registration.notes ?? ""}
-                    onChange={handleNotesChange}
-                    readOnly={false}
-                    rows={5}
-                  ></textarea>
-                </div>
+            <div className="row">
+              <div className="col-12">
+                <label className="text-primary" htmlFor="notes">
+                  Notes / Special Requests
+                </label>
+                <textarea
+                  id="notes"
+                  name="notes"
+                  className="form-control fc-alt"
+                  defaultValue={registration?.notes ?? ""}
+                  onChange={handleNotesChange}
+                  readOnly={false}
+                  rows={5}
+                ></textarea>
               </div>
-            )}
+            </div>
             <div className="row mt-2" style={{ textAlign: "right" }}>
               <div className="col-12">
-                <RegisterCountdown />
-                <button
-                  className="btn btn-secondary"
-                  disabled={isBusy}
-                  onClick={() => setShowCancelDialog(true)}
-                >
-                  Cancel
-                </button>
+                <RegisterCountdown doCountdown={true} />
+                <CancelButton mode="new" />
                 <button className="btn btn-primary ms-2" disabled={isBusy} onClick={handleNextStep}>
                   Continue
                 </button>
@@ -185,12 +165,6 @@ export function RegisterScreen() {
       </div>
       <div className="col-12 col-md-3">
         {showPickers && <FriendPickerCard clubEvent={clubEvent} onSelect={handleFriendSelect} />}
-        <ConfirmDialog
-          show={showCancelDialog}
-          title="Cancel Registration?"
-          message="Cancel this registration and return to the event detail page."
-          onClose={(result) => (result ? handleCancel() : setShowCancelDialog(false))}
-        />
         <Dialog
           show={showPriorityDialog}
           title="Large Groups Only"
