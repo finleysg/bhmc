@@ -40,7 +40,10 @@ export interface IRegistrationContext {
   selectedFees: EventFee[]
   addFee: (slot: RegistrationSlot, eventFee: EventFee, player: Player) => void
   addPlayer: (slot: RegistrationSlot, player: Player) => void
-  cancelRegistration: () => void
+  cancelRegistration: (
+    reason: "user" | "timeout" | "navigation",
+    mode: RegistrationMode,
+  ) => Promise<void>
   canRegister: () => boolean
   completeRegistration: () => void
   confirmPayment: (paymentMethod: string, saveCard: boolean) => Promise<void>
@@ -161,22 +164,17 @@ export function EventRegistrationProvider({
     },
   })
 
-  const { mutate: _cancelRegistration } = useMutation({
-    mutationFn: ({
-      registrationId,
-      paymentId,
-    }: {
-      registrationId?: number
-      paymentId?: number
-    }) => {
-      const regId = registrationId ?? state.registration?.id
-      const pmtId = paymentId ?? state.payment?.id
-      const endpoint = `registration/${regId}/cancel/` + (paymentId ? `?payment_id=${pmtId}` : "")
+  const { mutateAsync: _cancelRegistration } = useMutation({
+    mutationFn: ({ reason }: { reason: "user" | "timeout" | "navigation" }) => {
+      const regId = state.registration?.id ?? 0
+      const pmtId = state.payment?.id ?? 0
+      const endpoint = `registration/${regId}/cancel/?reason=${reason}&payment_id=${pmtId}`
       return httpClient(apiUrl(endpoint), {
         method: "PUT",
       })
     },
     onSettled: () => {
+      dispatch({ type: "cancel-registration", payload: null })
       queryClient.invalidateQueries({ queryKey: ["registration"] })
       queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
       queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
@@ -226,11 +224,13 @@ export function EventRegistrationProvider({
       queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
     },
     onError: (error) => {
-      if (error.message === "Database conflict") {
-        _handleRegistrationConflict()
-      } else {
-        dispatch({ type: "update-error", payload: { error } })
+      // conflict - the slots have been taken
+      if (error.message.startsWith("One or more of the slots")) {
+        queryClient.invalidateQueries({
+          queryKey: ["event-registration-slots", state.clubEvent?.id],
+        })
       }
+      dispatch({ type: "update-error", payload: { error } })
     },
   })
 
@@ -253,34 +253,6 @@ export function EventRegistrationProvider({
         )
       })
     return payment
-  }
-
-  const _handleRegistrationConflict = () => {
-    Promise.all([
-      httpClient(apiUrl(`registration/?event_id=${state.clubEvent?.id}&player=me`)),
-      httpClient(apiUrl(`payments/?event=${state.clubEvent?.id}&player=me`)),
-    ]).then((results) => {
-      const reg = results[0]
-      const pmt = results[1]
-
-      const paymentId = pmt && pmt.length > 0 ? pmt[0].id : undefined
-      const registrationId = reg && reg.length > 0 ? reg[0].id : undefined
-
-      if (registrationId) {
-        _cancelRegistration(
-          { registrationId, paymentId },
-          {
-            onSuccess: () => {
-              if (state.clubEvent?.canChoose) {
-                const message =
-                  "We had to clean up a previous incomplete registration. Please try again."
-                dispatch({ type: "update-error", payload: { error: new Error(message) } })
-              }
-            },
-          },
-        )
-      }
-    })
   }
 
   /**
@@ -342,13 +314,12 @@ export function EventRegistrationProvider({
   /**
    * Creates a new registration record for the current user.
    */
-  const createRegistration = (
-    course?: Course,
-    slots?: RegistrationSlot[],
-    selectedStart?: string,
-  ) => {
-    return _createRegistration({ courseId: course?.id, slots, selectedStart })
-  }
+  const createRegistration = useCallback(
+    (course?: Course, slots?: RegistrationSlot[], selectedStart?: string) => {
+      return _createRegistration({ courseId: course?.id, slots, selectedStart })
+    },
+    [_createRegistration],
+  )
 
   /**
    * Updates the current registration record with notes.
@@ -364,13 +335,17 @@ export function EventRegistrationProvider({
   /**
    * Cancels the current registration and resets the registration process flow.
    */
-  const cancelRegistration = useCallback(() => {
-    if (state.registration) {
-      _cancelRegistration({ registrationId: state.registration?.id, paymentId: state.payment?.id })
-    } else {
-      console.error("Should not see a cancellation request without a current registration.")
-    }
-  }, [_cancelRegistration, state.payment?.id, state.registration])
+  const cancelRegistration = useCallback(
+    (reason: "user" | "timeout" | "navigation", mode: RegistrationMode) => {
+      if (mode === "new") {
+        return _cancelRegistration({ reason })
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["registration"] })
+        return Promise.resolve()
+      }
+    },
+    [_cancelRegistration, queryClient],
+  )
 
   /**
    * Completes the registration process, clearing registration state and
@@ -384,21 +359,24 @@ export function EventRegistrationProvider({
    * Confirms that a payment with the given method is valid. We call Stripe to
    * validate the payment method.
    */
-  const confirmPayment = (paymentMethod: string, saveCard: boolean) => {
-    return _confirmPayment({ paymentMethod, saveCard })
-  }
+  const confirmPayment = useCallback(
+    (paymentMethod: string, saveCard: boolean) => {
+      return _confirmPayment({ paymentMethod, saveCard })
+    },
+    [_confirmPayment],
+  )
 
   /**
    * Saves the current payment record.
    */
-  const savePayment = () => {
+  const savePayment = useCallback(() => {
     if (state.payment?.id) {
       return _updatePayment(state.payment)
     } else {
       const payment = { ...state.payment }
       return _createPayment(payment)
     }
-  }
+  }, [_createPayment, _updatePayment, state.payment])
 
   /**
    * Add a player to a given registration slot.

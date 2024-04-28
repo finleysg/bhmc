@@ -1,38 +1,23 @@
-import { useState } from "react"
-
 import { useNavigate } from "react-router-dom"
 
-import { ConfirmDialog } from "../components/dialog/confirm"
+import { CancelButton } from "../components/event-registration/cancel-button"
 import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { RegistrationSlotLineItemReview } from "../components/event-registration/registration-slot-line-item-review"
 import { ErrorDisplay } from "../components/feedback/error-display"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
 import { CompleteStep, PaymentStep, RegisterStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
 import { NoAmount } from "../models/payment"
 import { useCurrentEvent } from "./event-detail"
 
 export function ReviewRegistrationScreen() {
   const { clubEvent } = useCurrentEvent()
-  const {
-    currentStep,
-    registration,
-    payment,
-    mode,
-    error,
-    cancelRegistration,
-    setError,
-    updateStep,
-  } = useEventRegistration()
-  const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const { currentStep, registration, payment, mode, error, setError, updateStep } =
+    useEventRegistration()
+  useEventRegistrationGuard(registration)
 
   const navigate = useNavigate()
-
-  // Simple guard.
-  if (!registration?.id) {
-    navigate("../")
-    return null
-  }
 
   const isBusy = !payment?.hasPaymentDetails()
   const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
@@ -44,12 +29,6 @@ export function ReviewRegistrationScreen() {
     } else {
       navigate("../register", { replace: true })
     }
-  }
-
-  const handleCancel = () => {
-    setShowCancelDialog(false)
-    cancelRegistration()
-    navigate("../")
   }
 
   const handleRegistrationConfirm = () => {
@@ -92,25 +71,17 @@ export function ReviewRegistrationScreen() {
             <div className="text-primary mb-2 me-1 fw-bold" style={{ textAlign: "right" }}>
               Amount Due: ${amountDue.total.toFixed(2)}
             </div>
-            {registration && registration.notes && (
-              <div className="mb-2">
-                <span className="text-primary">Notes / Requests</span>
-                <p className="fst-italic m-0">{registration.notes}</p>
-              </div>
-            )}
+            <div className="mb-2">
+              <span className="text-primary">Notes / Requests</span>
+              <p className="fst-italic m-0">{registration?.notes ?? "No notes entered."}</p>
+            </div>
             <hr />
             <div style={{ textAlign: "right" }}>
-              {mode === "new" && <RegisterCountdown />}
+              <RegisterCountdown doCountdown={mode === "new"} />
               <button className="btn btn-secondary" disabled={isBusy} onClick={handleBack}>
                 Back
               </button>
-              <button
-                className="btn btn-secondary ms-2"
-                disabled={isBusy}
-                onClick={() => setShowCancelDialog(true)}
-              >
-                Cancel
-              </button>
+              <CancelButton mode={mode} />
               <button
                 className="btn btn-primary ms-2"
                 disabled={isBusy}
@@ -121,14 +92,6 @@ export function ReviewRegistrationScreen() {
             </div>
           </div>
         </div>
-      </div>
-      <div className="col-12 col-md-3">
-        <ConfirmDialog
-          show={showCancelDialog}
-          title="Cancel Registration?"
-          message="Cancel this registration and return to the event detail page."
-          onClose={(result) => (result ? handleCancel() : setShowCancelDialog(false))}
-        />
       </div>
     </div>
   )
