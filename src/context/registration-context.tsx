@@ -425,11 +425,9 @@ export function EventRegistrationProvider({
   const canRegister = useCallback(() => {
     const slots = state.registration?.slots ?? []
     if (state.clubEvent?.priorityRegistrationIsOpen()) {
-      return slots.filter((s) => s.playerId).length >= 4 // TODO: Make this configurable
+      return slots.filter((s) => s.playerId).length >= (state.clubEvent.minimumSignupGroupSize ?? 3)
     } else if (state.clubEvent?.registrationIsOpen()) {
-      return (
-        slots.filter((s) => s.playerId).length >= (state.clubEvent?.minimumSignupGroupSize ?? 1)
-      )
+      return slots.filter((s) => s.playerId).length >= 1
     }
     return false
   }, [state.clubEvent, state.registration])
