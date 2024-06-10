@@ -15,7 +15,7 @@ export function AddPlayerView({ form, onCancel, onSubmit }: IAddPlayerView) {
   const { errors: formErrors, isSubmitting } = formState
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} style={{ marginBottom: "1rem" }}>
       <InputControl
         name="first_name"
         type="text"
@@ -44,7 +44,7 @@ export function AddPlayerView({ form, onCancel, onSubmit }: IAddPlayerView) {
         register={register("ghin")}
         error={formErrors.ghin}
       />
-      <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+      <button type="submit" className="btn btn-primary me-2" disabled={isSubmitting}>
         Create Player
       </button>
       <button type="reset" className="btn btn-light" disabled={isSubmitting} onClick={onCancel}>
