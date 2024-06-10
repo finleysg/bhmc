@@ -171,7 +171,7 @@ export function RegisterScreen() {
           onClose={() => setShowPriorityDialog(false)}
         >
           <p>
-            During the priority registration period, you must have 4 or 5 players to register.
+            During the priority registration period, you must have 3 to 5 players to register.
             Please add more players to your group or cancel your registration and wait until sign
             ups open for everyone.
           </p>

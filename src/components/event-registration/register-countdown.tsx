@@ -18,7 +18,7 @@ export const RegisterCountdown = ({ doCountdown }: { doCountdown: boolean }) => 
   useEffect(() => {
     if (minutes + seconds <= 0 && doCountdown && !isExpired) {
       setIsExpired(true)
-      cancelRegistration("timeout")
+      cancelRegistration("timeout", "new") // We never render this unless it's a new registration
     }
   }, [minutes, seconds, doCountdown, isExpired, cancelRegistration])
 
