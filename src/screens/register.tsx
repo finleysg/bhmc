@@ -103,12 +103,12 @@ export function RegisterScreen() {
           <div className="card-body">
             <OverlaySpinner loading={isBusy} />
             <PeoplePicker
-              style={{ float: "right", maxWidth: "180px" }}
+              style={{ float: "right" }}
               allowNew={false}
               clubEvent={clubEvent}
               onSelect={handlePlayerSelect}
             />
-            <h4 className="card-header mb-2 text-nowrap">{currentStep.title}</h4>
+            <h4 className="card-header mb-2 text-nowrap register-title">{currentStep.title}</h4>
             {error && (
               <ErrorDisplay error={error?.message} delay={5000} onClose={() => setError(null)} />
             )}

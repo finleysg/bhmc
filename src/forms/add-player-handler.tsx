@@ -7,9 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { DuplicateEmail } from "../components/feedback/duplicate-email"
 import { ErrorDisplay } from "../components/feedback/error-display"
 import { usePlayerCreate } from "../hooks/use-players"
-import { RegisterAccountSchema } from "../models/auth"
-import { GuestPlayerData, Player, PlayerApiSchema } from "../models/player"
-import { getOne } from "../utils/api-client"
+import { GuestPlayerApiSchema, GuestPlayerData, Player, PlayerApiSchema } from "../models/player"
 import { AddPlayerView } from "./add-player-view"
 
 interface AddPlayerHandlerProps {
@@ -20,7 +18,7 @@ interface AddPlayerHandlerProps {
 export function AddPlayerHandler({ onCancel, onCreated }: AddPlayerHandlerProps) {
   const { mutate, isError, error, reset } = usePlayerCreate()
   const form = useForm<GuestPlayerData>({
-    resolver: zodResolver(RegisterAccountSchema),
+    resolver: zodResolver(GuestPlayerApiSchema),
   })
 
   useEffect(() => {
@@ -36,17 +34,6 @@ export function AddPlayerHandler({ onCancel, onCreated }: AddPlayerHandlerProps)
         const playerData = PlayerApiSchema.parse(data)
         onCreated(new Player(playerData))
       },
-      onError: (error) => {
-        if (error.message.indexOf("player with this Email already exists.") >= 0) {
-          getOne(`players/?email=${args.email}`, PlayerApiSchema).then((playerData) => {
-            onCreated(new Player(playerData))
-          })
-        } else if (error.message.indexOf("player with this GHIN already exists.") >= 0) {
-          getOne(`players/?ghin=${args.ghin}`, PlayerApiSchema).then((playerData) => {
-            onCreated(new Player(playerData))
-          })
-        }
-      },
     })
   }
 
@@ -55,10 +42,13 @@ export function AddPlayerHandler({ onCancel, onCreated }: AddPlayerHandlerProps)
     onCancel()
   }
 
+  console.log(form.formState.errors)
+
   return (
-    <div>
+    <div style={{ width: "240px" }}>
       <AddPlayerView form={form} onSubmit={handleSubmit} onCancel={handleCancel} />
-      {isDuplicate ? <DuplicateEmail /> : <ErrorDisplay error={error?.message ?? ""} />}
+      {isDuplicate && <DuplicateEmail />}
+      {!isDuplicate && isError && <ErrorDisplay error={error?.message ?? ""} />}
     </div>
   )
 }

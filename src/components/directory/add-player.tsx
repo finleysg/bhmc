@@ -11,13 +11,22 @@ interface AddPlayerProps extends ComponentPropsWithoutRef<"div"> {
 export function AddPlayer({ onAdd, ...rest }: AddPlayerProps) {
   const [showAdd, setShowAdd] = React.useState(false)
 
+  const handleAdd = (player: Player) => {
+    onAdd(player)
+    setShowAdd(false)
+  }
+
   return (
     <div {...rest}>
-      <button className="btn btn-primary" onClick={() => setShowAdd(true)} title="Add a new player">
+      <button
+        className="btn btn-sm btn-success add-player"
+        onClick={() => setShowAdd(true)}
+        title="Add a new player"
+      >
         Add New Player
       </button>
       <Modal show={showAdd} title="Add a New Player">
-        <AddPlayerHandler onCancel={() => setShowAdd(false)} onCreated={onAdd} />
+        <AddPlayerHandler onCancel={() => setShowAdd(false)} onCreated={handleAdd} />
       </Modal>
     </div>
   )

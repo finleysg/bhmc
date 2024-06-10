@@ -239,4 +239,11 @@
     grid-template-areas: "item amount";
     min-height: 24px;
   }
+  .register-title {
+    color: $gray-100;
+  }
+  .add-player {
+    position: relative;
+    z-index: 10;
+  }
 }

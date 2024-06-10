@@ -422,10 +422,11 @@ export function EventRegistrationProvider({
     dispatch({ type: "remove-fee", payload: { eventFeeId: eventFee.id, slotId: slot.id } })
   }, [])
 
+  // TODO: minimumSignupGroupSize should control one of these values
   const canRegister = useCallback(() => {
     const slots = state.registration?.slots ?? []
     if (state.clubEvent?.priorityRegistrationIsOpen()) {
-      return slots.filter((s) => s.playerId).length >= (state.clubEvent.minimumSignupGroupSize ?? 3)
+      return slots.filter((s) => s.playerId).length >= 3
     } else if (state.clubEvent?.registrationIsOpen()) {
       return slots.filter((s) => s.playerId).length >= 1
     }
