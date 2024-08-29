@@ -1,3 +1,4 @@
+import { addDays } from "date-fns"
 import { z } from "zod"
 
 import { Player, PlayerApiSchema } from "./player"
@@ -24,6 +25,6 @@ export class Ace {
     this.player = new Player(data.player)
     this.season = data.season
     this.hole = data.hole_name
-    this.shotDate = data.shot_date
+    this.shotDate = addDays(data.shot_date, 1) // hack to fix timezone issue
   }
 }

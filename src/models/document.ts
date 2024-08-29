@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const DocumentApiSchema = z.object({
   id: z.number(),
-  year: z.number(),
+  year: z.number().nullish(),
   title: z.string(),
   document_type: z.string(),
   file: z.string().url(),
@@ -23,7 +23,7 @@ export type ClubDocumentData = z.infer<typeof ClubDocumentApiSchema>
 
 export class BhmcDocument {
   id: number
-  year: number
+  year?: number | null
   title: string
   documentType: string
   file: string
