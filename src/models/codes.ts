@@ -201,6 +201,10 @@ export const getClubDocumentName = (code: string) => {
       return "Season Long Points Gross Standings (SLP Page)"
     case "BYLAW":
       return "Club By-Laws (Home Page)"
+    case "SO":
+      return "Special Order Information (Home Page)"
+    case "ACCTS":
+      return "Special Order Accounts (Home Page)"
     default:
       return "N/A"
   }
@@ -215,4 +219,6 @@ export const clubDocumentMap = new Map([
   ["SLPG", "Season Long Points Gross Standings (SLP Page)"],
   ["SLPN", "Season Long Points Net Standings (SLP Page)"],
   ["FIN", "Treasurer Report (Home Page)"],
+  ["SO", "Special Order Information (Home Page)"],
+  ["ACCTS", "Special Order Accounts (Home Page)"],
 ])

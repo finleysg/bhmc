@@ -15,7 +15,7 @@ export function DamCupScreen() {
           <div className="card mb-4">
             <div className="card-body">
               <h4 className="card-header">Current Standings</h4>
-              <ClubDocument code="CUP" documentType="D" />
+              <ClubDocument code="CUP" />
             </div>
           </div>
           <div className="card mb-4">
