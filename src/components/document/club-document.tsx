@@ -3,7 +3,6 @@ import { DocumentCard } from "./document-card"
 
 interface ClubDocumentProps {
   code: string
-  documentType: string
 }
 
 export function ClubDocument({ code }: ClubDocumentProps) {

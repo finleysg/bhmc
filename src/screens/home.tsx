@@ -28,13 +28,15 @@ export function HomeScreen() {
               <AnnouncementList />
               <hr />
               <RandomPicList take={1} />
+              <hr />
+              <ClubDocumentsCard codes={["ACCTS", "SO"]} title="Special Order Info" />
             </div>
           </div>
         </div>
         <div className="col-xl-3 col-lg-4">
           <UpcomingEventsCard />
           <QuickLinksCard />
-          <ClubDocumentsCard />
+          <ClubDocumentsCard codes={["BYLAW", "FIN", "HCP", "TUT1", "TUT2"]} />
         </div>
         <div className="col-xl-3 col-lg-4">
           <HoleInOneCard />
