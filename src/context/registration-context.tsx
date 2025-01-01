@@ -1,5 +1,6 @@
 import { createContext, PropsWithChildren, useCallback, useEffect, useReducer } from "react"
 
+import { PaymentIntent } from "@stripe/stripe-js"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { useAuth } from "../hooks/use-auth"
@@ -22,6 +23,7 @@ import {
 import { getMany, getOne, httpClient } from "../utils/api-client"
 import { apiUrl } from "../utils/api-utils"
 import { currentSeason } from "../utils/app-config"
+import { getCorrelationId } from "../utils/correlation"
 import {
   defaultRegistrationState,
   eventRegistrationReducer,
@@ -31,6 +33,7 @@ import {
 
 export interface IRegistrationContext {
   clubEvent: ClubEvent | null // TODO: consider removing this from the context
+  correlationId: string
   currentStep: IRegistrationStep
   error: Error | null
   existingFees: Map<string, RegistrationFee> | null
@@ -38,6 +41,7 @@ export interface IRegistrationContext {
   payment: Payment | null
   registration: Registration | null
   selectedFees: EventFee[]
+  stripeClientSession?: string
   addFee: (slot: RegistrationSlot, eventFee: EventFee, player: Player) => void
   addPlayer: (slot: RegistrationSlot, player: Player) => void
   cancelRegistration: (
@@ -46,12 +50,13 @@ export interface IRegistrationContext {
   ) => Promise<void>
   canRegister: () => boolean
   completeRegistration: () => void
-  confirmPayment: (paymentMethod: string, saveCard: boolean) => Promise<void>
+  createPaymentIntent: () => Promise<PaymentIntent>
   createRegistration: (
     course?: Course,
     slots?: RegistrationSlot[],
     selectedStart?: string,
   ) => Promise<void>
+  initiateStripeSession: () => void
   loadRegistration: (player: Player) => Promise<void>
   removeFee: (slot: RegistrationSlot, eventFee: EventFee) => void
   removePlayer: (slot: RegistrationSlot) => void
@@ -75,7 +80,11 @@ export function EventRegistrationProvider({
   const { data: player } = useMyPlayerRecord()
 
   useEffect(() => {
-    dispatch({ type: "load-event", payload: { clubEvent: clubEvent } })
+    const correlationId = getCorrelationId(clubEvent?.id)
+    dispatch({
+      type: "load-event",
+      payload: { clubEvent: clubEvent, correlationId: correlationId },
+    })
   }, [clubEvent])
 
   const { mutateAsync: _createPayment } = useMutation({
@@ -93,6 +102,7 @@ export function EventRegistrationProvider({
             }
           }),
         }),
+        headers: { "X-Correlation-ID": state.correlationId },
       })
     },
     onSuccess: (data, variables) => {
@@ -120,6 +130,7 @@ export function EventRegistrationProvider({
             }
           }),
         }),
+        headers: { "X-Correlation-ID": state.correlationId },
       })
     },
     onSuccess: (data, variables) => {
@@ -131,19 +142,15 @@ export function EventRegistrationProvider({
     },
   })
 
-  const { mutateAsync: _confirmPayment } = useMutation({
-    mutationFn: ({ paymentMethod, saveCard }: { paymentMethod: string; saveCard: boolean }) => {
-      return httpClient(apiUrl(`payments/${state.payment?.id}/confirm/`), {
-        method: "PUT",
+  const { mutateAsync: _createPaymentIntent } = useMutation({
+    mutationFn: () => {
+      return httpClient(apiUrl(`payments/${state.payment?.id}/create-payment-intent/`), {
         body: JSON.stringify({
-          registrationId: state.registration?.id,
-          paymentMethodId: paymentMethod,
-          saveCard,
+          event_id: state.clubEvent?.id,
+          registration_id: state.registration?.id,
         }),
-      })
-    },
-    onSuccess: () => {
-      _invalidateQueries()
+        headers: { "X-Correlation-ID": state.correlationId },
+      }) as Promise<PaymentIntent>
     },
   })
 
@@ -154,6 +161,7 @@ export function EventRegistrationProvider({
         body: JSON.stringify({
           player: playerId,
         }),
+        headers: { "X-Correlation-ID": state.correlationId },
       })
     },
     onSuccess: () => {
@@ -171,6 +179,7 @@ export function EventRegistrationProvider({
       const endpoint = `registration/${regId}/cancel/?reason=${reason}&payment_id=${pmtId}`
       return httpClient(apiUrl(endpoint), {
         method: "PUT",
+        headers: { "X-Correlation-ID": state.correlationId },
       })
     },
     onSettled: () => {
@@ -191,6 +200,7 @@ export function EventRegistrationProvider({
         body: JSON.stringify({
           notes: notes,
         }),
+        headers: { "X-Correlation-ID": state.correlationId },
       })
     },
   })
@@ -210,6 +220,7 @@ export function EventRegistrationProvider({
           course: courseId,
           slots: slots?.map((s) => s.obj),
         }),
+        headers: { "X-Correlation-ID": state.correlationId },
       })
     },
     onSuccess: (data, args) => {
@@ -258,7 +269,7 @@ export function EventRegistrationProvider({
   /**
    * Updates query state so the UI reflects the completed registration.
    */
-  const _invalidateQueries = () => {
+  const _invalidateQueries = useCallback(() => {
     if (state.clubEvent?.eventType === EventType.Membership) {
       queryClient.setQueryData(["player", user.email], {
         ...player?.data,
@@ -272,7 +283,7 @@ export function EventRegistrationProvider({
     queryClient.invalidateQueries({ queryKey: ["my-events"] })
     queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
     queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
-  }
+  }, [player?.data, queryClient, state.clubEvent?.eventType, state.clubEvent?.id, user.email])
 
   /**
    * Changes the current step in the registration process.
@@ -352,19 +363,33 @@ export function EventRegistrationProvider({
    * setting the mode to "idle", which enables the guard on the register routes.
    */
   const completeRegistration = useCallback(() => {
+    _invalidateQueries()
     dispatch({ type: "complete-registration", payload: null })
+  }, [_invalidateQueries])
+
+  /**
+   * Create and return a stripe customer session, which allows the user to
+   * save their payment information for future use.
+   */
+  const initiateStripeSession = useCallback(() => {
+    httpClient(apiUrl("create-customer-session/"), {
+      method: "POST",
+      body: JSON.stringify({}),
+      headers: { "X-Correlation-ID": state.correlationId },
+    }).then((data) => {
+      dispatch({
+        type: "initiate-stripe-session",
+        payload: { clientSessionKey: data.client_secret },
+      })
+    })
   }, [])
 
   /**
-   * Confirms that a payment with the given method is valid. We call Stripe to
-   * validate the payment method.
+   * Create a payment intent for client-side processing.
    */
-  const confirmPayment = useCallback(
-    (paymentMethod: string, saveCard: boolean) => {
-      return _confirmPayment({ paymentMethod, saveCard })
-    },
-    [_confirmPayment],
-  )
+  const createPaymentIntent = useCallback(() => {
+    return _createPaymentIntent()
+  }, [_createPaymentIntent])
 
   /**
    * Saves the current payment record.
@@ -444,8 +469,9 @@ export function EventRegistrationProvider({
     cancelRegistration,
     canRegister,
     completeRegistration,
-    confirmPayment,
+    createPaymentIntent,
     createRegistration,
+    initiateStripeSession,
     loadRegistration,
     removeFee,
     removePlayer,

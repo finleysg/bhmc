@@ -42,8 +42,6 @@ export function AddPlayerHandler({ onCancel, onCreated }: AddPlayerHandlerProps)
     onCancel()
   }
 
-  console.log(form.formState.errors)
-
   return (
     <div style={{ width: "240px" }}>
       <AddPlayerView form={form} onSubmit={handleSubmit} onCancel={handleCancel} />

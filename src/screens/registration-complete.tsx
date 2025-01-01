@@ -10,7 +10,7 @@ import { useAuth } from "../hooks/use-auth"
 import { useEventRegistration } from "../hooks/use-event-registration"
 import { useCurrentEvent } from "./event-detail"
 
-export function RegistrationCompleteScreen() {
+export function RegistrationCompleteOldScreen() {
   const { user } = useAuth()
   const { clubEvent } = useCurrentEvent()
   const { completeRegistration, currentStep, error, mode, registration, setError } =
