@@ -3,8 +3,6 @@ import React from "react"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { toast } from "react-toastify"
 
-import { Elements } from "@stripe/react-stripe-js"
-import { loadStripe } from "@stripe/stripe-js"
 import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 import { FullPageSpinner } from "./components/spinners/full-screen-spinner"
@@ -12,7 +10,6 @@ import { AuthProvider } from "./context/auth-context"
 import { DefaultAuthenticationProvider } from "./context/authentication"
 import { LayoutProvider } from "./context/layout-context"
 import { ErrorScreen } from "./screens/error"
-import * as config from "./utils/app-config"
 
 const AdminLayout = React.lazy(() => import("./admin/layout/admin-layout"))
 const AuthLayout = React.lazy(() => import("./layout/auth-layout"))
@@ -37,8 +34,6 @@ const routeConfig = [
 ]
 
 const routes = createBrowserRouter(routeConfig)
-
-const stripePromise = loadStripe(config.stripePublicKey)
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,9 +66,7 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <LayoutProvider>
         <AuthProvider authenticationProvider={new DefaultAuthenticationProvider()}>
-          <Elements stripe={stripePromise}>
-            <RouterProvider router={routes} fallbackElement={<FullPageSpinner />} />
-          </Elements>
+          <RouterProvider router={routes} fallbackElement={<FullPageSpinner />} />
         </AuthProvider>
       </LayoutProvider>
       {/* <ReactQueryDevtools /> */}

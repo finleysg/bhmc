@@ -1,8 +1,17 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react"
+import {
+  ChangeEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 
 import { useNavigate } from "react-router-dom"
 
-import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
+import {
+  CardElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js"
 
 import { CancelButton } from "../components/event-registration/cancel-button"
 import { RegisterCountdown } from "../components/event-registration/register-countdown"
@@ -11,7 +20,10 @@ import { Checkbox } from "../components/forms/checkbox"
 import { CreditCardList } from "../components/payment/credit-card-list"
 import { StyledCardElement } from "../components/payment/styled-card-element"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
-import { CompleteStep, ReviewStep } from "../context/registration-reducer"
+import {
+  CompleteStep,
+  ReviewStep,
+} from "../context/registration-reducer"
 import { useAuth } from "../hooks/use-auth"
 import { useEventRegistration } from "../hooks/use-event-registration"
 import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
@@ -19,7 +31,7 @@ import { useMyCards } from "../hooks/use-my-cards"
 import { NoAmount } from "../models/payment"
 import { useCurrentEvent } from "./event-detail"
 
-export function PaymentScreen() {
+export function PaymentOldScreen() {
   const [cardUsed, setCardUsed] = useState<string | undefined>()
   const [isBusy, setIsBusy] = useState(false)
   const [saveCard, setSaveCard] = useState(false)

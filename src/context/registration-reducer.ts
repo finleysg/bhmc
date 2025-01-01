@@ -24,6 +24,8 @@ export interface IRegistrationState {
   readonly existingFees: Map<string, RegistrationFee> | null // needed for edit mode
   readonly error: Error | null
   readonly currentStep: IRegistrationStep
+  readonly stripeClientSession?: string
+  readonly correlationId: string
 }
 
 export const PendingStep: IRegistrationStep = {
@@ -58,7 +60,7 @@ export const CompleteStep: IRegistrationStep = {
 }
 
 export type RegistrationAction =
-  | { type: "load-event"; payload: { clubEvent: ClubEvent | null } }
+  | { type: "load-event"; payload: { clubEvent: ClubEvent | null; correlationId: string } }
   | {
       type: "load-registration"
       payload: { registration: Registration; payment: Payment; existingFees: RegistrationFee[] }
@@ -76,6 +78,7 @@ export type RegistrationAction =
   | { type: "remove-player"; payload: { slotId: number } }
   | { type: "add-fee"; payload: { slotId: number; eventFee: EventFee; player: Player } }
   | { type: "remove-fee"; payload: { slotId: number; eventFeeId: number } }
+  | { type: "initiate-stripe-session"; payload: { clientSessionKey: string } }
 
 export const defaultRegistrationState: IRegistrationState = {
   mode: "idle",
@@ -86,6 +89,8 @@ export const defaultRegistrationState: IRegistrationState = {
   existingFees: null,
   error: null,
   currentStep: PendingStep,
+  stripeClientSession: undefined,
+  correlationId: "",
 }
 
 export const eventRegistrationReducer = produce((draft, action: RegistrationAction) => {
@@ -100,6 +105,7 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
       draft.error = null
       draft.mode = "idle"
       draft.currentStep = PendingStep
+      draft.correlationId = payload.correlationId
       return
     }
     case "update-step": {
@@ -144,7 +150,6 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
       draft.currentStep = PendingStep
       return
     }
-    // TODO: consolidate with cancel-registration
     case "complete-registration": {
       draft.registration = null
       draft.payment = null
@@ -221,6 +226,10 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
     }
     case "update-error": {
       draft.error = payload.error
+      return
+    }
+    case "initiate-stripe-session": {
+      draft.stripeClientSession = payload.clientSessionKey
       return
     }
     default: {

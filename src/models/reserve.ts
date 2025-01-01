@@ -64,7 +64,7 @@ export class ReserveSlot {
     } else if (this.status === RegistrationStatus.Reserved) {
       return this.playerName
     } else if (this.status === RegistrationStatus.Processing) {
-      return `${this.playerName} (processing)`
+      return this.playerName
     } else {
       return this.statusName
     }

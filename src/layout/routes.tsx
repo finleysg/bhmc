@@ -15,14 +15,15 @@ import { MaintenanceScreen } from "../screens/maintenance"
 import { MatchPlayScreen } from "../screens/match-play"
 import { MembershipFull } from "../screens/membership-full"
 import { NotFoundScreen } from "../screens/not-found"
-import { PaymentScreen } from "../screens/payment"
+import { PaymentFlow } from "../screens/payment-flow"
+import { PaymentScreen } from "../screens/payment-new"
 import { PhotoGalleryScreen } from "../screens/photo-gallery"
 import { PlayerProfileScreen } from "../screens/player-profile"
 import { PlayerScoresScreen } from "../screens/player-scores"
 import { PolicyScreen } from "../screens/policies"
 import { RegisterScreen } from "../screens/register"
 import { RegisteredScreen } from "../screens/registered"
-import { RegistrationCompleteScreen } from "../screens/registration-complete"
+import { RegistrationCompleteScreen } from "../screens/registration-complete-new"
 import { ReserveScreen } from "../screens/reserve"
 import { ReviewRegistrationScreen } from "../screens/review-registration"
 import { SeasonLongPointsScreen } from "../screens/season-long-points"
@@ -46,8 +47,14 @@ export const mainRoutes = () =>
             { path: "register", element: <RegisterScreen /> },
             { path: "edit", element: <EditRegistrationScreen /> },
             { path: "review", element: <ReviewRegistrationScreen /> },
-            { path: "payment", element: <PaymentScreen /> },
-            { path: "complete", element: <RegistrationCompleteScreen /> },
+            {
+              path: ":paymentId",
+              element: <PaymentFlow />,
+              children: [
+                { path: "payment", element: <PaymentScreen /> },
+                { path: "complete", element: <RegistrationCompleteScreen /> },
+              ],
+            },
             { path: "registrations", element: <RegisteredScreen /> },
           ],
         },
