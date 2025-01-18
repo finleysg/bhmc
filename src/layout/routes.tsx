@@ -13,17 +13,17 @@ import { GalleryImageScreen } from "../screens/gallery-image"
 import { HomeScreen } from "../screens/home"
 import { MaintenanceScreen } from "../screens/maintenance"
 import { MatchPlayScreen } from "../screens/match-play"
-import { MembershipFull } from "../screens/membership-full"
+import { MembershipScreen } from "../screens/membership"
 import { NotFoundScreen } from "../screens/not-found"
+import { PaymentScreen } from "../screens/payment"
 import { PaymentFlow } from "../screens/payment-flow"
-import { PaymentScreen } from "../screens/payment-new"
 import { PhotoGalleryScreen } from "../screens/photo-gallery"
 import { PlayerProfileScreen } from "../screens/player-profile"
 import { PlayerScoresScreen } from "../screens/player-scores"
 import { PolicyScreen } from "../screens/policies"
 import { RegisterScreen } from "../screens/register"
 import { RegisteredScreen } from "../screens/registered"
-import { RegistrationCompleteScreen } from "../screens/registration-complete-new"
+import { RegistrationCompleteScreen } from "../screens/registration-complete"
 import { ReserveScreen } from "../screens/reserve"
 import { ReviewRegistrationScreen } from "../screens/review-registration"
 import { SeasonLongPointsScreen } from "../screens/season-long-points"
@@ -36,7 +36,7 @@ export const mainRoutes = () =>
     : [
         { path: "/", element: <HomeScreen /> },
         { path: "/home", element: <HomeScreen /> },
-        { path: "/membership", element: <MembershipFull /> },
+        { path: "/membership", element: <MembershipScreen /> },
         { path: "/calendar/:year/:monthName", element: <CalendarScreen /> },
         {
           path: "/event/:eventDate/:eventName",
