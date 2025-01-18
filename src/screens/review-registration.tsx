@@ -38,7 +38,7 @@ export function ReviewRegistrationScreen() {
     } else {
       updateStep(CompleteStep)
     }
-    navigate("../payment", { replace: true })
+    navigate(`../${payment?.id}/payment`, { replace: true })
   }
 
   return (
