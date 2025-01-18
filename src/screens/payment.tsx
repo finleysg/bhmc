@@ -1,73 +1,59 @@
-import {
-  ChangeEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react"
+import { useRef, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
 
-import {
-  CardElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js"
+import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 
 import { CancelButton } from "../components/event-registration/cancel-button"
 import { RegisterCountdown } from "../components/event-registration/register-countdown"
 import { ErrorDisplay } from "../components/feedback/error-display"
-import { Checkbox } from "../components/forms/checkbox"
-import { CreditCardList } from "../components/payment/credit-card-list"
-import { StyledCardElement } from "../components/payment/styled-card-element"
 import { OverlaySpinner } from "../components/spinners/overlay-spinner"
-import {
-  CompleteStep,
-  ReviewStep,
-} from "../context/registration-reducer"
+import { ReviewStep } from "../context/registration-reducer"
 import { useAuth } from "../hooks/use-auth"
 import { useEventRegistration } from "../hooks/use-event-registration"
 import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
-import { useMyCards } from "../hooks/use-my-cards"
-import { NoAmount } from "../models/payment"
-import { useCurrentEvent } from "./event-detail"
+import * as config from "../utils/app-config"
+import { useCurrentPaymentAmount } from "./payment-flow"
 
-export function PaymentOldScreen() {
-  const [cardUsed, setCardUsed] = useState<string | undefined>()
-  const [isBusy, setIsBusy] = useState(false)
-  const [saveCard, setSaveCard] = useState(false)
-  const buttonRef = useRef<HTMLButtonElement>(null)
-
+export function PaymentScreen() {
   const { user } = useAuth()
-  const { clubEvent } = useCurrentEvent()
-  const { data: myCards } = useMyCards()
-  const { currentStep, error, mode, payment, registration, confirmPayment, setError, updateStep } =
-    useEventRegistration()
-  useEventRegistrationGuard(registration)
+  const [isBusy, setIsBusy] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const { amount: stripeAmount } = useCurrentPaymentAmount()
+  const {
+    currentStep,
+    error,
+    mode,
+    registration,
+    completeRegistration,
+    createPaymentIntent,
+    setError,
+    updateStep,
+  } = useEventRegistration()
 
   const stripe = useStripe()
   const elements = useElements()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (myCards === undefined || myCards.length === 0) {
-      setCardUsed("new")
-    } else {
-      setCardUsed(myCards[0].paymentMethod)
-    }
-  }, [myCards])
-
-  const amountDue = payment?.getAmountDue(clubEvent.feeMap) ?? NoAmount
+  useEventRegistrationGuard(registration)
 
   const handleBack = () => {
     updateStep(ReviewStep)
     navigate("../review", { replace: true })
   }
 
-  const handleSaveCard = (e: ChangeEvent<HTMLInputElement>) => {
-    setSaveCard(e.target.checked)
+  const handleError = (error: unknown) => {
+    console.error(error)
+    if (error instanceof Error) {
+      setError(error)
+    } else if (Object.prototype.hasOwnProperty.call(error, "message")) {
+      setError(new Error((error as { message: string }).message))
+    } else {
+      setError(new Error("An unknown error occurred."))
+    }
   }
 
-  const handlePaymentClick = async () => {
+  const handleSubmitPayment = async () => {
     if (!buttonRef.current) {
       throw new Error("Inconceivable! Button ref not found.")
     }
@@ -83,48 +69,46 @@ export function PaymentOldScreen() {
     }, 10)
 
     try {
-      const method = await getPaymentMethod()
-      await confirmPayment(method, cardUsed === "new" && saveCard)
-      updateStep(CompleteStep)
-      navigate("../complete", { replace: true })
+      // 1. Validate the payment element.
+      const { error: submitError } = await elements!.submit()
+      if (submitError) {
+        handleError(submitError)
+        return
+      }
+      // 2. Create the payment intent.
+      const intent = await createPaymentIntent()
+
+      // 3. Confirm the payment.
+      const { error: confirmError } = await stripe!.confirmPayment({
+        elements: elements!,
+        clientSecret: intent.client_secret!,
+        confirmParams: {
+          payment_method_data: {
+            billing_details: {
+              name: user.name,
+              email: user.email,
+              address: {
+                country: "US",
+              },
+            },
+          },
+          return_url: `${window.location.origin}${window.location.pathname.replace("payment", "complete")}`,
+        },
+      })
+
+      if (confirmError) {
+        handleError(confirmError)
+        return
+      }
+
+      // Does some cache invalidation.
+      completeRegistration()
     } catch (err) {
-      setError(err as Error)
+      handleError(err)
     } finally {
       buttonRef.current.disabled = false
       setIsBusy(false)
     }
-  }
-
-  const getPaymentMethod = async () => {
-    // Using a saved card
-    if (cardUsed !== "new" && cardUsed) {
-      return cardUsed
-    }
-
-    if (!stripe) {
-      throw new Error("Stripe is not initialized")
-    }
-
-    const cardElement = elements?.getElement(CardElement)
-    if (!cardElement) {
-      throw new Error("Card element not found")
-    }
-
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: "card",
-      card: cardElement,
-      billing_details: {
-        email: user.email,
-        name: user.name,
-      },
-    })
-
-    // Invalid card, expired card, etc.
-    if (error) {
-      throw new Error(error.message)
-    }
-
-    return paymentMethod.id
   }
 
   return (
@@ -134,30 +118,31 @@ export function PaymentOldScreen() {
           <div className="card-body">
             <OverlaySpinner loading={isBusy} />
             <h4 className="card-header mb-2">{currentStep.title}</h4>
-            {error && (
-              <ErrorDisplay error={error?.message} delay={5000} onClose={() => setError(null)} />
-            )}
             <p className="text-info fst-italic mb-4">{registration?.selectedStart}</p>
-            <h6 className="text-primary">Amount due: ${amountDue.total.toFixed(2)}</h6>
+            <h6 className="text-primary">
+              Amount due: {config.currencyFormatter.format(stripeAmount / 100)}
+            </h6>
+            {error && <ErrorDisplay error={error?.message} onClose={() => setError(null)} />}
             <div className="mb-4">
-              {myCards && myCards[0] && (
-                <CreditCardList cards={myCards} onSelect={(pm: string) => setCardUsed(pm)} />
-              )}
+              <PaymentElement
+                options={{
+                  business: { name: "BHMC" },
+                  layout: {
+                    type: "accordion",
+                    defaultCollapsed: false,
+                    radios: true,
+                    spacedAccordionItems: true,
+                  },
+                  fields: {
+                    billingDetails: {
+                      name: "never",
+                      email: "never",
+                      address: { country: "never" },
+                    },
+                  },
+                }}
+              />
             </div>
-            {cardUsed === "new" && (
-              <>
-                <div className="mb-4">
-                  <StyledCardElement />
-                </div>
-                <div>
-                  <Checkbox
-                    label="Save this card for future payments"
-                    checked={saveCard}
-                    onChange={handleSaveCard}
-                  />
-                </div>
-              </>
-            )}
             <hr />
             <div style={{ textAlign: "right" }}>
               <RegisterCountdown doCountdown={mode === "new"} />
@@ -165,7 +150,12 @@ export function PaymentOldScreen() {
                 Back
               </button>
               <CancelButton mode={mode} />
-              <button className="btn btn-primary ms-2" ref={buttonRef} onClick={handlePaymentClick}>
+              <button
+                disabled={!stripe || !elements}
+                className="btn btn-primary ms-2"
+                ref={buttonRef}
+                onClick={handleSubmitPayment}
+              >
                 Submit Payment
               </button>
             </div>

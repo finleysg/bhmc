@@ -1,6 +1,9 @@
 import React from "react"
 
-import { Link, useNavigate } from "react-router-dom"
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom"
 
 import { useAuth } from "../hooks/use-auth"
 import * as colors from "../styles/colors"
@@ -20,7 +23,11 @@ export function UserMenu() {
     return (
       <li style={{ float: "right", color: colors.base }}>
         <ul style={{ listStyle: "none" }}>
-          <li>Guest</li>
+          <li>
+            <Link to="session/login" className="text-white">
+              Login
+            </Link>
+          </li>
         </ul>
       </li>
     )

@@ -1,7 +1,16 @@
-import { createContext, PropsWithChildren, useCallback, useEffect, useReducer } from "react"
+import {
+  createContext,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useReducer,
+} from "react"
 
 import { PaymentIntent } from "@stripe/stripe-js"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query"
 
 import { useAuth } from "../hooks/use-auth"
 import { useMyPlayerRecord } from "../hooks/use-my-player-record"
@@ -10,7 +19,10 @@ import { EventType } from "../models/codes"
 import { ClubEventProps } from "../models/common-props"
 import { Course } from "../models/course"
 import { EventFee } from "../models/event-fee"
-import { Payment, PaymentDetail } from "../models/payment"
+import {
+  Payment,
+  PaymentDetail,
+} from "../models/payment"
 import { Player } from "../models/player"
 import {
   Registration,
@@ -20,7 +32,11 @@ import {
   RegistrationFeeApiSchema,
   RegistrationSlot,
 } from "../models/registration"
-import { getMany, getOne, httpClient } from "../utils/api-client"
+import {
+  getMany,
+  getOne,
+  httpClient,
+} from "../utils/api-client"
 import { apiUrl } from "../utils/api-utils"
 import { currentSeason } from "../utils/app-config"
 import { getCorrelationId } from "../utils/correlation"
@@ -382,7 +398,7 @@ export function EventRegistrationProvider({
         payload: { clientSessionKey: data.client_secret },
       })
     })
-  }, [])
+  }, [state.correlationId])
 
   /**
    * Create a payment intent for client-side processing.
