@@ -16,6 +16,7 @@ import { MatchPlayScreen } from "../screens/match-play"
 import { MembershipScreen } from "../screens/membership"
 import { NotFoundScreen } from "../screens/not-found"
 import { PaymentScreen } from "../screens/payment"
+import { PaymentFlow } from "../screens/payment-flow"
 import { PhotoGalleryScreen } from "../screens/photo-gallery"
 import { PlayerProfileScreen } from "../screens/player-profile"
 import { PlayerScoresScreen } from "../screens/player-scores"
@@ -46,8 +47,14 @@ export const mainRoutes = () =>
             { path: "register", element: <RegisterScreen /> },
             { path: "edit", element: <EditRegistrationScreen /> },
             { path: "review", element: <ReviewRegistrationScreen /> },
-            { path: "payment", element: <PaymentScreen /> },
-            { path: "complete", element: <RegistrationCompleteScreen /> },
+            {
+              path: ":paymentId",
+              element: <PaymentFlow />,
+              children: [
+                { path: "payment", element: <PaymentScreen /> },
+                { path: "complete", element: <RegistrationCompleteScreen /> },
+              ],
+            },
             { path: "registrations", element: <RegisteredScreen /> },
           ],
         },

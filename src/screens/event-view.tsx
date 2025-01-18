@@ -12,11 +12,13 @@ import { useCurrentEvent } from "./event-detail"
 
 export function EventViewScreen() {
   const { clubEvent } = useCurrentEvent()
-  const { createRegistration, loadRegistration, updateStep } = useEventRegistration()
+  const { createRegistration, initiateStripeSession, loadRegistration, updateStep } =
+    useEventRegistration()
   const { data: player } = useMyPlayerRecord()
   const navigate = useNavigate()
 
   const handleStart = async () => {
+    initiateStripeSession()
     if (clubEvent.canChoose) {
       updateStep(ReserveStep)
       navigate("reserve")

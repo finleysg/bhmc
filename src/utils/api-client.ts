@@ -23,17 +23,22 @@ const parseError = (error: any) => {
 
 export async function httpClient(endpoint: string, options?: Partial<RequestInit>) {
   const { body, ...customConfig } = options ?? {}
-  const headers = body instanceof FormData ? {} : { "Content-Type": "application/json" }
+
+  const headers = new Headers(customConfig.headers)
+  if (body && !(body instanceof FormData)) {
+    headers.set("Content-Type", "application/json")
+  }
+
+  let method = customConfig.method
+  if (!method) {
+    method = body ? "POST" : "GET"
+  }
 
   const config = {
-    method: body ? "POST" : "GET",
+    method: method,
     body: body,
     credentials: "include",
-    headers: {
-      ...headers,
-      ...customConfig.headers,
-    },
-    ...customConfig,
+    headers: headers,
   } as RequestInit
 
   return window.fetch(endpoint, config).then(async (response) => {

@@ -8,7 +8,7 @@ import { ConfirmDialog } from "../dialog/confirm"
 
 export function CancelButton({ mode }: { mode: RegistrationMode }) {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
-  const { cancelRegistration } = useEventRegistration()
+  const { cancelRegistration, currentStep } = useEventRegistration()
   const navigate = useNavigate()
 
   const dialogTitle = mode === "new" ? "Cancel Registration?" : "Cancel Changes?"
@@ -20,7 +20,11 @@ export function CancelButton({ mode }: { mode: RegistrationMode }) {
   const handleCancel = async () => {
     setShowCancelDialog(false)
     await cancelRegistration("user", mode)
-    navigate("../")
+    if (currentStep.name === "payment") {
+      navigate("../../")
+    } else {
+      navigate("../")
+    }
   }
 
   return (
