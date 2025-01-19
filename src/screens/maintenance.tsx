@@ -9,7 +9,7 @@ export function MaintenanceScreen() {
         <h3 className="text-primary" style={{ marginTop: "30px" }}>
           We&apos;re Doing Some Work
         </h3>
-        <p>The website will return Monday afternoon or evening.</p>
+        <p>The website will return soon.</p>
       </div>
     </div>
   )
