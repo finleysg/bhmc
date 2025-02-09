@@ -35,7 +35,8 @@ export function RegisterButton({
     return null
   }
 
-  const isDisabled = !clubEvent.playerCanRegister(currentTime, player)
+  const isDisabled =
+    !clubEvent.playerCanRegister(currentTime, player) || !clubEvent.playerIsEligible(player)
   const buttonText =
     startCountdown && minutes + seconds > 0 ? (
       <span className="fw-bold">

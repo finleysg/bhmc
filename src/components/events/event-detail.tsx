@@ -3,6 +3,7 @@ import React, { useEffect } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
+import { useMyPlayerRecord } from "../../hooks/use-my-player-record"
 import { useMyRegistrationStatus } from "../../hooks/use-my-registration-status"
 import { ClubEvent } from "../../models/club-event"
 import { EventStatusType, getRegistrationTypeName, getStartTypeName } from "../../models/codes"
@@ -22,7 +23,9 @@ export interface EventDetailProps {
 }
 
 export function EventDetail({ clubEvent, onRegister, onEditRegistration }: EventDetailProps) {
+  const { data: player } = useMyPlayerRecord()
   const hasSignedUp = useMyRegistrationStatus(clubEvent.id)
+  const isEligible = clubEvent.playerIsEligible(player)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -95,6 +98,18 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
           {hasSignedUp && (
             <p className="text-danger-emphasis">
               <strong>You are registered for this event.</strong>
+            </p>
+          )}
+          {!isEligible && (
+            <p className="text-danger">
+              {player?.birthDate ? (
+                <strong>You are not eligible for this event because you are {player.age}.</strong>
+              ) : (
+                <strong>
+                  You are not eligible for this event because you have not entered your birthdate.
+                  Please do so on your My Account page.
+                </strong>
+              )}
             </p>
           )}
           <h4 className="text-primary" style={{ marginTop: "2rem" }}>
