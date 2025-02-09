@@ -27,6 +27,8 @@ export type RegistrationWindow = "future" | "registration" | "past" | "n/a"
 
 export const ClubEventApiSchema = z.object({
   id: z.number(),
+  age_restriction: z.number().nullish(),
+  age_restriction_type: z.string(),
   can_choose: z.boolean(),
   courses: z.array(CourseApiSchema).optional(),
   default_tag: z.string().optional(),
@@ -67,6 +69,8 @@ export class ClubEvent {
 
   id: number
   adminUrl: string
+  ageRestriction?: number | null
+  ageRestrictionType: string
   canChoose: boolean
   courses: Course[]
   defaultTag?: string
@@ -109,6 +113,8 @@ export class ClubEvent {
 
   constructor(json: ClubEventData) {
     this.id = json.id
+    this.ageRestriction = json.age_restriction
+    this.ageRestrictionType = json.age_restriction_type
     this.canChoose = json.can_choose
     this.courses = json.courses?.map((c) => new Course(c)) ?? []
     this.defaultTag = json.default_tag
@@ -247,6 +253,28 @@ export class ClubEvent {
       return false
     }
     return true
+  }
+
+  /**
+   * Returns true if the player is eligible to register for this event
+   * based on player age and event age restriction.
+   * @param {Player} player
+   * @returns boolean
+   */
+  playerIsEligible(player?: Player) {
+    if (!player) {
+      return false
+    } else if (!this.ageRestriction) {
+      return true
+    } else if (!player.birthDate) {
+      return false
+    } else {
+      if (this.ageRestrictionType === "O") {
+        return player.ageAtYearEnd! >= this.ageRestriction
+      } else {
+        return player.age! < this.ageRestriction
+      }
+    }
   }
 
   /**

@@ -4,6 +4,18 @@ export enum AdminPaymentDetailAction {
   None,
 }
 
+export const AgeRestrictionType = {
+  None: "N",
+  Over: "O",
+  Under: "U",
+} as const
+
+export const ageRestrictionTypeMap = new Map([
+  ["N", "None"],
+  ["O", "Over"],
+  ["U", "Under"],
+])
+
 export const DocumentType = {
   Results: "R",
   Teetimes: "T",
