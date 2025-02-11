@@ -1,4 +1,5 @@
 import { MemberhipReport } from "../../components/reports/membership-report"
+import { AppendTeetimesScreen } from "../screens/append_teetimes"
 import { CloneEventsScreen } from "../screens/clone-events"
 import { ClubDocumentsScreen } from "../screens/club-documents"
 import { EventDocumentsScreen } from "../screens/event-documents"
@@ -48,6 +49,7 @@ export const adminRoutes = () => [
           { path: "import-scores", element: <ImportScoresScreen /> },
           { path: "import-champions", element: <ImportChampionsScreen /> },
           { path: "view-slots", element: <ViewSlotsScreen /> },
+          { path: "append-teetime", element: <AppendTeetimesScreen /> },
         ],
       },
     ],
