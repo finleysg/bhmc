@@ -114,6 +114,16 @@ export function ValidateSlotsCard() {
   )
 }
 
+export function AppendTeetimeCard() {
+  return (
+    <AdminCard
+      title="Add a Teetime"
+      action={"append-teetime"}
+      description="Add an additional teetime for each course at the end of the teesheet."
+    />
+  )
+}
+
 export function EventSettingsCard({ eventId }: EventAdminMenuProps) {
   return (
     <AdminCard

@@ -1,6 +1,7 @@
 import { EventType } from "../../models/codes"
 import { useEventAdmin } from "./event-admin"
 import {
+  AppendTeetimeCard,
   EventReportCard,
   EventSettingsCard,
   ImportChampionsCard,
@@ -60,6 +61,11 @@ export function EventAdminMenu() {
         {clubEvent.canChoose && clubEvent.registrationWindow === "future" && (
           <div className="col">
             <ValidateSlotsCard />
+          </div>
+        )}
+        {clubEvent.canChoose && (
+          <div className="col">
+            <AppendTeetimeCard />
           </div>
         )}
         <div className="col">

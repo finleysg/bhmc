@@ -14,7 +14,7 @@ export function useCopyEvent() {
 
   return useMutation({
     mutationFn: ({ eventId, startDate }: CopyEventArgs) => {
-      return httpClient(apiUrl(`events/${eventId}/clone/?start_dt=${startDate}`), {
+      return httpClient(apiUrl(`events/${eventId}/copy_event/?start_dt=${startDate}`), {
         method: "POST",
       })
     },
