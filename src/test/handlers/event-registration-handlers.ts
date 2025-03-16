@@ -22,7 +22,7 @@ export const eventRegistrationHandlers = [
   http.get(apiUrl("registration-slots/"), () => {
     return HttpResponse.json([])
   }),
-  http.get(apiUrl("player-search/"), () => {
+  http.get(apiUrl("players/search/"), () => {
     return HttpResponse.json([])
   }),
 ]

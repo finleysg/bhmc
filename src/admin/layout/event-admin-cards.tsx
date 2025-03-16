@@ -74,22 +74,12 @@ export function ManageDocumentsCard() {
   )
 }
 
-export function ImportPointsCard() {
+export function ImportLeaderboardCard() {
   return (
     <AdminCard
-      title="Import Points"
-      action={"import-points"}
-      description="Upload one or more season long points files for this event."
-    />
-  )
-}
-
-export function ImportScoresCard() {
-  return (
-    <AdminCard
-      title="Imports Scores"
-      action={"import-scores"}
-      description="Upload a file with player scores for this event."
+      title="Import Leaderboard"
+      action={"import-leaderboard"}
+      description="Upload the Golf Genius leaderboard file for this event. Optionally upload scores, points, and low scores."
     />
   )
 }

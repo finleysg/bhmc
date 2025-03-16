@@ -17,7 +17,7 @@ interface TopPointsArgs {
 }
 
 export function useTopPoints({ season, topN, category }: TopPointsArgs) {
-  const endpoint = `points/${season}/${category}/${topN}/`
+  const endpoint = `season-long-points/top_points/?season=${season}&category=${category}&top=${topN}/`
 
   return useQuery({
     queryKey: ["season-long-points", season, category, topN],

@@ -12,7 +12,7 @@ export function SkinsReport({ clubEvent }: ClubEventProps) {
   const [data, setData] = useState<any[]>([])
 
   useEffect(() => {
-    httpClient(apiUrl(`events/${clubEvent.id}/skins-report/`)).then((json) => setData(json))
+    httpClient(apiUrl(`reports/skins/?event_id=${clubEvent.id}`)).then((json) => setData(json))
   }, [clubEvent.id])
 
   const reportName = `${slugify(clubEvent.name)}-skins-report.csv`

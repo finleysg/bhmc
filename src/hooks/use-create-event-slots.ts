@@ -8,7 +8,7 @@ export function useCreateEventSlots() {
 
   return useMutation({
     mutationFn: ({ eventId }: { eventId: number }) => {
-      return httpClient(apiUrl(`events/${eventId}/create-slots/`), {
+      return httpClient(apiUrl(`events/${eventId}/create_slots/`), {
         method: "POST",
       })
     },

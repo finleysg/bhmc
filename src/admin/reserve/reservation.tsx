@@ -12,6 +12,7 @@ interface ReservationAdminProps extends Omit<ComponentPropsWithoutRef<"div">, "o
   onDrop: () => void
   onSwap: () => void
   onEditNotes: () => void
+  onChangeEvent: () => void
 }
 
 export function ReservationAdmin({
@@ -22,6 +23,7 @@ export function ReservationAdmin({
   onDrop,
   onSwap,
   onEditNotes,
+  onChangeEvent,
   ...rest
 }: ReservationAdminProps) {
   return (
@@ -30,6 +32,9 @@ export function ReservationAdmin({
         <div className="reservation">
           <button className="btn btn-sm btn-warning" disabled={!selected} onClick={onSwap}>
             Swap
+          </button>
+          <button className="btn btn-sm btn-warning" disabled={!selected} onClick={onChangeEvent}>
+            Change
           </button>
           <button className="btn btn-sm btn-danger" disabled={!selected} onClick={onDrop}>
             Drop

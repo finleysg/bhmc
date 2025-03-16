@@ -25,3 +25,29 @@ export function useRegistrationUpdate() {
     },
   })
 }
+
+/**
+ * Move a registration from one event to another.
+ * @returns
+ */
+export function useChangeEvent() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      registrationId,
+      targetEventId,
+    }: {
+      registrationId: number
+      targetEventId: number
+    }) => {
+      return httpClient(apiUrl(`registration/${registrationId}/move_registration`), {
+        method: "PUT",
+        body: JSON.stringify({ target_event_id: targetEventId }),
+      })
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event-registrations"] })
+    },
+  })
+}

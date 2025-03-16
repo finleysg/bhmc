@@ -7,7 +7,7 @@ export function useLowScores(season: number) {
   const endpoint = `low-scores/?season=${season}`
 
   return useQuery({
-    queryKey: [endpoint],
+    queryKey: ["low-scores"],
     queryFn: () => getMany<LowScoreData>(endpoint, LowScoreApiSchema),
     select: (data) => data.map((champ) => new LowScore(champ)),
   })

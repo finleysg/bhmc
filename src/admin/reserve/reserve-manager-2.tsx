@@ -8,7 +8,7 @@ import { useDropPlayers } from "../../hooks/use-drop-players"
 import { useEventRegistrations } from "../../hooks/use-event-registrations"
 import { useIssueMultipleRefunds } from "../../hooks/use-issue-refunds"
 import { useRegisterPlayer } from "../../hooks/use-register-player"
-import { useRegistrationUpdate } from "../../hooks/use-registration-update"
+import { useChangeEvent, useRegistrationUpdate } from "../../hooks/use-registration-update"
 import { useSwapPlayers } from "../../hooks/use-swap-players"
 import { ClubEventProps } from "../../models/common-props"
 import { RefundData } from "../../models/refund"
@@ -30,6 +30,7 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
   const { mutateAsync: dropPlayers, status: dropStatus, error: dropError } = useDropPlayers()
   const { mutateAsync: swapPlayers, status: swapStatus, error: swapError } = useSwapPlayers()
   const { mutateAsync: updateNotes, status: noteStatus, error: noteError } = useRegistrationUpdate()
+  const { mutateAsync: changeEvent, status: changeStatus, error: changeError } = useChangeEvent()
   const issueRefunds = useIssueMultipleRefunds()
 
   const handleRegister = async (
@@ -71,6 +72,14 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
     toast.success("Player swap was successful.")
   }
 
+  const handleChangeEvent = async (registrationId: number, targetEventId: number) => {
+    await changeEvent({
+      registrationId: registrationId,
+      targetEventId: targetEventId,
+    })
+    toast.success("Player(s) have been moved to selected event.")
+  }
+
   const handleEditNotes = async (registrationId: number, notes: string) => {
     await updateNotes({ registrationId, notes })
     toast.success("Notes were updated.")
@@ -85,7 +94,8 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
           dropStatus === "pending" ||
           swapStatus === "pending" ||
           registerStatus === "pending" ||
-          noteStatus === "pending"
+          noteStatus === "pending" ||
+          changeStatus === "pending"
         }
       />
       {error && <ErrorDisplay error={error.message} delay={5000} />}
@@ -93,6 +103,7 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
       {swapError && <ErrorDisplay error={swapError.message} delay={5000} />}
       {registerError && <ErrorDisplay error={registerError.message} delay={5000} />}
       {noteError && <ErrorDisplay error={noteError.message} delay={5000} />}
+      {changeError && <ErrorDisplay error={changeError.message} delay={5000} />}
       <ReserveListAdmin
         clubEvent={clubEvent}
         registrations={registrations ?? []}
@@ -100,6 +111,7 @@ export function ReserveManager2({ clubEvent }: ClubEventProps) {
         onDrop={handleDrop}
         onSwap={handleSwap}
         onNotesEdit={handleEditNotes}
+        onChangeEvent={handleChangeEvent}
       />
     </div>
   )

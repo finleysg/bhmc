@@ -7,7 +7,7 @@ import { useMyPlayerRecord } from "./use-my-player-record"
 
 export function useMyFriends() {
   const { data: player } = useMyPlayerRecord()
-  const endpoint = apiUrl(`friends/${player?.id}`)
+  const endpoint = apiUrl(`players/${player?.id}/friends`)
 
   return useQuery({
     queryKey: ["friends"],
@@ -22,7 +22,7 @@ export function useAddFriend() {
 
   return useMutation({
     mutationFn: (friendId: number) => {
-      const endpoint = apiUrl(`friends/${friendId}/add/`)
+      const endpoint = apiUrl(`players/${friendId}/add_friend/`)
       return httpClient(endpoint, { method: "POST" })
     },
     onSuccess: () => {
@@ -36,7 +36,7 @@ export function useRemoveFriend() {
 
   return useMutation({
     mutationFn: (friendId: number) => {
-      const endpoint = apiUrl(`friends/${friendId}/remove/`)
+      const endpoint = apiUrl(`players/${friendId}/remove_friend/`)
       return httpClient(endpoint, { method: "DELETE" })
     },
     onSuccess: () => {

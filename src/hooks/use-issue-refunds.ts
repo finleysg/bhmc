@@ -14,7 +14,7 @@ export function useIssueMultipleRefunds() {
     })
 
     if (refundList.length > 0) {
-      return httpClient(apiUrl("issue-refunds"), {
+      return httpClient(apiUrl("refunds/issue_refunds"), {
         body: JSON.stringify({ refunds: refundList }),
       })
     } else {

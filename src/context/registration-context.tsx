@@ -144,7 +144,7 @@ export function EventRegistrationProvider({
 
   const { mutateAsync: _createPaymentIntent } = useMutation({
     mutationFn: () => {
-      return httpClient(apiUrl(`payments/${state.payment?.id}/create-payment-intent/`), {
+      return httpClient(apiUrl(`payments/${state.payment?.id}/payment_intent/`), {
         body: JSON.stringify({
           event_id: state.clubEvent?.id,
           registration_id: state.registration?.id,
@@ -372,7 +372,7 @@ export function EventRegistrationProvider({
    * save their payment information for future use.
    */
   const initiateStripeSession = useCallback(() => {
-    httpClient(apiUrl("create-customer-session/"), {
+    httpClient(apiUrl("payments/customer_session/"), {
       method: "POST",
       body: JSON.stringify({}),
       headers: { "X-Correlation-ID": state.correlationId },

@@ -6,9 +6,9 @@ import { getMany } from "../utils/api-client"
 export function useRandomPhotos(take: number, tag: string | undefined) {
   const getUrl = () => {
     if (tag) {
-      return `random-photos/?take=${take}&tag=${tag}`
+      return `photos/random/?take=${take}&tag=${tag}`
     } else {
-      return `random-photos/?take=${take}`
+      return `photos/random/?take=${take}`
     }
   }
   const url = getUrl()

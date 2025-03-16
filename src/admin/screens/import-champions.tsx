@@ -5,7 +5,7 @@ import { toast } from "react-toastify"
 import { CardContent } from "../../components/card/content"
 import { ErrorDisplay } from "../../components/feedback/error-display"
 import { ChampionList } from "../../components/results/champion-list"
-import { ImportScoresForm } from "../../components/scores/import-scores-form"
+import { UploadDataFileForm } from "../../components/scores/upload-data-file-form"
 import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
 import { useEventDocumentSave } from "../../hooks/use-event-documents"
 import { useImportChampions } from "../../hooks/use-import-champions"
@@ -51,7 +51,7 @@ export function ImportChampionsScreen() {
           <>
             <OverlaySpinner loading={uploadStatus === "pending" || importStatus === "pending"} />
             {/* TODO: this should be generalized to import any data file */}
-            <ImportScoresForm
+            <UploadDataFileForm
               commandName="Import Champions"
               onSubmit={handleUpload}
               className="mb-2"

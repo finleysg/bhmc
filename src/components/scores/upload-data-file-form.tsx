@@ -2,12 +2,12 @@ import { ComponentPropsWithoutRef, FormEvent, useState } from "react"
 
 import { FilePicker } from "../document/file-picker"
 
-interface ImportScoresFormProps extends Omit<ComponentPropsWithoutRef<"div">, "onSubmit"> {
+interface UploadDataFileFormProps extends Omit<ComponentPropsWithoutRef<"div">, "onSubmit"> {
   commandName: string
   onSubmit: (file: File) => void
 }
 
-export function ImportScoresForm({ commandName, onSubmit, ...rest }: ImportScoresFormProps) {
+export function UploadDataFileForm({ commandName, onSubmit, ...rest }: UploadDataFileFormProps) {
   const [refreshKey, setRefreshKey] = useState(0)
   const [files, setFiles] = useState<File[]>([])
 

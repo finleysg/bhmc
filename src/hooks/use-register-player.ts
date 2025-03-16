@@ -16,7 +16,7 @@ export function useRegisterPlayer(eventId: number) {
 
   return useMutation({
     mutationFn: ({ playerId, fees, isMoneyOwed, slotId, notes }: RegisterPlayersArgs) => {
-      return httpClient(apiUrl(`events/${eventId}/add-player/`), {
+      return httpClient(apiUrl(`events/${eventId}/add_player/`), {
         method: "PUT",
         body: JSON.stringify({
           player_id: playerId,
