@@ -7,6 +7,7 @@ import { createRefunds, RefundData } from "../../models/refund"
 import { Registration } from "../../models/registration"
 import { ConvertRegistrationsToReservations, Reservation, ReserveSlot } from "../../models/reserve"
 import { AddPlayer } from "./add-player"
+import { ChangeEvent } from "./change-event"
 import { DropPlayers } from "./drop-players"
 import { EditNotes } from "./edit-notes"
 import { ReservationAdmin } from "./reservation"
@@ -19,6 +20,7 @@ interface ReserveListAdminProps extends Omit<ComponentPropsWithoutRef<"div">, "o
   onDrop: (registrationId: number, slotIds: number[], refunds: Map<number, RefundData>) => void
   onSwap: (slot: ReserveSlot, newPlayerId: number) => void
   onNotesEdit: (registrationId: number, notes: string) => void
+  onChangeEvent: (registrationId: number, targetEventId: number) => void
 }
 
 /**
@@ -33,6 +35,7 @@ export function ReserveListAdmin({
   onDrop,
   onSwap,
   onNotesEdit,
+  onChangeEvent,
   ...rest
 }: ReserveListAdminProps) {
   const [selectedSlotId, setSelectedSlotId] = useState(-1)
@@ -42,6 +45,7 @@ export function ReserveListAdmin({
   const [showDrop, setShowDrop] = useState(false)
   const [showSwap, setShowSwap] = useState(false)
   const [showNotes, setShowNotes] = useState(false)
+  const [showChange, setShowChange] = useState(false)
 
   const reservations = ConvertRegistrationsToReservations(registrations ?? [])
   const notes = new Map(registrations.map((r) => [r.id, r.notes]))
@@ -180,6 +184,28 @@ export function ReserveListAdmin({
     setSelectedRegistrationId(-1)
   }
 
+  const handleChangeEvent = () => {
+    if (selectedSlots?.length > 0) {
+      setShowChange(true)
+    }
+  }
+
+  const handleChangeEventConfirm = (targetEvent: ClubEvent) => {
+    try {
+      onChangeEvent(selectedRegistrationId, targetEvent.id)
+    } finally {
+      setShowChange(false)
+      setSelectedSlotId(-1)
+      setSelectedRegistrationId(-1)
+    }
+  }
+
+  const handleChangeEventCancel = () => {
+    setShowChange(false)
+    setSelectedSlotId(-1)
+    setSelectedRegistrationId(-1)
+  }
+
   return (
     <div className="row">
       <div className="col-6 col-md-12">
@@ -203,6 +229,7 @@ export function ReserveListAdmin({
                 onDrop={handleDrop}
                 onSwap={handleSwap}
                 onEditNotes={handleEditNotes}
+                onChangeEvent={handleChangeEvent}
               />
             ))}
             <Modal show={showDrop}>
@@ -241,6 +268,14 @@ export function ReserveListAdmin({
                   registrationNotes={notes.get(selectedRegistrationId) ?? ""}
                   onEdit={handleEditNotesConfirm}
                   onCancel={handleEditNotesCancel}
+                />
+              )}
+            </Modal>
+            <Modal show={showChange}>
+              {selectedRegistrationId && (
+                <ChangeEvent
+                  onChange={handleChangeEventConfirm}
+                  onCancel={handleChangeEventCancel}
                 />
               )}
             </Modal>

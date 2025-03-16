@@ -3,16 +3,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { httpClient } from "../utils/api-client"
 import { apiUrl } from "../utils/api-utils"
 
-interface ImportScoresArgs {
-  eventId: number
-  documentId: number
-}
-
 export function useImportScores() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ eventId, documentId }: ImportScoresArgs) => {
+    mutationFn: ({ eventId, documentId }: { eventId: number; documentId: number }) => {
       return httpClient(apiUrl("import-scores"), {
         method: "POST",
         body: JSON.stringify({

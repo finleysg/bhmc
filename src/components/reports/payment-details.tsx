@@ -18,7 +18,7 @@ export function PaymentDetails({ eventId, paymentId }: PaymentDetailsProps) {
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
-    httpClient(apiUrl(`events/${eventId}/payment-report/${paymentId}/details/`))
+    httpClient(apiUrl(`reports/payment_details/?payment_id=${paymentId}`))
       .then((json) => {
         setData(json)
         setLoading(false)

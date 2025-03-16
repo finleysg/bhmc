@@ -99,7 +99,7 @@ export function PlayerSearch() {
 
   const searchPlayers = React.useCallback(
     async (pattern: string) => {
-      const results = await getMany(`player-search/?pattern=${pattern}`, PlayerApiSchema)
+      const results = await getMany(`players/search/?pattern=${pattern}`, PlayerApiSchema)
       const players = results.map((obj) => new Player(obj))
       players.forEach((p) => (p.isFriend = (friends?.findIndex((f) => f.id === p.id) ?? -1) >= 0))
       updateResults(players)

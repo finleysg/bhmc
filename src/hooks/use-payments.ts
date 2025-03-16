@@ -4,7 +4,7 @@ import { httpClient } from "../utils/api-client"
 import { apiUrl } from "../utils/api-utils"
 
 export function usePaymentAmount(paymentId: number) {
-  const endpoint = apiUrl(`payments/${paymentId}/amount/`)
+  const endpoint = apiUrl(`payments/${paymentId}/stripe_amount/`)
   return useQuery({
     queryKey: [endpoint],
     queryFn: () => httpClient(endpoint),
@@ -13,7 +13,7 @@ export function usePaymentAmount(paymentId: number) {
 }
 
 export function useCustomerSession() {
-  const endpoint = apiUrl("create-customer-session/")
+  const endpoint = apiUrl("payments/customer_session/")
   return useQuery({
     queryKey: [endpoint],
     queryFn: () => httpClient(endpoint, { method: "POST", body: JSON.stringify({}) }),
