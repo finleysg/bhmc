@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 
-import { useNavigate } from "react-router-dom"
+import { useBlocker, useNavigate } from "react-router-dom"
 
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 
@@ -18,6 +18,8 @@ import { useCurrentPaymentAmount } from "./payment-flow"
 export function PaymentScreen() {
   const { user } = useAuth()
   const [isBusy, setIsBusy] = useState(false)
+  const [paymentProcessing, setPaymentProcessing] = useState(false)
+  const [paymentCanceled, setPaymentCanceled] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { amount: stripeAmount } = useCurrentPaymentAmount()
   const {
@@ -25,6 +27,7 @@ export function PaymentScreen() {
     error,
     mode,
     registration,
+    cancelRegistration,
     completeRegistration,
     createPaymentIntent,
     setError,
@@ -37,9 +40,29 @@ export function PaymentScreen() {
 
   useEventRegistrationGuard(registration)
 
+  // This flag means the user has started the payment process, but
+  // something went wrong and they need to cancel before leaving.
+  const blocker = useBlocker(paymentProcessing)
+  if (blocker.state === "blocked" && paymentCanceled) {
+    blocker.proceed()
+  }
+
   const handleBack = () => {
     updateStep(ReviewStep)
-    navigate("../review", { replace: true })
+    navigate("../../review", { replace: true })
+  }
+
+  const handleCancelPayment = async () => {
+    if (blocker.state === "blocked") {
+      await cancelRegistration("navigation", mode)
+      blocker.proceed()
+    }
+  }
+
+  const handlePaymentCanceled = () => {
+    setPaymentProcessing(false)
+    setPaymentCanceled(true) // Overrides the blocker
+    navigate("../../", { replace: true }) // event detail
   }
 
   const handleError = (error: unknown) => {
@@ -65,7 +88,7 @@ export function PaymentScreen() {
 
     // Without this the spinner doesn't show up.
     setTimeout(() => {
-      console.log("Payment processing...")
+      // no-op
     }, 10)
 
     try {
@@ -77,6 +100,7 @@ export function PaymentScreen() {
       }
       // 2. Create the payment intent.
       const intent = await createPaymentIntent()
+      setPaymentProcessing(true)
 
       // 3. Confirm the payment.
       const { error: confirmError } = await stripe!.confirmPayment({
@@ -101,7 +125,8 @@ export function PaymentScreen() {
         return
       }
 
-      // Does some cache invalidation.
+      // Payment processed = safe to navigate away.
+      setPaymentProcessing(false)
       completeRegistration()
     } catch (err) {
       handleError(err)
@@ -123,6 +148,14 @@ export function PaymentScreen() {
               Amount due: {config.currencyFormatter.format(stripeAmount / 100)}
             </h6>
             {error && <ErrorDisplay error={error?.message} onClose={() => setError(null)} />}
+            {blocker.state === "blocked" && (
+              <div className="mb-4">
+                <p>Your payment should be canceled before leaving this page.</p>
+                <button className="btn btn-danger" onClick={handleCancelPayment}>
+                  Cancel and Proceed
+                </button>
+              </div>
+            )}
             <div className="mb-4">
               <PaymentElement
                 options={{
@@ -146,12 +179,16 @@ export function PaymentScreen() {
             <hr />
             <div style={{ textAlign: "right" }}>
               <RegisterCountdown doCountdown={mode === "new"} />
-              <button className="btn btn-secondary" disabled={isBusy} onClick={handleBack}>
+              <button
+                className="btn btn-secondary"
+                disabled={isBusy || paymentProcessing}
+                onClick={handleBack}
+              >
                 Back
               </button>
-              <CancelButton mode={mode} />
+              <CancelButton mode={mode} onCanceled={handlePaymentCanceled} />
               <button
-                disabled={!stripe || !elements}
+                disabled={!stripe || !elements || isBusy}
                 className="btn btn-primary ms-2"
                 ref={buttonRef}
                 onClick={handleSubmitPayment}

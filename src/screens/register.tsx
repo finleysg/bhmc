@@ -29,6 +29,7 @@ export function RegisterScreen() {
     error,
     payment,
     registration,
+    cancelRegistration,
     canRegister,
     addFee,
     addPlayer,
@@ -53,6 +54,12 @@ export function RegisterScreen() {
         ? "vertical"
         : "horizontal"
   const showPickers = (clubEvent?.maximumSignupGroupSize ?? 0) > 1
+
+  const handlePriorityCancel = () => {
+    setShowPriorityDialog(false)
+    cancelRegistration("violation", "new")
+    navigate("../", { replace: true })
+  }
 
   const handleFriendSelect = (friend: Player) => {
     const slot = registration?.slots.find((slot) => !slot.playerId)
@@ -165,15 +172,10 @@ export function RegisterScreen() {
       </div>
       <div className="col-12 col-md-3">
         {showPickers && <FriendPickerCard clubEvent={clubEvent} onSelect={handleFriendSelect} />}
-        <Dialog
-          show={showPriorityDialog}
-          title="Large Groups Only"
-          onClose={() => setShowPriorityDialog(false)}
-        >
+        <Dialog show={showPriorityDialog} title="Large Groups Only" onClose={handlePriorityCancel}>
           <p>
             During the priority registration period, you must have 3 to 5 players to register.
-            Please add more players to your group or cancel your registration and wait until sign
-            ups open for everyone.
+            Please wait until sign ups open for twosomes and singles.
           </p>
         </Dialog>
       </div>
