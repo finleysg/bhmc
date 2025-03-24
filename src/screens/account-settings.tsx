@@ -1,4 +1,3 @@
-import { MyCards } from "../components/account/my-cards"
 import { MyEvents } from "../components/account/my-events"
 import { MyFriends } from "../components/account/my-friends"
 
@@ -12,9 +11,7 @@ export function AccountSettingsScreen() {
         <div className="col-lg-4 col-md-6 col-12">
           <MyFriends />
         </div>
-        <div className="col-lg-4 col-md-6 col-12">
-          <MyCards />
-        </div>
+        <div className="col-lg-4 col-md-6 col-12">{/* <MyCards /> */}</div>
       </div>
     </div>
   )
