@@ -45,7 +45,7 @@ export interface IRegistrationContext {
   addFee: (slot: RegistrationSlot, eventFee: EventFee, player: Player) => void
   addPlayer: (slot: RegistrationSlot, player: Player) => void
   cancelRegistration: (
-    reason: "user" | "timeout" | "navigation",
+    reason: "user" | "timeout" | "navigation" | "violation",
     mode: RegistrationMode,
   ) => Promise<void>
   canRegister: () => boolean
@@ -173,7 +173,7 @@ export function EventRegistrationProvider({
   })
 
   const { mutateAsync: _cancelRegistration } = useMutation({
-    mutationFn: ({ reason }: { reason: "user" | "timeout" | "navigation" }) => {
+    mutationFn: ({ reason }: { reason: "user" | "timeout" | "navigation" | "violation" }) => {
       const regId = state.registration?.id ?? 0
       const pmtId = state.payment?.id ?? 0
       const endpoint = `registration/${regId}/cancel/?reason=${reason}&payment_id=${pmtId}`
@@ -347,7 +347,7 @@ export function EventRegistrationProvider({
    * Cancels the current registration and resets the registration process flow.
    */
   const cancelRegistration = useCallback(
-    (reason: "user" | "timeout" | "navigation", mode: RegistrationMode) => {
+    (reason: "user" | "timeout" | "navigation" | "violation", mode: RegistrationMode) => {
       if (mode === "new") {
         return _cancelRegistration({ reason })
       } else {

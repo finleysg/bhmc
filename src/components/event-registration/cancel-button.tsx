@@ -6,7 +6,13 @@ import { RegistrationMode } from "../../context/registration-reducer"
 import { useEventRegistration } from "../../hooks/use-event-registration"
 import { ConfirmDialog } from "../dialog/confirm"
 
-export function CancelButton({ mode }: { mode: RegistrationMode }) {
+export function CancelButton({
+  mode,
+  onCanceled,
+}: {
+  mode: RegistrationMode
+  onCanceled?: () => void
+}) {
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const { cancelRegistration, currentStep } = useEventRegistration()
   const navigate = useNavigate()
@@ -20,10 +26,15 @@ export function CancelButton({ mode }: { mode: RegistrationMode }) {
   const handleCancel = async () => {
     setShowCancelDialog(false)
     await cancelRegistration("user", mode)
-    if (currentStep.name === "payment") {
-      navigate("../../")
+    if (onCanceled) {
+      onCanceled()
     } else {
-      navigate("../")
+      // TODO: Remove this else block so the caller is responsible for navigation
+      if (currentStep.name === "payment") {
+        navigate("../../")
+      } else {
+        navigate("../")
+      }
     }
   }
 

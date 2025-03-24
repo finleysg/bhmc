@@ -13,7 +13,7 @@ import { GalleryImageScreen } from "../screens/gallery-image"
 import { HomeScreen } from "../screens/home"
 import { MaintenanceScreen } from "../screens/maintenance"
 import { MatchPlayScreen } from "../screens/match-play"
-import { MembershipScreen } from "../screens/membership"
+import { MembershipFull } from "../screens/membership-full"
 import { NotFoundScreen } from "../screens/not-found"
 import { PaymentScreen } from "../screens/payment"
 import { PaymentFlow } from "../screens/payment-flow"
@@ -36,7 +36,7 @@ export const mainRoutes = () =>
     : [
         { path: "/", element: <HomeScreen /> },
         { path: "/home", element: <HomeScreen /> },
-        { path: "/membership", element: <MembershipScreen /> },
+        { path: "/membership", element: <MembershipFull /> },
         { path: "/calendar/:year/:monthName", element: <CalendarScreen /> },
         {
           path: "/event/:eventDate/:eventName",
