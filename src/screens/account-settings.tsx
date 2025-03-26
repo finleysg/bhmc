@@ -1,5 +1,6 @@
 import { MyEvents } from "../components/account/my-events"
 import { MyFriends } from "../components/account/my-friends"
+import { MyPoints } from "../components/points/my-points"
 
 export function AccountSettingsScreen() {
   return (
@@ -9,9 +10,11 @@ export function AccountSettingsScreen() {
           <MyEvents />
         </div>
         <div className="col-lg-4 col-md-6 col-12">
+          <MyPoints />
+        </div>
+        <div className="col-lg-4 col-md-6 col-12">
           <MyFriends />
         </div>
-        <div className="col-lg-4 col-md-6 col-12">{/* <MyCards /> */}</div>
       </div>
     </div>
   )

@@ -354,3 +354,35 @@ export class ClubEvent {
     return { found: false, clubEvent: null }
   }
 }
+
+export const SimpleEventApiSchema = z.object({
+  id: z.number(),
+  event_type: z.string(),
+  name: z.string(),
+  season: z.number(),
+  start_date: z.string(),
+})
+
+export type SimpleEventData = z.infer<typeof SimpleEventApiSchema>
+
+export class SimpleEvent {
+  [immerable] = true
+
+  id: number
+  eventType: string
+  eventUrl: string
+  name: string
+  season: number
+  startDate: Date
+  startDateString: string
+
+  constructor(json: SimpleEventData) {
+    this.id = json.id
+    this.eventType = json.event_type
+    this.name = json.name
+    this.season = json.season
+    this.startDate = parse(json.start_date, "yyyy-MM-dd", new Date())
+    this.startDateString = json.start_date
+    this.eventUrl = `/event/${isoDayFormat(this.startDate)}/${slugify(json.name)}`
+  }
+}
