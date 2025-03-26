@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { SimpleEvent, SimpleEventApiSchema } from "./club-event"
 import { PlayerApiSchema } from "./player"
 
 export const TopPointsSchema = z.object({
@@ -46,5 +47,34 @@ export class Points {
     this.category = data.additional_info
     this.grossPoints = data.gross_points ?? 0
     this.netPoints = data.net_points ?? 0
+  }
+}
+
+export const PlayerPointsApiSchema = z.object({
+  id: z.number(),
+  player: z.number(),
+  gross_points: z.number().nullish(),
+  net_points: z.number().nullish(),
+  additional_info: z.string(),
+  event: SimpleEventApiSchema,
+})
+
+export type PlayerPointsData = z.infer<typeof PlayerPointsApiSchema>
+
+export class PlayerPoints {
+  id: number
+  playerId: number
+  category: string
+  grossPoints: number
+  netPoints: number
+  event: SimpleEvent
+
+  constructor(data: PlayerPointsData) {
+    this.id = data.id
+    this.playerId = data.player
+    this.category = data.additional_info
+    this.grossPoints = data.gross_points ?? 0
+    this.netPoints = data.net_points ?? 0
+    this.event = new SimpleEvent(data.event)
   }
 }
