@@ -3,7 +3,6 @@ import React, { useEffect } from "react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
-import { useMyPlayerRecord } from "../../hooks/use-my-player-record"
 import { useMyRegistrationStatus } from "../../hooks/use-my-registration-status"
 import { ClubEvent } from "../../models/club-event"
 import { EventStatusType, getRegistrationTypeName, getStartTypeName } from "../../models/codes"
@@ -23,9 +22,9 @@ export interface EventDetailProps {
 }
 
 export function EventDetail({ clubEvent, onRegister, onEditRegistration }: EventDetailProps) {
-  const { data: player } = useMyPlayerRecord()
+  // const { data: player } = useMyPlayerRecord()
   const hasSignedUp = useMyRegistrationStatus(clubEvent.id)
-  const isEligible = clubEvent.playerIsEligible(player)
+  // const isEligible = clubEvent.playerIsEligible(player)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -100,7 +99,7 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
               <strong>You are registered for this event.</strong>
             </p>
           )}
-          {!isEligible && (
+          {/* {!isEligible && (
             <p className="text-danger">
               {player?.birthDate ? (
                 <strong>You are not eligible for this event because you are {player.age}.</strong>
@@ -111,7 +110,7 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
                 </strong>
               )}
             </p>
-          )}
+          )} */}
           <h4 className="text-primary" style={{ marginTop: "2rem" }}>
             Notes / Format
           </h4>
