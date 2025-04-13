@@ -17,6 +17,10 @@
     color: $yellow-400;
   }
 
+  &__unavailable {
+    color: $gray-400;
+  }
+  
   .reserve-group-name {
     // flex: 1.5;
     min-width: 240px;

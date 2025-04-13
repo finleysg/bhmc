@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { toast } from "react-toastify"
 
 import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import { FullPageSpinner } from "./components/spinners/full-screen-spinner"
 import { AuthProvider } from "./context/auth-context"
@@ -69,7 +70,7 @@ export function App() {
           <RouterProvider router={routes} fallbackElement={<FullPageSpinner />} />
         </AuthProvider>
       </LayoutProvider>
-      {/* <ReactQueryDevtools /> */}
+      <ReactQueryDevtools />
     </QueryClientProvider>
   )
 }

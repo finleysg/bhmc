@@ -12,10 +12,11 @@ interface ReserveGridProps extends ComponentPropsWithoutRef<"div"> {
   table: ReserveTable
   error: Error | null
   mode: "view" | "edit"
+  wave: number
   onReserve: (course: Course, groupName: string, slots: ReserveSlot[]) => void
 }
 
-export function ReserveGrid({ table, mode, onReserve, ...rest }: ReserveGridProps) {
+export function ReserveGrid({ table, mode, wave, onReserve, ...rest }: ReserveGridProps) {
   const [selectedSlots, updateSelectedSlots] = React.useState<ReserveSlot[]>([])
   const { error, setError } = useEventRegistration()
 
@@ -84,6 +85,7 @@ export function ReserveGrid({ table, mode, onReserve, ...rest }: ReserveGridProp
               mode={mode}
               courseName={table.course.name}
               group={group}
+              wave={wave}
               onSelect={handleSelect}
               onReserve={handleReserve}
             />

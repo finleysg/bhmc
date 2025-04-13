@@ -95,6 +95,7 @@ export class ReserveGroup {
   slots: ReserveSlot[]
   startingOrder: number
   name: string
+  wave: number
 
   constructor(course: Course, hole: Hole, slots: RegistrationSlot[], name: string) {
     this.id = `${course.name.toLowerCase()}-${name.toLowerCase()}`
@@ -104,6 +105,7 @@ export class ReserveGroup {
     this.slots = slots.map((slot) => new ReserveSlot(this.id, slot))
     this.startingOrder = this.slots[0]?.startingOrder
     this.name = name // starting hole or tee time
+    this.wave = deriveWave(name)
   }
 
   isRegistered = (playerId: number) => {
@@ -330,4 +332,22 @@ export const ConvertRegistrationsToReservations = (registrations: Registration[]
       })
   })
   return reservations
+}
+
+const deriveWave = (timeAsString: string) => {
+  const hour = parseInt(timeAsString.split(":")[0], 10)
+  switch (hour) {
+    case 2:
+      return 1
+    case 3:
+      return 2
+    case 4:
+      return 3
+    case 5:
+      return 4
+    case 6:
+      return 4
+    default:
+      return 0
+  }
 }

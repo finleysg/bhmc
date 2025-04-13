@@ -4,12 +4,20 @@ import { ReserveSlot } from "../../models/reserve"
 
 interface ReserveCardProps extends Omit<ComponentPropsWithoutRef<"div">, "onSelect"> {
   reserveSlot: ReserveSlot
+  isAvailable: boolean
+  availabilityText?: string
   onSelect: (slot: ReserveSlot) => void
 }
 
-export function ReserveCard({ reserveSlot, onSelect, ...rest }: ReserveCardProps) {
+export function ReserveCard({
+  reserveSlot,
+  isAvailable,
+  availabilityText,
+  onSelect,
+  ...rest
+}: ReserveCardProps) {
   const handleSelect = () => {
-    if (reserveSlot.canSelect()) {
+    if (isAvailable && reserveSlot.canSelect()) {
       onSelect(reserveSlot)
     }
   }
@@ -31,7 +39,11 @@ export function ReserveCard({ reserveSlot, onSelect, ...rest }: ReserveCardProps
       tabIndex={0}
       {...rest}
     >
-      <span>{reserveSlot.displayText()}</span>
+      {isAvailable || reserveSlot.statusName === "Reserved" ? (
+        <span>{reserveSlot.displayText()}</span>
+      ) : (
+        <span>{availabilityText}</span>
+      )}
     </div>
   )
 }
