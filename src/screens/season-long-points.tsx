@@ -1,12 +1,17 @@
+import { useState } from "react"
+
 import { CardContent } from "../components/card/content"
 import { ClubDocument } from "../components/document/club-document"
 import { HistoricalDocuments } from "../components/document/historical-documents"
 import { PointsTable } from "../components/points/points-table"
+import { TopPoints } from "../components/points/top-points"
+import { IndexTab } from "../components/tab/index-tab"
+import { Tabs } from "../components/tab/tabs"
 import { DocumentType } from "../models/codes"
 import { currentSeason } from "../utils/app-config"
 
 export function SeasonLongPointsScreen() {
-  // const [selectedCategory, updateSelectedCategory] = React.useState<"gross" | "net">("gross")
+  const [selectedCategory, updateSelectedCategory] = useState<"gross" | "net">("gross")
 
   return (
     <div className="content__inner">
@@ -19,14 +24,14 @@ export function SeasonLongPointsScreen() {
               <ClubDocument code="SLPN" />
             </div>
           </div>
-          {/* <Tabs>
+          <Tabs>
             <IndexTab
               key="gross"
               index={0}
               selectedIndex={selectedCategory === "gross" ? 0 : 1}
               onSelect={() => updateSelectedCategory("gross")}
             >
-              Top 50 Gross
+              Top 25 Gross
             </IndexTab>
             <IndexTab
               key="net"
@@ -34,10 +39,10 @@ export function SeasonLongPointsScreen() {
               selectedIndex={selectedCategory === "gross" ? 0 : 1}
               onSelect={() => updateSelectedCategory("net")}
             >
-              Top 50 Net
+              Top 25 Net
             </IndexTab>
           </Tabs>
-          <TopPoints category={selectedCategory} topN={50} /> */}
+          <TopPoints category={selectedCategory} topN={25} />
         </div>
         <div className="col-xl-6 col-12">
           <CardContent contentKey="season-long-points" />

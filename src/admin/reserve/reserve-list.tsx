@@ -18,6 +18,7 @@ interface ReserveListAdminProps extends Omit<ComponentPropsWithoutRef<"div">, "o
   registrations: Registration[]
   onRegister: (playerId: number, feeIds: number[], isMoneyOwed: boolean, notes: string) => void
   onDrop: (registrationId: number, slotIds: number[], refunds: Map<number, RefundData>) => void
+  onRefund: (refunds: Map<number, RefundData>) => void
   onSwap: (slot: ReserveSlot, newPlayerId: number) => void
   onNotesEdit: (registrationId: number, notes: string) => void
   onChangeEvent: (registrationId: number, targetEventId: number) => void
@@ -33,6 +34,7 @@ export function ReserveListAdmin({
   registrations,
   onRegister,
   onDrop,
+  onRefund,
   onSwap,
   onNotesEdit,
   onChangeEvent,
@@ -51,11 +53,7 @@ export function ReserveListAdmin({
   const notes = new Map(registrations.map((r) => [r.id, r.notes]))
 
   const handleSlotSelect = (reservation: Reservation) => {
-    if (selectedRegistrationId === reservation.registrationId) {
-      setSelectedRegistrationId(-1)
-    } else {
-      setSelectedRegistrationId(reservation.registrationId)
-    }
+    setSelectedRegistrationId(-1)
 
     if (selectedSlotId === reservation.slotId) {
       setSelectedSlotId(-1)
@@ -127,6 +125,17 @@ export function ReserveListAdmin({
       const slotIds = dropSlots.map((slot) => slot.id)
       const refunds = createRefunds(dropSlots, dropNotes)
       onDrop(registrationId, slotIds, refunds)
+    } finally {
+      setShowDrop(false)
+      setSelectedSlotId(-1)
+      setSelectedRegistrationId(-1)
+    }
+  }
+
+  const handleRefundConfirm = (slots: ReserveSlot[], notes: string) => {
+    try {
+      const refunds = createRefunds(slots, notes)
+      onRefund(refunds)
     } finally {
       setShowDrop(false)
       setSelectedSlotId(-1)
@@ -239,6 +248,7 @@ export function ReserveListAdmin({
                   slots={selectedSlots}
                   onCancel={handleDropCancel}
                   onDrop={handleDropConfirm}
+                  onRefund={handleRefundConfirm}
                 />
               )}
             </Modal>

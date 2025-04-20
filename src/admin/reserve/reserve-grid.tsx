@@ -29,6 +29,7 @@ interface ReserveGridAdminProps extends Omit<ComponentPropsWithoutRef<"div">, "o
     destinationSlots: ReserveSlot[],
   ) => void
   onDrop: (registrationId: number, slotIds: number[], refunds: Map<number, RefundData>) => void
+  onRefund: (refunds: Map<number, RefundData>) => void
   onSwap: (slot: ReserveSlot, newPlayerId: number) => void
 }
 
@@ -38,6 +39,7 @@ export function ReserveGridAdmin({
   onRegister,
   onMove,
   onDrop,
+  onRefund,
   onSwap,
   ...rest
 }: ReserveGridAdminProps) {
@@ -122,6 +124,17 @@ export function ReserveGridAdmin({
       const slotIds = dropSlots.map((slot) => slot.id)
       const refunds = createRefunds(dropSlots, dropNotes)
       onDrop(selectedRegistration, slotIds, refunds)
+    } finally {
+      setShowDrop(false)
+      updateSelectedSlots([])
+      setSelectStatus("none")
+    }
+  }
+
+  const handleRefundConfirm = (slots: ReserveSlot[], notes: string) => {
+    try {
+      const refunds = createRefunds(slots, notes)
+      onRefund(refunds)
     } finally {
       setShowDrop(false)
       updateSelectedSlots([])
@@ -216,6 +229,7 @@ export function ReserveGridAdmin({
             slots={selectedSlots}
             onCancel={handleDropCancel}
             onDrop={handleDropConfirm}
+            onRefund={handleRefundConfirm}
           />
         )}
       </Modal>

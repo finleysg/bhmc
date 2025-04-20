@@ -11,7 +11,9 @@ export interface Refund {
   selected: boolean
 }
 
+// Basically a partial register_registrationfee record
 export interface RefundInstance {
+  fee_id: number // registationfee.id (aka payment detail id)
   event_fee_id: number
   amount_paid: number
 }
@@ -29,11 +31,17 @@ export const createRefunds = (slots: ReserveSlot[], notes: string) => {
     .reduce((acc, curr) => {
       const refund = acc.get(curr.payment.id)
       if (refund) {
-        refund.refund_fees.push({ event_fee_id: curr.eventFee.id, amount_paid: curr.amountPaid })
+        refund.refund_fees.push({
+          fee_id: curr.id,
+          event_fee_id: curr.eventFee.id,
+          amount_paid: curr.amountPaid,
+        })
       } else {
         acc.set(curr.payment.id, {
           payment: curr.payment.id,
-          refund_fees: [{ event_fee_id: curr.eventFee.id, amount_paid: curr.amountPaid }],
+          refund_fees: [
+            { fee_id: curr.id, event_fee_id: curr.eventFee.id, amount_paid: curr.amountPaid },
+          ],
           notes,
         })
       }

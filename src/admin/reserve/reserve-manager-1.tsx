@@ -76,6 +76,16 @@ export function ReserveManager1({ clubEvent }: ClubEventProps) {
     }
   }
 
+  const handleRefund = async (refunds: Map<number, RefundData>) => {
+    try {
+      setBusy(true)
+      await issueRefunds(refunds)
+      toast.success("Refunds have been triggered.")
+    } finally {
+      setBusy(false)
+    }
+  }
+
   const handleSwap = async (slot: ReserveSlot, newPlayerId: number) => {
     await swapPlayers({
       slotId: slot.id,
@@ -122,6 +132,7 @@ export function ReserveManager1({ clubEvent }: ClubEventProps) {
             onRegister={handleRegister}
             onMove={handleMove}
             onDrop={handleDrop}
+            onRefund={handleRefund}
             onSwap={handleSwap}
           />
         </div>

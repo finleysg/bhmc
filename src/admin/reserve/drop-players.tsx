@@ -39,14 +39,16 @@ const createRefundDetails = (
         ? payment.payment_details.filter((d) => d.registration_slot === slot.id)
         : []
       paymentDetails.forEach((detail) => {
-        newSlot.fees.push({
-          id: detail.id,
-          eventFee: eventFeeMap.get(detail.event_fee)!,
-          amountPaid: detail.amount ?? -1, // TODO: there should always be an amount
-          paidBy: `TODO: derive user from id: ${payment.user}`,
-          payment: payment,
-          selected: true,
-        })
+        if (detail.is_paid) {
+          newSlot.fees.push({
+            id: detail.id,
+            eventFee: eventFeeMap.get(detail.event_fee)!,
+            amountPaid: detail.amount ?? -1, // TODO: there should always be an amount
+            paidBy: `TODO: derive user from id: ${payment.user}`,
+            payment: payment,
+            selected: true,
+          })
+        }
       })
     })
     transformedSlots.push(newSlot)
@@ -58,10 +60,11 @@ interface DropPlayersProps {
   clubEvent: ClubEvent
   slots: ReserveSlot[]
   onDrop: (slots: ReserveSlot[], notes: string) => void
+  onRefund: (slots: ReserveSlot[], notes: string) => void
   onCancel: () => void
 }
 
-export function DropPlayers({ clubEvent, slots, onDrop, onCancel }: DropPlayersProps) {
+export function DropPlayers({ clubEvent, slots, onRefund, onDrop, onCancel }: DropPlayersProps) {
   const [dropSlots, setDropSlots] = useState<ReserveSlot[]>([])
   const [dropNotes, setDropNotes] = useState("")
   const { data: payments, status } = usePaymentData(clubEvent.id)
@@ -98,6 +101,10 @@ export function DropPlayers({ clubEvent, slots, onDrop, onCancel }: DropPlayersP
     onDrop(dropSlots, dropNotes)
   }
 
+  const handleRefund = () => {
+    onRefund(dropSlots, dropNotes)
+  }
+
   const updateDropNotes = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setDropNotes(e.target.value)
   }
@@ -126,6 +133,9 @@ export function DropPlayers({ clubEvent, slots, onDrop, onCancel }: DropPlayersP
         <div className="card-footer d-flex justify-content-end pb-0">
           <button className="btn btn-light me-2 mt-2" onClick={onCancel}>
             Cancel
+          </button>
+          <button className="btn btn-warning me-2 mt-2" onClick={handleRefund}>
+            Refund Only
           </button>
           <button className="btn btn-danger mt-2" onClick={handleDrop}>
             Confirm Drop
