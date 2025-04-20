@@ -21,7 +21,7 @@ export const PaymentApiSchema = z.object({
   event: z.number(),
   user: z.number().nullish(),
   payment_code: z.string(),
-  payment_key: z.string(),
+  payment_key: z.string().nullish(),
   payment_amount: z.coerce.number().nullish(),
   transaction_fee: z.coerce.number().nullish(),
   notification_type: z.string().nullish(),
@@ -104,7 +104,7 @@ export class Payment {
     this.id = json.id
     this.eventId = json.event
     this.paymentCode = json.payment_code
-    this.paymentKey = json.payment_key
+    this.paymentKey = json.payment_key ?? "n/a"
     this.paymentAmount = json.payment_amount ?? 0
     this.transactionFee = json.transaction_fee ?? 0
     this.notificationType = json.notification_type
