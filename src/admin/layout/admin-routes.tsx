@@ -6,6 +6,7 @@ import { EventDocumentsScreen } from "../screens/event-documents"
 import { EventReportScreen } from "../screens/event-report"
 import { ImportChampionsScreen } from "../screens/import-champions"
 import { ImportLeaderboardScreen } from "../screens/import-leaderboard"
+import { ImportMajorPointsScreen } from "../screens/import-major-points"
 import { ManagePlayersScreen } from "../screens/manage-players"
 import { PaymentReportScreen } from "../screens/payment-report"
 import { RegistrationNotesScreen } from "../screens/registration-notes"
@@ -45,6 +46,7 @@ export const adminRoutes = () => [
           { path: "update-portal", element: <UpdatePortalScreen /> },
           { path: "manage-documents", element: <EventDocumentsScreen /> },
           { path: "import-leaderboard", element: <ImportLeaderboardScreen /> },
+          { path: "import-major-points", element: <ImportMajorPointsScreen /> },
           { path: "import-champions", element: <ImportChampionsScreen /> },
           { path: "view-slots", element: <ViewSlotsScreen /> },
           { path: "append-teetime", element: <AppendTeetimesScreen /> },

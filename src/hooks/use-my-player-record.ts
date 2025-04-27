@@ -1,7 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query"
 
-import { Player, PlayerApiData, PlayerApiSchema } from "../models/player"
-import { getOne, httpClient } from "../utils/api-client"
+import {
+  Player,
+  PlayerApiData,
+  PlayerApiSchema,
+} from "../models/player"
+import {
+  getOne,
+  httpClient,
+} from "../utils/api-client"
 import { apiUrl } from "../utils/api-utils"
 import { useAuth } from "./use-auth"
 
@@ -34,6 +45,7 @@ export function useUpdateMyPlayerRecord() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["player"] })
+      window.location.reload()
     },
   })
 }
