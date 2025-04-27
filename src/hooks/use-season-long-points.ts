@@ -17,7 +17,7 @@ interface TopPointsArgs {
 }
 
 export function useTopPoints({ season, topN, category }: TopPointsArgs) {
-  const endpoint = `season-long-points/top_points/?season=${season}&category=${category}&top=${topN}/`
+  const endpoint = `season-long-points/top_points/?season=${season}&category=${category}&top=${topN}`
 
   return useQuery({
     queryKey: ["season-long-points", season, category, topN],
@@ -57,5 +57,6 @@ export function usePlayerPoints({ season, playerId }: SeasonLongPointsArgs) {
     queryKey: ["season-long-points", season, playerId],
     queryFn: () => getMany<PlayerPointsData>(endpoint, PlayerPointsApiSchema),
     select: (data) => data.map((pp) => new PlayerPoints(pp)),
+    enabled: playerId !== undefined,
   })
 }

@@ -84,6 +84,16 @@ export function ImportLeaderboardCard() {
   )
 }
 
+export function ImportPointsCard() {
+  return (
+    <AdminCard
+      title="Import Points"
+      action={"import-major-points"}
+      description="Upload the Golf Genius points export file for this event."
+    />
+  )
+}
+
 export function ImportChampionsCard() {
   return (
     <AdminCard

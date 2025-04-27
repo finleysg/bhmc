@@ -6,6 +6,7 @@ import {
   EventSettingsCard,
   ImportChampionsCard,
   ImportLeaderboardCard,
+  ImportPointsCard,
   ManageDocumentsCard,
   ManagePlayersCard,
   PaymentReportCard,
@@ -45,6 +46,11 @@ export function EventAdminMenu() {
         {clubEvent.eventType === EventType.Weeknight && clubEvent.registrationWindow === "past" && (
           <div className="col">
             <ImportLeaderboardCard />
+          </div>
+        )}
+        {clubEvent.eventType === EventType.Major && clubEvent.registrationWindow === "past" && (
+          <div className="col">
+            <ImportPointsCard />
           </div>
         )}
         {clubEvent.eventType === EventType.Major && clubEvent.registrationWindow === "past" && (
