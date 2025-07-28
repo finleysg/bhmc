@@ -35,6 +35,7 @@ test("can add single day events to a Calendar", () => {
     registration_window: "registration",
     season: 2020,
     status: EventStatusType.Scheduled,
+    age_restriction_type: "N",
   })
   const event1 = new ClubEvent(eventData)
 
@@ -66,6 +67,7 @@ test("can add multi-day events to a Calendar", () => {
     registration_window: "registration",
     season: 2020,
     status: EventStatusType.Scheduled,
+    age_restriction_type: "N",
   })
   const event1 = new ClubEvent(eventData)
   const october = new Calendar(2020, "October")

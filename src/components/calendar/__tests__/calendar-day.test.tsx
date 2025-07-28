@@ -44,6 +44,7 @@ test("always renders a date with an event", async () => {
         registration_window: "registration",
         season: 2020,
         status: EventStatusType.Scheduled,
+        age_restriction_type: "N",
       }),
     ),
   )
@@ -102,6 +103,7 @@ test("renders an internal link for club events", async () => {
         registration_window: "registration",
         season: 2020,
         status: EventStatusType.Scheduled,
+        age_restriction_type: "N",
       }),
     ),
   )
@@ -137,6 +139,7 @@ test("overrides the link to the season event", async () => {
         registration_window: "registration",
         season: 2020,
         status: EventStatusType.Scheduled,
+        age_restriction_type: "N",
       }),
     ),
   )
@@ -172,6 +175,7 @@ test("overrides the link to the match play event", async () => {
         registration_window: "registration",
         season: 2020,
         status: EventStatusType.Scheduled,
+        age_restriction_type: "N",
       }),
     ),
   )
@@ -209,6 +213,7 @@ test("renders an external url for non-club events", async () => {
         season: 2020,
         status: EventStatusType.Scheduled,
         external_url: externalUrl,
+        age_restriction_type: "N",
       }),
     ),
   )
@@ -241,6 +246,7 @@ test("renders a link to event admin for administrators", async () => {
         registration_window: "registration",
         season: 2020,
         status: EventStatusType.Scheduled,
+        age_restriction_type: "N",
       }),
     ),
   )
@@ -270,6 +276,7 @@ test("does not render a link to event admin for non-administrators", async () =>
         registration_window: "registration",
         season: 2020,
         status: EventStatusType.Scheduled,
+        age_restriction_type: "N",
       }),
     ),
   )

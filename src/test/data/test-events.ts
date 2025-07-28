@@ -250,6 +250,7 @@ const SeasonRegistrationEvent = {
   registration_window: "registration",
   notes: "notes",
   event_type: "R",
+  age_restriction_type: "N",
   start_date: format(subDays(new Date(), 1), "yyyy-MM-dd"),
   start_time: "Open",
   registration_type: "O",
@@ -303,6 +304,7 @@ const MatchPlayEvent = {
   can_choose: false,
   courses: [],
   event_type: "O",
+  age_restriction_type: "N",
   fees: [
     {
       amount: 30,
@@ -349,6 +351,7 @@ const MatchPlayEvent = {
 const MajorEvent = {
   can_choose: false,
   event_type: "W",
+  age_restriction_type: "N",
   fees: commonFees,
   ghin_required: true,
   group_size: 4,
@@ -377,6 +380,7 @@ const WeeknightTeetimeEvent = {
   can_choose: true,
   courses: nineHoleCourses,
   event_type: "N",
+  age_restriction_type: "N",
   fees: commonFees,
   ghin_required: true,
   group_size: 5,
@@ -404,6 +408,7 @@ const WeeknightTeetimeEvent = {
 const OpenEvent = {
   can_choose: false,
   event_type: "O",
+  age_restriction_type: "N",
   fees: commonFees,
   ghin_required: true,
   group_size: 4,
@@ -431,6 +436,7 @@ const OpenEvent = {
 const MemberGuestEvent = {
   can_choose: false,
   event_type: "O",
+  age_restriction_type: "N",
   fees: commonFees,
   ghin_required: false,
   group_size: 4,
@@ -469,6 +475,7 @@ const WeeknightShotgunEvent = {
   season: 2021,
   notes: "Test event",
   event_type: "N",
+  age_restriction_type: "N",
   skins_type: "I",
   season_points: 30,
   start_date: "2021-02-01",
@@ -485,6 +492,7 @@ const WeeknightShotgunEvent = {
 const DeadlineEvent = {
   can_choose: false,
   event_type: "O",
+  age_restriction_type: "N",
   ghin_required: false,
   group_size: 4,
   id: TestEventType.deadline,
