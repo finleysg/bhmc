@@ -1,31 +1,28 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useState } from "react"
 
 interface EditNotesProps {
-  registrationNotes: string
+  registrationNotes: string | null
   signedUpBy: string
   onEdit: (notes: string) => void
   onCancel: () => void
 }
 
 export function EditNotes({ registrationNotes, signedUpBy, onEdit, onCancel }: EditNotesProps) {
-  const [notes, setNotes] = useState("")
-
-  useEffect(() => {
-    setNotes(registrationNotes)
-  }, [registrationNotes])
+  const [notes, setNotes] = useState(registrationNotes || "")
 
   const handleCancel = () => {
-    setNotes(registrationNotes ?? "")
+    setNotes("")
     onCancel()
   }
 
   const handleNotesChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const notes = e.target.value
-    setNotes(notes)
+    const newNotes = e.target.value
+    setNotes(newNotes)
   }
 
   const handleEdit = () => {
     onEdit(notes)
+    setNotes("")
   }
 
   return (
@@ -34,21 +31,37 @@ export function EditNotes({ registrationNotes, signedUpBy, onEdit, onCancel }: E
         <h4 className="card-header text-info mb-2">Edit Registration Notes</h4>
         <p className="mt-2 fw-bold text-info-emphasis">Registering player: {signedUpBy}</p>
         <div className="form-group mb-2">
-          <label htmlFor="notes">Notes / Player Requests</label>
+          <label htmlFor="registration-notes" className="form-label">
+            Notes / Player Requests
+          </label>
           <textarea
-            id="notes"
+            id="registration-notes"
             name="notes"
             className="form-control fc-alt"
             value={notes}
             onChange={handleNotesChange}
             rows={5}
-          ></textarea>
+            aria-describedby="notes-help"
+          />
+          <div id="notes-help" className="form-text">
+            Add any special requests or notes for this player&apos;s registration.
+          </div>
         </div>
         <div className="card-footer d-flex justify-content-end pb-0">
-          <button className="btn btn-light btn-sm me-2 mt-2" onClick={handleCancel}>
+          <button
+            type="button"
+            className="btn btn-light btn-sm me-2 mt-2"
+            onClick={handleCancel}
+            aria-label="Cancel editing notes"
+          >
             Cancel
           </button>
-          <button className="btn btn-info btn-sm mt-2" onClick={handleEdit}>
+          <button
+            type="button"
+            className="btn btn-info btn-sm mt-2"
+            onClick={handleEdit}
+            aria-label="Save registration notes"
+          >
             Save Changes
           </button>
         </div>

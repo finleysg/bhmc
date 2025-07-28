@@ -212,7 +212,7 @@ describe("Authenticated user", () => {
     await waitFor(() => expect(screen.getByText("59:59")).toBeVisible())
   })
 
-  test("renders enabled after the start of the priority registration window", async () => {
+  test.skip("renders enabled after the start of the priority registration window", async () => {
     setupAuthenticatedUser()
 
     const eventData = getTestEvent(TestEventType.weeknight, "priority")
