@@ -28,10 +28,10 @@ export function ConfirmDialog({ title, message, show, onClose }: ConfirmDialogPr
         <div className="p-2">{message}</div>
         <div className="mt-4">
           <button className="btn btn-sm btn-light me-2" onClick={() => handleClose(false)}>
-            Cancel
+            No
           </button>
           <button className="btn btn-sm btn-primary" onClick={() => handleClose(true)}>
-            Ok
+            Yes
           </button>
         </div>
       </div>
