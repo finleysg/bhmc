@@ -54,11 +54,13 @@ can track my earnings and control when I receive cash payments.
    I should see my current skins cash balance prominently displayed at the top of the page
 2. **Given** I am viewing my skins account page, **When** I select a specific season from the season
    filter, **Then** I should see all my skins winnings for that season
-3. **Given** I am viewing my skins account page, **When** I select a specific season from the season
+3. **Given** I am viewing my skins account page with a season selected, **When** the page loads my
+   winnings data, **Then** I should see the total dollar amount of all skins won for that season
+4. **Given** I am viewing my skins account page, **When** I select a specific season from the season
    filter, **Then** I should see all my transactions (wins, cash-outs, adjustments) for that season
-4. **Given** I am viewing my account settings section, **When** I change my payout frequency
+5. **Given** I am viewing my account settings section, **When** I change my payout frequency
    preference, **Then** the system should save my new preference and display a confirmation
-5. **Given** I am a player with no skins activity, **When** I access /my-skins, **Then** I should
+6. **Given** I am a player with no skins activity, **When** I access /my-skins, **Then** I should
    see a friendly message indicating no activity and current balance of $0
 
 ### Edge Cases
@@ -77,21 +79,24 @@ can track my earnings and control when I receive cash payments.
   previous seasons
 - **FR-003**: Users MUST be able to view all skins they've won for the selected season, including
   date, event, and amount
-- **FR-004**: Users MUST be able to view all transactions for the selected season, including wins,
+- **FR-004**: System MUST display the total dollar amount of all skins won for the selected season
+- **FR-005**: Users MUST be able to view all transactions for the selected season, including wins,
   cash-outs, and adjustments
-- **FR-005**: System MUST display transaction history with date, type, description, and amount for
+- **FR-006**: System MUST display transaction history with date, type, description, and amount for
   each entry
-- **FR-006**: Users MUST be able to adjust their payout frequency settings with options for:
+- **FR-006**: System MUST display transaction history with date, type, description, and amount for
+  each entry
+- **FR-007**: Users MUST be able to adjust their payout frequency settings with options for:
   bi-monthly (1st and 15th), monthly (1st), or yearly (October 1st at season end)
-- **FR-007**: System MUST save payout preference changes and provide user feedback on successful
+- **FR-008**: System MUST save payout preference changes and provide user feedback on successful
   updates
-- **FR-008**: System MUST restrict access to authenticated users who are current club members only
-- **FR-009**: System MUST restrict access so users can only view their own skins account information
-- **FR-010**: System MUST handle cases where users have no skins activity gracefully with
+- **FR-009**: System MUST restrict access to authenticated users who are current club members only
+- **FR-010**: System MUST restrict access so users can only view their own skins account information
+- **FR-011**: System MUST handle cases where users have no skins activity gracefully with
   appropriate messaging
-- **FR-011**: System MUST integrate with the existing Django-based skins accounts API hosted at
+- **FR-012**: System MUST integrate with the existing Django-based skins accounts API hosted at
   https://data.bhmc.org/api (source: https://github.com/finleysg/bhmc-api)
-- **FR-012**: Page MUST be accessible at the URL path /my-skins within the existing BHMC application
+- **FR-013**: Page MUST be accessible at the URL path /my-skins within the existing BHMC application
 
 ### Key Entities _(include if feature involves data)_
 
