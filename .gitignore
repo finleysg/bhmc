@@ -29,7 +29,5 @@ firebase.json
 
 .github/
 
-.env
-.env.development
-.env.test
-.env.production
+# Environment files
+.env*
