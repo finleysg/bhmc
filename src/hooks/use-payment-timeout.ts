@@ -15,7 +15,7 @@ export function usePaymentTimeout({
   onTimeout,
   timeoutDuration = 120000, // 2 minutes default
 }: UsePaymentTimeoutProps) {
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const clearTimeoutRef = useCallback(() => {
     if (timeoutRef.current) {
