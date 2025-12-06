@@ -9,27 +9,27 @@ import { LoginData, LoginSchema } from "../models/auth"
 import { LoginView } from "./login-view"
 
 export function LoginHandler() {
-  const [searchParams] = useSearchParams()
-  const {
-    login: { mutate, error },
-  } = useAuth()
-  const navigate = useNavigate()
-  const form = useForm<LoginData>({
-    resolver: zodResolver(LoginSchema),
-  })
+	const [searchParams] = useSearchParams()
+	const {
+		login: { mutate, error },
+	} = useAuth()
+	const navigate = useNavigate()
+	const form = useForm<LoginData>({
+		resolver: zodResolver(LoginSchema),
+	})
 
-  const submitHandler = (args: LoginData) => {
-    mutate(args, {
-      onSuccess: () => {
-        navigate(searchParams.get("redirectUrl") ?? "/home")
-      },
-    })
-  }
+	const submitHandler = (args: LoginData) => {
+		mutate(args, {
+			onSuccess: () => {
+				navigate(searchParams.get("redirectUrl") ?? "/home")
+			},
+		})
+	}
 
-  return (
-    <div>
-      <LoginView form={form} onSubmit={submitHandler} />
-      {error && <ErrorDisplay error={error.message} delay={3000} />}
-    </div>
-  )
+	return (
+		<div>
+			<LoginView form={form} onSubmit={submitHandler} />
+			{error && <ErrorDisplay error={error.message} delay={3000} />}
+		</div>
+	)
 }

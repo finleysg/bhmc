@@ -1,18 +1,18 @@
-import { Spinner } from './spinner';
+import { Spinner } from "./spinner"
 
 interface OverlaySpinnerProps {
-  loading: boolean
+	loading: boolean
 }
 
 export function OverlaySpinner({ loading }: OverlaySpinnerProps) {
-  if (loading) {
-    return (
-      <div className="spinner-overlay">
-        <div>
-          <Spinner />
-        </div>
-      </div>
-    )
-  }
-  return null
+	if (loading) {
+		return (
+			<div className="spinner-overlay">
+				<div>
+					<Spinner />
+				</div>
+			</div>
+		)
+	}
+	return null
 }

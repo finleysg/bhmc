@@ -20,38 +20,38 @@ import { EventAdmin } from "./event-admin"
 import { EventAdminMenu } from "./event-admin-menu"
 
 export interface EventAdminHandle {
-  title: string
+	title: string
 }
 
 export const adminRoutes = () => [
-  {
-    path: "",
-    element: <Admin />,
-    children: [
-      { element: <AdminMenu />, index: true },
-      { path: "clone-events", element: <CloneEventsScreen /> },
-      { path: "membership-report", element: <MemberhipReport /> },
-      { path: "upload-photo", element: <UploadPhotoScreen /> },
-      { path: "club-documents", element: <ClubDocumentsScreen /> },
-      {
-        path: "event/:eventId",
-        element: <EventAdmin />,
-        children: [
-          { element: <EventAdminMenu />, index: true },
-          { path: "event-report", element: <EventReportScreen /> },
-          { path: "payment-report", element: <PaymentReportScreen /> },
-          { path: "skins-report", element: <SkinsReportScreen /> },
-          { path: "registration-notes", element: <RegistrationNotesScreen /> },
-          { path: "manage-players", element: <ManagePlayersScreen /> },
-          { path: "update-portal", element: <UpdatePortalScreen /> },
-          { path: "manage-documents", element: <EventDocumentsScreen /> },
-          { path: "import-leaderboard", element: <ImportLeaderboardScreen /> },
-          { path: "import-major-points", element: <ImportMajorPointsScreen /> },
-          { path: "import-champions", element: <ImportChampionsScreen /> },
-          { path: "view-slots", element: <ViewSlotsScreen /> },
-          { path: "append-teetime", element: <AppendTeetimesScreen /> },
-        ],
-      },
-    ],
-  },
+	{
+		path: "",
+		element: <Admin />,
+		children: [
+			{ element: <AdminMenu />, index: true },
+			{ path: "clone-events", element: <CloneEventsScreen /> },
+			{ path: "membership-report", element: <MemberhipReport /> },
+			{ path: "upload-photo", element: <UploadPhotoScreen /> },
+			{ path: "club-documents", element: <ClubDocumentsScreen /> },
+			{
+				path: "event/:eventId",
+				element: <EventAdmin />,
+				children: [
+					{ element: <EventAdminMenu />, index: true },
+					{ path: "event-report", element: <EventReportScreen /> },
+					{ path: "payment-report", element: <PaymentReportScreen /> },
+					{ path: "skins-report", element: <SkinsReportScreen /> },
+					{ path: "registration-notes", element: <RegistrationNotesScreen /> },
+					{ path: "manage-players", element: <ManagePlayersScreen /> },
+					{ path: "update-portal", element: <UpdatePortalScreen /> },
+					{ path: "manage-documents", element: <EventDocumentsScreen /> },
+					{ path: "import-leaderboard", element: <ImportLeaderboardScreen /> },
+					{ path: "import-major-points", element: <ImportMajorPointsScreen /> },
+					{ path: "import-champions", element: <ImportChampionsScreen /> },
+					{ path: "view-slots", element: <ViewSlotsScreen /> },
+					{ path: "append-teetime", element: <AppendTeetimesScreen /> },
+				],
+			},
+		],
+	},
 ]

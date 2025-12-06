@@ -15,14 +15,14 @@ enableMapSet()
 
 const rootElement = document.getElementById("root")
 if (!rootElement) {
-  throw new Error("Boom! You need a root element.")
+	throw new Error("Boom! You need a root element.")
 }
 const root = createRoot(rootElement)
 
 root.render(
-  <React.StrictMode>
-    <Suspense fallback={<FullPageSpinner />}>
-      <App />
-    </Suspense>
-  </React.StrictMode>,
+	<React.StrictMode>
+		<Suspense fallback={<FullPageSpinner />}>
+			<App />
+		</Suspense>
+	</React.StrictMode>,
 )

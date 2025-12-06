@@ -9,22 +9,22 @@ import { RenderReportData } from "./render-report-data"
 import { getSkinsReportHeader, getSkinsReportRows } from "./report-utils"
 
 export function SkinsReport({ clubEvent }: ClubEventProps) {
-  const [data, setData] = useState<any[]>([])
+	const [data, setData] = useState<any[]>([])
 
-  useEffect(() => {
-    httpClient(apiUrl(`reports/skins/?event_id=${clubEvent.id}`)).then((json) => setData(json))
-  }, [clubEvent.id])
+	useEffect(() => {
+		httpClient(apiUrl(`reports/skins/?event_id=${clubEvent.id}`)).then((json) => setData(json))
+	}, [clubEvent.id])
 
-  const reportName = `${slugify(clubEvent.name)}-skins-report.csv`
-  const reportHeader = getSkinsReportHeader()
-  const reportData = getSkinsReportRows(clubEvent, data)
+	const reportName = `${slugify(clubEvent.name)}-skins-report.csv`
+	const reportHeader = getSkinsReportHeader()
+	const reportData = getSkinsReportRows(clubEvent, data)
 
-  return (
-    <RenderReportData
-      title="Skins Report"
-      reportData={reportData}
-      reportHeader={reportHeader}
-      reportName={reportName}
-    />
-  )
+	return (
+		<RenderReportData
+			title="Skins Report"
+			reportData={reportData}
+			reportHeader={reportHeader}
+			reportName={reportName}
+		/>
+	)
 }

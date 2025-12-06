@@ -31,47 +31,47 @@ import { SendMessageScreen } from "../screens/send-message"
 import * as config from "../utils/app-config"
 
 export const mainRoutes = () =>
-  config.maintenanceMode
-    ? [{ path: "*", element: <MaintenanceScreen /> }]
-    : [
-        { path: "/", element: <HomeScreen /> },
-        { path: "/home", element: <HomeScreen /> },
-        { path: "/membership", element: <MembershipFull /> },
-        { path: "/calendar/:year/:monthName", element: <CalendarScreen /> },
-        {
-          path: "/event/:eventDate/:eventName",
-          element: <EventDetailScreen />,
-          children: [
-            { element: <EventViewScreen />, index: true },
-            { path: "reserve", element: <ReserveScreen /> },
-            { path: "register", element: <RegisterScreen /> },
-            { path: "edit", element: <EditRegistrationScreen /> },
-            { path: "review", element: <ReviewRegistrationScreen /> },
-            {
-              path: ":paymentId",
-              element: <PaymentFlow />,
-              children: [
-                { path: "payment", element: <PaymentScreen /> },
-                { path: "complete", element: <RegistrationCompleteScreen /> },
-              ],
-            },
-            { path: "registrations", element: <RegisteredScreen /> },
-          ],
-        },
-        { path: "/champions/:season", element: <ChampionsScreen /> },
-        { path: "/my-scores/:scoreType/:season", element: <PlayerScoresScreen /> },
-        { path: "/policies/:policyType", element: <PolicyScreen /> },
-        { path: "/match-play", element: <MatchPlayScreen /> },
-        { path: "/season-long-points", element: <SeasonLongPointsScreen /> },
-        { path: "/dam-cup", element: <DamCupScreen /> },
-        { path: "/directory", element: <DirectoryScreen /> },
-        { path: "/directory/:playerId", element: <PlayerProfileScreen /> },
-        { path: "/contact-us", element: <ContactScreen /> },
-        { path: "/contact-us/message", element: <SendMessageScreen /> },
-        { path: "/about-us", element: <AboutUsScreen /> },
-        { path: "/gallery", element: <PhotoGalleryScreen /> },
-        { path: "/gallery/:id", element: <GalleryImageScreen /> },
-        { path: "/my-account", element: <AccountScreen /> },
-        { path: "/my-activity", element: <AccountSettingsScreen /> },
-        { path: "*", element: <NotFoundScreen /> },
-      ]
+	config.maintenanceMode
+		? [{ path: "*", element: <MaintenanceScreen /> }]
+		: [
+				{ path: "/", element: <HomeScreen /> },
+				{ path: "/home", element: <HomeScreen /> },
+				{ path: "/membership", element: <MembershipFull /> },
+				{ path: "/calendar/:year/:monthName", element: <CalendarScreen /> },
+				{
+					path: "/event/:eventDate/:eventName",
+					element: <EventDetailScreen />,
+					children: [
+						{ element: <EventViewScreen />, index: true },
+						{ path: "reserve", element: <ReserveScreen /> },
+						{ path: "register", element: <RegisterScreen /> },
+						{ path: "edit", element: <EditRegistrationScreen /> },
+						{ path: "review", element: <ReviewRegistrationScreen /> },
+						{
+							path: ":paymentId",
+							element: <PaymentFlow />,
+							children: [
+								{ path: "payment", element: <PaymentScreen /> },
+								{ path: "complete", element: <RegistrationCompleteScreen /> },
+							],
+						},
+						{ path: "registrations", element: <RegisteredScreen /> },
+					],
+				},
+				{ path: "/champions/:season", element: <ChampionsScreen /> },
+				{ path: "/my-scores/:scoreType/:season", element: <PlayerScoresScreen /> },
+				{ path: "/policies/:policyType", element: <PolicyScreen /> },
+				{ path: "/match-play", element: <MatchPlayScreen /> },
+				{ path: "/season-long-points", element: <SeasonLongPointsScreen /> },
+				{ path: "/dam-cup", element: <DamCupScreen /> },
+				{ path: "/directory", element: <DirectoryScreen /> },
+				{ path: "/directory/:playerId", element: <PlayerProfileScreen /> },
+				{ path: "/contact-us", element: <ContactScreen /> },
+				{ path: "/contact-us/message", element: <SendMessageScreen /> },
+				{ path: "/about-us", element: <AboutUsScreen /> },
+				{ path: "/gallery", element: <PhotoGalleryScreen /> },
+				{ path: "/gallery/:id", element: <GalleryImageScreen /> },
+				{ path: "/my-account", element: <AccountScreen /> },
+				{ path: "/my-activity", element: <AccountSettingsScreen /> },
+				{ path: "*", element: <NotFoundScreen /> },
+			]

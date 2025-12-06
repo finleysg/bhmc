@@ -9,30 +9,30 @@ import { ResetPasswordData, ResetPasswordSchema } from "../models/auth"
 import { ResetPasswordView } from "./reset-password-view"
 
 export function ResetPasswordHandler() {
-  const { uid, token } = useParams()
-  const {
-    resetPassword: { mutate, error },
-  } = useAuth()
-  const navigate = useNavigate()
-  const form = useForm<ResetPasswordData>({
-    resolver: zodResolver(ResetPasswordSchema),
-  })
+	const { uid, token } = useParams()
+	const {
+		resetPassword: { mutate, error },
+	} = useAuth()
+	const navigate = useNavigate()
+	const form = useForm<ResetPasswordData>({
+		resolver: zodResolver(ResetPasswordSchema),
+	})
 
-  const submitHandler = (args: ResetPasswordData) => {
-    if (uid && token) {
-      const finalArgs = { ...args, ...{ uid, token } }
-      mutate(finalArgs, {
-        onSuccess: () => navigate("/session/reset-password/complete"),
-      })
-    } else {
-      console.error("Inconceivable! Not uid or token params available.")
-    }
-  }
+	const submitHandler = (args: ResetPasswordData) => {
+		if (uid && token) {
+			const finalArgs = { ...args, ...{ uid, token } }
+			mutate(finalArgs, {
+				onSuccess: () => navigate("/session/reset-password/complete"),
+			})
+		} else {
+			console.error("Inconceivable! Not uid or token params available.")
+		}
+	}
 
-  return (
-    <div>
-      <ResetPasswordView form={form} onSubmit={submitHandler} />
-      {error && <ErrorDisplay error={error.message} delay={3000} />}
-    </div>
-  )
+	return (
+		<div>
+			<ResetPasswordView form={form} onSubmit={submitHandler} />
+			{error && <ErrorDisplay error={error.message} delay={3000} />}
+		</div>
+	)
 }

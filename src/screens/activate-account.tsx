@@ -8,60 +8,59 @@ import { FidgetSpinner } from "../components/spinners/spinner"
 import { useAuth } from "../hooks/use-auth"
 
 export function ActivateAccountScreen() {
-  const { uid, token } = useParams()
-  const {
-    activate: { mutate, isPending, isError, error },
-  } = useAuth()
-  const navigate = useNavigate()
+	const { uid, token } = useParams()
+	const {
+		activate: { mutate, isPending, isError, error },
+	} = useAuth()
+	const navigate = useNavigate()
 
-  useEffect(() => {
-    if (uid && token) {
-      const args = { uid, token }
-      mutate(args)
-    }
-  }, [mutate, uid, token])
+	useEffect(() => {
+		if (uid && token) {
+			const args = { uid, token }
+			mutate(args)
+		}
+	}, [mutate, uid, token])
 
-  const handleLogin = () => {
-    navigate("/session/login")
-  }
+	const handleLogin = () => {
+		navigate("/session/login")
+	}
 
-  return (
-    <div className="login">
-      <div className="login__block active">
-        <div className="login__header bg-success">
-          <i>
-            <MdAccountCircle />
-          </i>
-          Account Activation
-        </div>
-        {isPending && (
-          <div className="login__body">
-            <h3 className="text-green">
-              <FidgetSpinner />
-            </h3>
-            <p>Activating your account...</p>
-          </div>
-        )}
-        {!isPending && isError && (
-          <div className="login__body">
-            <h3>Activation Failed</h3>
-            {error && <ErrorDisplay error={error.message} delay={3000} />}
-          </div>
-        )}
-        {!isPending && !isError && (
-          <div className="login__body">
-            <h3>Your Account is Active</h3>
-            <p>
-              Thank you! Log in now to sign up for an event or update your profile. If you
-              don&apos;t have a GHIN, you will receive one when you join us for the current golf
-              season.
-            </p>
-            <button className="btn btn-success" onClick={handleLogin}>
-              Login
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+	return (
+		<div className="login">
+			<div className="login__block active">
+				<div className="login__header bg-success">
+					<i>
+						<MdAccountCircle />
+					</i>
+					Account Activation
+				</div>
+				{isPending && (
+					<div className="login__body">
+						<h3 className="text-green">
+							<FidgetSpinner />
+						</h3>
+						<p>Activating your account...</p>
+					</div>
+				)}
+				{!isPending && isError && (
+					<div className="login__body">
+						<h3>Activation Failed</h3>
+						{error && <ErrorDisplay error={error.message} delay={3000} />}
+					</div>
+				)}
+				{!isPending && !isError && (
+					<div className="login__body">
+						<h3>Your Account is Active</h3>
+						<p>
+							Thank you! Log in now to sign up for an event or update your profile. If you don&apos;t have a GHIN, you
+							will receive one when you join us for the current golf season.
+						</p>
+						<button className="btn btn-success" onClick={handleLogin}>
+							Login
+						</button>
+					</div>
+				)}
+			</div>
+		</div>
+	)
 }

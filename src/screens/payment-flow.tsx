@@ -12,31 +12,31 @@ import * as config from "../utils/app-config"
 export type PaymentAmountContextType = { amount: number }
 
 export function PaymentFlow() {
-  const { paymentId } = useParams()
-  const [stripePromise] = useState(() => loadStripe(config.stripePublicKey))
-  const { data: stripeAmount, status } = usePaymentAmount(+paymentId!)
-  const { stripeClientSession } = useEventRegistration()
+	const { paymentId } = useParams()
+	const [stripePromise] = useState(() => loadStripe(config.stripePublicKey))
+	const { data: stripeAmount, status } = usePaymentAmount(+paymentId!)
+	const { stripeClientSession } = useEventRegistration()
 
-  if (status === "pending") {
-    return null
-  }
+	if (status === "pending") {
+		return null
+	}
 
-  return (
-    <Elements
-      stripe={stripePromise}
-      options={{
-        mode: "payment",
-        currency: "usd",
-        amount: stripeAmount,
-        customerSessionClientSecret: stripeClientSession,
-      }}
-    >
-      <Outlet context={{ amount: stripeAmount! } satisfies PaymentAmountContextType} />
-    </Elements>
-  )
+	return (
+		<Elements
+			stripe={stripePromise}
+			options={{
+				mode: "payment",
+				currency: "usd",
+				amount: stripeAmount,
+				customerSessionClientSecret: stripeClientSession,
+			}}
+		>
+			<Outlet context={{ amount: stripeAmount! } satisfies PaymentAmountContextType} />
+		</Elements>
+	)
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useCurrentPaymentAmount() {
-  return useOutletContext<PaymentAmountContextType>()
+	return useOutletContext<PaymentAmountContextType>()
 }
