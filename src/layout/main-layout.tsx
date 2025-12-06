@@ -10,23 +10,23 @@ import { mainRoutes } from "./routes"
 import { Sidebar } from "./sidebar"
 
 function MainLayout() {
-  const { sidebarOpen, closeSidebar } = useLayout()
-  // const { user } = useAuth()
-  const routing = useRoutes(mainRoutes())
-  // const themeColor = user.isAuthenticated ? "dark" : "dark"
+	const { sidebarOpen, closeSidebar } = useLayout()
+	// const { user } = useAuth()
+	const routing = useRoutes(mainRoutes())
+	// const themeColor = user.isAuthenticated ? "dark" : "dark"
 
-  return (
-    <main className="main">
-      <ToastContainer autoClose={3000} hideProgressBar={true} newestOnTop={true} />
-      <Header />
-      <Sidebar />
-      <section className="content">
-        {routing}
-        <Footer />
-        {sidebarOpen && <div onClick={closeSidebar} className="sidebar-backdrop"></div>}
-      </section>
-    </main>
-  )
+	return (
+		<main className="main">
+			<ToastContainer autoClose={3000} hideProgressBar={true} newestOnTop={true} />
+			<Header />
+			<Sidebar />
+			<section className="content">
+				{routing}
+				<Footer />
+				{sidebarOpen && <div onClick={closeSidebar} className="sidebar-backdrop"></div>}
+			</section>
+		</main>
+	)
 }
 
 export default MainLayout

@@ -4,10 +4,10 @@ import { ContentApiSchema } from "../models/content"
 import { getOne } from "../utils/api-client"
 
 export function usePageContent(contentKey: string) {
-  const endpoint = `page-content/?key=${contentKey}`
+	const endpoint = `page-content/?key=${contentKey}`
 
-  return useQuery({
-    queryKey: [endpoint],
-    queryFn: () => getOne(endpoint, ContentApiSchema),
-  })
+	return useQuery({
+		queryKey: [endpoint],
+		queryFn: () => getOne(endpoint, ContentApiSchema),
+	})
 }

@@ -5,21 +5,21 @@ export const small = "@media (min-width: 577px) and (max-width: 768px)"
 export const mobile = "@media (max-width: 576px)"
 
 export const isMobile = () => {
-  return window.innerWidth <= 576
+	return window.innerWidth <= 576
 }
 
 export const isSmall = () => {
-  return window.innerWidth > 576 && window.innerWidth <= 768
+	return window.innerWidth > 576 && window.innerWidth <= 768
 }
 
 export const isMedium = () => {
-  return window.innerWidth > 768 && window.innerWidth <= 992
+	return window.innerWidth > 768 && window.innerWidth <= 992
 }
 
 export const isLarge = () => {
-  return window.innerWidth > 992 && window.innerWidth <= 1200
+	return window.innerWidth > 992 && window.innerWidth <= 1200
 }
 
 export const isExtraLarge = () => {
-  return window.innerWidth >= 1200
+	return window.innerWidth >= 1200
 }

@@ -10,34 +10,34 @@ import { Dialog } from "../dialog/dialog"
 import { GalleryImage } from "./gallery-image"
 
 function OpenFullImage(props: ComponentPropsWithoutRef<"button">) {
-  return (
-    <div className="mt-1">
-      <button className="photo-upload" {...props}>
-        <GoScreenFull />
-      </button>
-    </div>
-  )
+	return (
+		<div className="mt-1">
+			<button className="photo-upload" {...props}>
+				<GoScreenFull />
+			</button>
+		</div>
+	)
 }
 
 export function SmallPhoto({ photo }: PhotoProps) {
-  const [showFullImage, setShowFullImage] = React.useState(false)
-  const navigate = useNavigate()
+	const [showFullImage, setShowFullImage] = React.useState(false)
+	const navigate = useNavigate()
 
-  const open = () => {
-    if (isMobile() || isSmall()) {
-      navigate(`/gallery/${photo.id}`)
-    } else {
-      setShowFullImage(true)
-    }
-  }
+	const open = () => {
+		if (isMobile() || isSmall()) {
+			navigate(`/gallery/${photo.id}`)
+		} else {
+			setShowFullImage(true)
+		}
+	}
 
-  return (
-    <div className="photo-display">
-      <img src={photo.mobileImageUrl()} alt={photo.caption} />
-      <OpenFullImage onClick={open} color={colors.blue} />
-      <Dialog show={showFullImage} onClose={() => setShowFullImage(false)}>
-        <GalleryImage photo={photo} />
-      </Dialog>
-    </div>
-  )
+	return (
+		<div className="photo-display">
+			<img src={photo.mobileImageUrl()} alt={photo.caption} />
+			<OpenFullImage onClick={open} color={colors.blue} />
+			<Dialog show={showFullImage} onClose={() => setShowFullImage(false)}>
+				<GalleryImage photo={photo} />
+			</Dialog>
+		</div>
+	)
 }

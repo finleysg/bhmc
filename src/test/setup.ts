@@ -8,12 +8,12 @@ import { cleanup } from "@testing-library/react"
 import { server } from "./test-server"
 
 beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" })
+	server.listen({ onUnhandledRequest: "error" })
 })
 afterAll(() => server.close())
 
 afterEach(() => {
-  server.resetHandlers()
-  vi.clearAllMocks()
+	server.resetHandlers()
+	vi.clearAllMocks()
 })
 afterEach(() => cleanup())

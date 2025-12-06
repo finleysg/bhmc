@@ -5,41 +5,41 @@ import { Player } from "./player"
 import { Round, Score } from "./scores"
 
 export interface SeasonProps {
-  season: number
+	season: number
 }
 
 export interface CloseableProps {
-  onClose: () => void
+	onClose: () => void
 }
 
 export interface ClubEventProps {
-  clubEvent: ClubEvent
+	clubEvent: ClubEvent
 }
 
 export interface MajorChampionProps {
-  champion: MajorChampion
+	champion: MajorChampion
 }
 
 export interface PlayerProps {
-  player: Player
+	player: Player
 }
 
 export interface ScoreProps {
-  score: Score
+	score: Score
 }
 
 export interface ScoresProps {
-  scores: Score[]
+	scores: Score[]
 }
 
 export interface CourseProps {
-  course: Course
+	course: Course
 }
 
 export interface RoundProps {
-  round: Round
+	round: Round
 }
 
 export interface RoundsProps {
-  rounds: Round[]
+	rounds: Round[]
 }

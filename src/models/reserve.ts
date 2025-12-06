@@ -14,205 +14,201 @@ const DEFAULT_SPLIT = 8
  * spots in an event.
  */
 export interface Reservation {
-  registrationId: number
-  slotId: number
-  playerId: number
-  name: string
-  sortName: string
-  signedUpBy: string
-  signupDate: Date
+	registrationId: number
+	slotId: number
+	playerId: number
+	name: string
+	sortName: string
+	signedUpBy: string
+	signupDate: Date
 }
 
 export class ReserveSlot {
-  id: number
-  groupId: string
-  holeId: number | null
-  playerId: number | null
-  playerName?: string
-  position: number
-  registrationId: number | null
-  startingOrder: number
-  status: string
-  statusName: string
-  selected: boolean
-  fees: Refund[]
-  obj: RegistrationSlotData
+	id: number
+	groupId: string
+	holeId: number | null
+	playerId: number | null
+	playerName?: string
+	position: number
+	registrationId: number | null
+	startingOrder: number
+	status: string
+	statusName: string
+	selected: boolean
+	fees: Refund[]
+	obj: RegistrationSlotData
 
-  constructor(groupId: string, slot: RegistrationSlot) {
-    this.obj = slot.obj
-    this.id = slot.id
-    this.groupId = groupId
-    this.holeId = slot.holeId
-    this.playerId = slot.playerId
-    this.playerName = slot.playerName
-    this.position = slot.slot // 0 to size of group - 1
-    this.registrationId = slot.registrationId
-    this.startingOrder = slot.startingOrder
-    this.status = slot.status
-    this.statusName = getStatusName(slot.status)
-    this.selected = false
-    this.fees = []
-  }
+	constructor(groupId: string, slot: RegistrationSlot) {
+		this.obj = slot.obj
+		this.id = slot.id
+		this.groupId = groupId
+		this.holeId = slot.holeId
+		this.playerId = slot.playerId
+		this.playerName = slot.playerName
+		this.position = slot.slot // 0 to size of group - 1
+		this.registrationId = slot.registrationId
+		this.startingOrder = slot.startingOrder
+		this.status = slot.status
+		this.statusName = getStatusName(slot.status)
+		this.selected = false
+		this.fees = []
+	}
 
-  isRegistered = (playerId: number) => {
-    return this.playerId === playerId
-  }
+	isRegistered = (playerId: number) => {
+		return this.playerId === playerId
+	}
 
-  displayText = () => {
-    if (this.selected && this.status === RegistrationStatus.Available) {
-      return "Selected"
-    } else if (this.status === RegistrationStatus.Reserved) {
-      return this.playerName
-    } else if (this.status === RegistrationStatus.Processing) {
-      return this.playerName
-    } else {
-      return this.statusName
-    }
-  }
+	displayText = () => {
+		if (this.selected && this.status === RegistrationStatus.Available) {
+			return "Selected"
+		} else if (this.status === RegistrationStatus.Reserved) {
+			return this.playerName
+		} else if (this.status === RegistrationStatus.Processing) {
+			return this.playerName
+		} else {
+			return this.statusName
+		}
+	}
 
-  deriveClass = () => {
-    const className = "reserve-slot"
-    if (this.selected) {
-      return className + " reserve-slot__selected"
-    }
-    return className + ` reserve-slot__${this.statusName.replace(" ", "-").toLowerCase()}`
-  }
+	deriveClass = () => {
+		const className = "reserve-slot"
+		if (this.selected) {
+			return className + " reserve-slot__selected"
+		}
+		return className + ` reserve-slot__${this.statusName.replace(" ", "-").toLowerCase()}`
+	}
 
-  canSelect = () => {
-    return this.status === RegistrationStatus.Available
-  }
+	canSelect = () => {
+		return this.status === RegistrationStatus.Available
+	}
 
-  toRegistrationSlot = () => {
-    return new RegistrationSlot(this.obj)
-  }
+	toRegistrationSlot = () => {
+		return new RegistrationSlot(this.obj)
+	}
 }
 
 export class ReserveGroup {
-  id: string
-  courseId: number
-  holeId: number
-  holeNumber: number
-  slots: ReserveSlot[]
-  startingOrder: number
-  name: string
-  wave: number
+	id: string
+	courseId: number
+	holeId: number
+	holeNumber: number
+	slots: ReserveSlot[]
+	startingOrder: number
+	name: string
+	wave: number
 
-  constructor(course: Course, hole: Hole, slots: RegistrationSlot[], name: string) {
-    this.id = `${course.name.toLowerCase()}-${name.toLowerCase()}`
-    this.courseId = course.id
-    this.holeId = hole.id
-    this.holeNumber = hole.holeNumber
-    this.slots = slots.map((slot) => new ReserveSlot(this.id, slot))
-    this.startingOrder = this.slots[0]?.startingOrder
-    this.name = name // starting hole or tee time
-    this.wave = deriveWave(name)
-  }
+	constructor(course: Course, hole: Hole, slots: RegistrationSlot[], name: string) {
+		this.id = `${course.name.toLowerCase()}-${name.toLowerCase()}`
+		this.courseId = course.id
+		this.holeId = hole.id
+		this.holeNumber = hole.holeNumber
+		this.slots = slots.map((slot) => new ReserveSlot(this.id, slot))
+		this.startingOrder = this.slots[0]?.startingOrder
+		this.name = name // starting hole or tee time
+		this.wave = deriveWave(name)
+	}
 
-  isRegistered = (playerId: number) => {
-    return this.slots.some((slot) => {
-      return slot.isRegistered(playerId)
-    })
-  }
+	isRegistered = (playerId: number) => {
+		return this.slots.some((slot) => {
+			return slot.isRegistered(playerId)
+		})
+	}
 
-  hasOpenings = () => {
-    return this.slots.some((s) => {
-      return s.status === RegistrationStatus.Available
-    })
-  }
+	hasOpenings = () => {
+		return this.slots.some((s) => {
+			return s.status === RegistrationStatus.Available
+		})
+	}
 
-  isDisabled = () => {
-    return !this.slots.some((s) => {
-      return s.selected
-    })
-  }
+	isDisabled = () => {
+		return !this.slots.some((s) => {
+			return s.selected
+		})
+	}
 
-  selectedSlotIds = () => {
-    return this.slots.filter((s) => s.selected).map((s) => s.id)
-  }
+	selectedSlotIds = () => {
+		return this.slots.filter((s) => s.selected).map((s) => s.id)
+	}
 }
 
 export class ReserveTable {
-  course: Course
-  groups: ReserveGroup[]
+	course: Course
+	groups: ReserveGroup[]
 
-  constructor(course: Course) {
-    this.course = course
-    this.groups = []
-  }
+	constructor(course: Course) {
+		this.course = course
+		this.groups = []
+	}
 
-  /**
-   * Clear any selections in a different row
-   * @param {string} groupName - The only group that should have selections
-   */
-  clearOtherGroups = (groupName: string) => {
-    this.groups.forEach((group) => {
-      group.slots.forEach((slot) => {
-        if (group.name !== groupName) {
-          slot.selected = false
-        }
-      })
-    })
-  }
+	/**
+	 * Clear any selections in a different row
+	 * @param {string} groupName - The only group that should have selections
+	 */
+	clearOtherGroups = (groupName: string) => {
+		this.groups.forEach((group) => {
+			group.slots.forEach((slot) => {
+				if (group.name !== groupName) {
+					slot.selected = false
+				}
+			})
+		})
+	}
 
-  /**
-   * Apply any selections to this table
-   * @param {Array} selectedSlots - An array of selected slot
-   */
-  applySelectedSlots = (selectedSlots: ReserveSlot[]) => {
-    this.groups.forEach((group) => {
-      group.slots.forEach((slot) => {
-        slot.selected = false
-        if (selectedSlots.findIndex((s) => s.id === slot.id) >= 0) {
-          slot.selected = true
-        }
-      })
-    })
-  }
+	/**
+	 * Apply any selections to this table
+	 * @param {Array} selectedSlots - An array of selected slot
+	 */
+	applySelectedSlots = (selectedSlots: ReserveSlot[]) => {
+		this.groups.forEach((group) => {
+			group.slots.forEach((slot) => {
+				slot.selected = false
+				if (selectedSlots.findIndex((s) => s.id === slot.id) >= 0) {
+					slot.selected = true
+				}
+			})
+		})
+	}
 
-  /**
-   * Return slots that are part of a given registation
-   * @param {number} registrationId - The registration
-   */
-  findSlotsByRegistrationId = (registrationId: number) => {
-    const slots: ReserveSlot[] = []
-    this.groups.forEach((group) => {
-      group.slots.forEach((slot) => {
-        if (slot.registrationId === registrationId && Boolean(slot.playerId)) {
-          slots.push(slot)
-        }
-      })
-    })
-    return slots
-  }
+	/**
+	 * Return slots that are part of a given registation
+	 * @param {number} registrationId - The registration
+	 */
+	findSlotsByRegistrationId = (registrationId: number) => {
+		const slots: ReserveSlot[] = []
+		this.groups.forEach((group) => {
+			group.slots.forEach((slot) => {
+				if (slot.registrationId === registrationId && Boolean(slot.playerId)) {
+					slots.push(slot)
+				}
+			})
+		})
+		return slots
+	}
 }
 
 export const LoadReserveTables = (clubEvent: ClubEvent, slots: RegistrationSlot[]) => {
-  if (Boolean(slots) && slots.length > 0) {
-    if (clubEvent.startType === StartType.TeeTimes) {
-      return createTeeTimes(clubEvent, slots)
-    } else if (clubEvent.startType === StartType.Shotgun) {
-      return createShotgun(clubEvent, slots)
-    } else {
-      throw new Error(
-        `${clubEvent.startType} is an invalid start type for an event where 
+	if (Boolean(slots) && slots.length > 0) {
+		if (clubEvent.startType === StartType.TeeTimes) {
+			return createTeeTimes(clubEvent, slots)
+		} else if (clubEvent.startType === StartType.Shotgun) {
+			return createShotgun(clubEvent, slots)
+		} else {
+			throw new Error(
+				`${clubEvent.startType} is an invalid start type for an event where 
         players can choose their tee time or starting hole.`,
-      )
-    }
-  }
-  return []
+			)
+		}
+	}
+	return []
 }
 
-export const GetGroupStartName = (
-  clubEvent: ClubEvent,
-  startingHole: number,
-  startingOrder: number,
-) => {
-  if (clubEvent.startType === "Shotgun") {
-    return calculateStartingHole(startingHole, startingOrder)
-  } else {
-    const startingTime = parse(clubEvent.startTime!, "h:mm a", clubEvent.startDate)
-    return calculateTeetime(startingTime, startingOrder, getTeeTimeSplits(clubEvent))
-  }
+export const GetGroupStartName = (clubEvent: ClubEvent, startingHole: number, startingOrder: number) => {
+	if (clubEvent.startType === "Shotgun") {
+		return calculateStartingHole(startingHole, startingOrder)
+	} else {
+		const startingTime = parse(clubEvent.startTime!, "h:mm a", clubEvent.startDate)
+		return calculateTeetime(startingTime, startingOrder, getTeeTimeSplits(clubEvent))
+	}
 }
 
 /**
@@ -221,133 +217,132 @@ export const GetGroupStartName = (
  * @param {ReserveSlot[]} slots - reserve slots with fee collections
  */
 export const CreateRefunds = (slots: ReserveSlot[], notes: string) => {
-  const feeDetails = slots.flatMap((slot) => slot.fees)
-  return feeDetails
-    .filter((fee) => fee.selected)
-    .reduce((acc, curr) => {
-      const refund = acc.get(curr.payment.id)
-      if (refund) {
-        refund.refund_amount += curr.eventFee.amount
-      } else {
-        acc.set(curr.payment.id, {
-          payment: curr.payment.id,
-          refund_amount: curr.eventFee.amount,
-          notes,
-        })
-      }
-      return acc
-    }, new Map())
+	const feeDetails = slots.flatMap((slot) => slot.fees)
+	return feeDetails
+		.filter((fee) => fee.selected)
+		.reduce((acc, curr) => {
+			const refund = acc.get(curr.payment.id)
+			if (refund) {
+				refund.refund_amount += curr.eventFee.amount
+			} else {
+				acc.set(curr.payment.id, {
+					payment: curr.payment.id,
+					refund_amount: curr.eventFee.amount,
+					notes,
+				})
+			}
+			return acc
+		}, new Map())
 }
 
 // each table is a hierarchy: course --> groups --> slots
 const createTeeTimes = (clubEvent: ClubEvent, slots: RegistrationSlot[]) => {
-  const tables: ReserveTable[] = []
-  const startingTime = parse(clubEvent.startTime!, "h:mm a", clubEvent.startDate)
-  const teeTimeSplits = getTeeTimeSplits(clubEvent)
+	const tables: ReserveTable[] = []
+	const startingTime = parse(clubEvent.startTime!, "h:mm a", clubEvent.startDate)
+	const teeTimeSplits = getTeeTimeSplits(clubEvent)
 
-  clubEvent.courses.forEach((course) => {
-    const table = new ReserveTable(course)
-    const firstHole = course.holes[0]
-    for (let i = 0; i < clubEvent.totalGroups!; i++) {
-      const group = slots.filter((slot) => {
-        return slot.startingOrder === i && slot.holeId === firstHole.id
-      })
-      const teetime = calculateTeetime(startingTime, i, teeTimeSplits)
-      table.groups.push(new ReserveGroup(course, firstHole, group, teetime))
-    }
-    tables.push(table)
-  })
+	clubEvent.courses.forEach((course) => {
+		const table = new ReserveTable(course)
+		const firstHole = course.holes[0]
+		for (let i = 0; i < clubEvent.totalGroups!; i++) {
+			const group = slots.filter((slot) => {
+				return slot.startingOrder === i && slot.holeId === firstHole.id
+			})
+			const teetime = calculateTeetime(startingTime, i, teeTimeSplits)
+			table.groups.push(new ReserveGroup(course, firstHole, group, teetime))
+		}
+		tables.push(table)
+	})
 
-  return tables
+	return tables
 }
 
 const createShotgun = (clubEvent: ClubEvent, slots: RegistrationSlot[]) => {
-  const tables: ReserveTable[] = []
+	const tables: ReserveTable[] = []
 
-  clubEvent.courses.forEach((course) => {
-    const table = new ReserveTable(course)
-    course.holes.forEach((hole) => {
-      const aGroup = slots.filter((slot) => {
-        return slot.holeId === hole.id && slot.startingOrder === 0
-      })
-      const bGroup = slots.filter((slot) => {
-        return slot.holeId === hole.id && slot.startingOrder === 1
-      })
-      table.groups.push(new ReserveGroup(course, hole, aGroup, `${hole.holeNumber}A`))
-      table.groups.push(new ReserveGroup(course, hole, bGroup, `${hole.holeNumber}B`))
-    })
-    tables.push(table)
-  })
+	clubEvent.courses.forEach((course) => {
+		const table = new ReserveTable(course)
+		course.holes.forEach((hole) => {
+			const aGroup = slots.filter((slot) => {
+				return slot.holeId === hole.id && slot.startingOrder === 0
+			})
+			const bGroup = slots.filter((slot) => {
+				return slot.holeId === hole.id && slot.startingOrder === 1
+			})
+			table.groups.push(new ReserveGroup(course, hole, aGroup, `${hole.holeNumber}A`))
+			table.groups.push(new ReserveGroup(course, hole, bGroup, `${hole.holeNumber}B`))
+		})
+		tables.push(table)
+	})
 
-  return tables
+	return tables
 }
 
 // Supports null or empty (""), single numeric value ("9"), or alternating
 // numeric values separated by a comma ("8,9")
 const calculateTeetime = (startingTime: Date, startingOrder: number, intervals: number[]) => {
-  const offset =
-    intervals.length === 1 ? startingOrder * intervals[0] : getOffset(startingOrder, intervals)
-  return format(addMinutes(startingTime, offset), "h:mm a")
+	const offset = intervals.length === 1 ? startingOrder * intervals[0] : getOffset(startingOrder, intervals)
+	return format(addMinutes(startingTime, offset), "h:mm a")
 }
 
 const calculateStartingHole = (holeNumber: number, startingOrder: number) => {
-  return `${holeNumber}${startingOrder === 0 ? "A" : "B"}`
+	return `${holeNumber}${startingOrder === 0 ? "A" : "B"}`
 }
 
 const getTeeTimeSplits = (clubEvent: ClubEvent) => {
-  if (!clubEvent.teeTimeSplits) {
-    return [DEFAULT_SPLIT]
-  }
-  const splits = clubEvent.teeTimeSplits.split(",")
-  return splits.map((s) => {
-    return parseInt(s, 10)
-  })
+	if (!clubEvent.teeTimeSplits) {
+		return [DEFAULT_SPLIT]
+	}
+	const splits = clubEvent.teeTimeSplits.split(",")
+	return splits.map((s) => {
+		return parseInt(s, 10)
+	})
 }
 
 const getOffset = (startingOrder: number, intervals: number[]) => {
-  if (startingOrder === 0) {
-    return 0
-  } else if (startingOrder % 2 === 0) {
-    return (startingOrder / 2) * (intervals[0] + intervals[1])
-  } else {
-    return Math.floor(startingOrder / 2) * (intervals[0] + intervals[1]) + intervals[0]
-  }
+	if (startingOrder === 0) {
+		return 0
+	} else if (startingOrder % 2 === 0) {
+		return (startingOrder / 2) * (intervals[0] + intervals[1])
+	} else {
+		return Math.floor(startingOrder / 2) * (intervals[0] + intervals[1]) + intervals[0]
+	}
 }
 
 export const ConvertRegistrationsToReservations = (registrations: Registration[]) => {
-  const reservations = [] as Reservation[]
-  registrations?.forEach((r) => {
-    r.slots
-      .filter((r) => r.status === RegistrationStatus.Reserved)
-      .forEach((s) => {
-        reservations.push({
-          registrationId: r.id,
-          slotId: s.id,
-          playerId: s.playerId!,
-          name: s.playerName!,
-          sortName: s.playerName!.toUpperCase(),
-          signedUpBy: r.signedUpBy,
-          signupDate: r.createdDate,
-        })
-      })
-  })
-  return reservations
+	const reservations = [] as Reservation[]
+	registrations?.forEach((r) => {
+		r.slots
+			.filter((r) => r.status === RegistrationStatus.Reserved)
+			.forEach((s) => {
+				reservations.push({
+					registrationId: r.id,
+					slotId: s.id,
+					playerId: s.playerId!,
+					name: s.playerName!,
+					sortName: s.playerName!.toUpperCase(),
+					signedUpBy: r.signedUpBy,
+					signupDate: r.createdDate,
+				})
+			})
+	})
+	return reservations
 }
 
 const deriveWave = (timeAsString: string) => {
-  const hour = parseInt(timeAsString.split(":")[0], 10)
-  switch (hour) {
-    case 2:
-      return 1
-    case 3:
-      return 2
-    case 4:
-      return 3
-    case 5:
-      return 4
-    case 6:
-      return 4
-    default:
-      return 0
-  }
+	const hour = parseInt(timeAsString.split(":")[0], 10)
+	switch (hour) {
+		case 2:
+			return 1
+		case 3:
+			return 2
+		case 4:
+			return 3
+		case 5:
+			return 4
+		case 6:
+			return 4
+		default:
+			return 0
+	}
 }

@@ -2,7 +2,7 @@ import { PaymentReport } from "../../components/reports/payment-report"
 import { useEventAdmin } from "../layout/event-admin"
 
 export function PaymentReportScreen() {
-  const { clubEvent } = useEventAdmin()
+	const { clubEvent } = useEventAdmin()
 
-  return <PaymentReport clubEvent={clubEvent} />
+	return <PaymentReport clubEvent={clubEvent} />
 }

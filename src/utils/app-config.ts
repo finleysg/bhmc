@@ -17,7 +17,7 @@ export const fiveMinutes = 1000 * 60 * 5
 export const tenMinutes = 1000 * 60 * 10
 
 export const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
+	style: "currency",
+	currency: "USD",
+	minimumFractionDigits: 2,
 })
