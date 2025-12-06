@@ -3,6 +3,7 @@ import React, { ComponentPropsWithoutRef, useEffect } from "react"
 import { toast } from "react-toastify"
 
 import { useEventRegistration } from "../../hooks/use-event-registration"
+import { ClubEvent } from "../../models/club-event"
 import { Course } from "../../models/course"
 import { ReserveSlot, ReserveTable } from "../../models/reserve"
 import { OverlaySpinner } from "../spinners/overlay-spinner"

@@ -329,6 +329,15 @@ export const ConvertRegistrationsToReservations = (registrations: Registration[]
 	return reservations
 }
 
+const calculateWave = (groupIndex: number, totalGroups: number, signupWaves?: number | null) => {
+  if (!signupWaves || signupWaves <= 0) {
+    return 0 // No wave restrictions
+  }
+
+  const groupsPerWave = Math.ceil(totalGroups / signupWaves)
+  return Math.floor(groupIndex / groupsPerWave) + 1
+}
+
 const deriveWave = (timeAsString: string) => {
 	const hour = parseInt(timeAsString.split(":")[0], 10)
 	switch (hour) {
