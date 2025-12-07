@@ -24,7 +24,7 @@ const getDocumentTypeOptions = () => {
 const DocumentUploadSchema = z.object({
 	title: z.string().min(1, "A document title is required."),
 	document_type: z.string().min(1, "Select a document type."),
-	year: z.transform(Number).pipe(z.number({ message: "Associate the document with a season, or enter 0." })),
+	year: z.string({ message: "Associate the document with a season, or enter 0." }),
 })
 export type DocumentUploadData = z.infer<typeof DocumentUploadSchema>
 
@@ -47,7 +47,7 @@ export function DocumentUploadForm({
 	const form = useForm<DocumentUploadData>({
 		resolver: zodResolver(DocumentUploadSchema),
 		defaultValues: {
-			year: currentSeason,
+			year: currentSeason.toString(),
 			title: document?.title,
 			document_type: document?.documentType,
 		},

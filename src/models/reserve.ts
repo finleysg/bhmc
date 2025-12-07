@@ -97,7 +97,7 @@ export class ReserveGroup {
 	name: string
 	wave: number
 
-	constructor(course: Course, hole: Hole, slots: RegistrationSlot[], name: string, wave?: number) {
+	constructor(course: Course, hole: Hole, slots: RegistrationSlot[], name: string, wave: number) {
 		this.id = `${course.name.toLowerCase()}-${name.toLowerCase()}`
 		this.courseId = course.id
 		this.holeId = hole.id
@@ -105,7 +105,7 @@ export class ReserveGroup {
 		this.slots = slots.map((slot) => new ReserveSlot(this.id, slot))
 		this.startingOrder = this.slots[0]?.startingOrder
 		this.name = name // starting hole or tee time
-		this.wave = wave ?? deriveWave(name)
+		this.wave = wave // ?? deriveWave(name)
 	}
 
 	isRegistered = (playerId: number) => {
@@ -348,29 +348,16 @@ export const ConvertRegistrationsToReservations = (registrations: Registration[]
 	return reservations
 }
 
-const calculateWave = (groupIndex: number, totalGroups: number, signupWaves?: number | null) => {
+export const calculateWave = (groupIndex: number, totalGroups: number, signupWaves?: number | null) => {
 	if (!signupWaves || signupWaves <= 0) {
 		return 0 // No wave restrictions
 	}
-
-	const groupsPerWave = Math.ceil(totalGroups / signupWaves)
-	return Math.floor(groupIndex / groupsPerWave) + 1
-}
-
-const deriveWave = (timeAsString: string) => {
-	const hour = parseInt(timeAsString.split(":")[0], 10)
-	switch (hour) {
-		case 2:
-			return 1
-		case 3:
-			return 2
-		case 4:
-			return 3
-		case 5:
-			return 4
-		case 6:
-			return 4
-		default:
-			return 0
+	const base = Math.floor(totalGroups / signupWaves)
+	const remainder = totalGroups % signupWaves
+	const cutoff = remainder * (base + 1)
+	if (groupIndex < cutoff) {
+		return Math.floor(groupIndex / (base + 1)) + 1
+	} else {
+		return remainder + Math.floor((groupIndex - cutoff) / base) + 1
 	}
 }
