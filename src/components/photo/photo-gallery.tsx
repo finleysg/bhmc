@@ -27,7 +27,8 @@ export function PhotoGallery({ tag }: PhotoGalleryProps) {
 	console.log("photos length: " + photos.length)
 
 	if (data?.results && (data?.results?.length ?? 0) * page > photos.length) {
-		setPhotos([...photos, ...data.results.map((pic) => new Photo(pic))])
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		setPhotos([...photos, ...data.results.map((pic: any) => new Photo(pic))])
 	}
 
 	const handleLoadMore = () => {

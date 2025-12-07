@@ -11,7 +11,7 @@ import { PhotoPicker } from "./photo-picker"
 import { TagPicker } from "./tag-picker"
 
 const PhotoUploadSchema = z.object({
-	year: z.number({ required_error: "The year/season is required." }),
+	year: z.number({ message: "The year/season is required." }),
 	caption: z.string().min(1, "Enter a caption for this photo."),
 	tags: z.array(z.string()).refine((value) => value.length > 0 && value[0].trim().length > 0, {
 		message: "Select at least one tag to associate with this photo.",

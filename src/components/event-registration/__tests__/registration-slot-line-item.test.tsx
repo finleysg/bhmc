@@ -170,7 +170,7 @@ test.each([
 				team={teamNumber}
 				skinsType={SkinsType.Team}
 				mode="new"
-				onRemovePlayer={vi.fn}
+				onRemovePlayer={vi.fn()}
 				onToggleFee={onToggleFee}
 			/>
 		</div>,
@@ -214,7 +214,7 @@ test.each([
 				team={teamNumber}
 				skinsType={SkinsType.Team}
 				mode="new"
-				onRemovePlayer={vi.fn}
+				onRemovePlayer={vi.fn()}
 				onToggleFee={onToggleFee}
 			/>
 		</div>,
@@ -268,7 +268,7 @@ test("a selected optional fee is rendered as checked and can be removed", async 
 				skinsType={SkinsType.Individual}
 				mode="new"
 				team={0}
-				onRemovePlayer={vi.fn}
+				onRemovePlayer={vi.fn()}
 				onToggleFee={onToggleFee}
 			/>
 		</div>,
@@ -325,7 +325,7 @@ test.each([["new", "edit"]])("a paid fee can only be removed when not in edit mo
 				team={0}
 				skinsType={SkinsType.Team}
 				mode={mode as RegistrationMode}
-				onRemovePlayer={vi.fn}
+				onRemovePlayer={vi.fn()}
 				onToggleFee={onToggleFee}
 			/>
 		</div>,

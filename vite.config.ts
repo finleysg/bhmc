@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
 import path from "path"
-import { defineConfig } from "vite"
+import { defineConfig } from "vitest/config"
 
 import react from "@vitejs/plugin-react-swc"
 
@@ -22,5 +22,17 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: "./src/test/setup.ts",
+    env: {
+      VITE_API_URL: "http://localhost:8000/api",
+      VITE_AUTH_URL: "http://localhost:8000/rest-auth",
+      VITE_SERVER_URL: "http://localhost:8000",
+      VITE_CURRENT_ENVIRONMENT: "test",
+      VITE_STRIPE_PUBLIC_KEY: "pk_test_mock",
+      VITE_GIPHY_API_KEY: "test_giphy_key",
+      VITE_SENIOR_AGE: "55",
+      VITE_SENIOR_COMPETITION_AGE: "50",
+      VITE_VERSION: "test",
+      VITE_MODE: "Live"
+    }
   },
 })

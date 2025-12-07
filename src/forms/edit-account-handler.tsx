@@ -13,7 +13,7 @@ import { EditAccountView } from "./edit-account-view"
 
 export function EditAccountHandler({ onClose, player }: CloseableProps & PlayerProps) {
 	const { mutate, error, reset } = useUpdateMyPlayerRecord()
-	const form = useForm<PlayerApiData>({
+	const form = useForm<Omit<PlayerApiData, "profile_picture">>({
 		resolver: zodResolver(PlayerApiSchema),
 		defaultValues: {
 			id: player.id,

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SafeParseReturnType, ZodType } from "zod"
-
+import { ZodSafeParseResult, ZodType } from "zod"
 import { apiUrl } from "./api-utils"
 
 const parseError = (error: any) => {
@@ -60,7 +59,7 @@ export async function getOne<TData extends object>(
 	schema: ZodType<TData>,
 ): Promise<TData | undefined> {
 	const json = await httpClient(apiUrl(endpoint))
-	let result: SafeParseReturnType<TData, TData>
+	let result: ZodSafeParseResult<TData>
 	if (Array.isArray(json) && json.length >= 1) {
 		result = schema.safeParse(json[0])
 	} else if (typeof json === "object") {
