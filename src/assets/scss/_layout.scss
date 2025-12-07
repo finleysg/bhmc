@@ -10,16 +10,16 @@ $layout-spacer: 20px;
 
 .content {
 	&:not(.content--boxed):not(.content--full) {
-		@include media-breakpoint-up(xl) {
-			padding: ($header-height + $layout-spacer) $layout-spacer 0 ($sidebar-width + $layout-spacer);
+		@include media-breakpoint-down(xs) {
+			padding: ($header-height + calc($layout-spacer/2)) calc($layout-spacer/2) 0;
 		}
 
 		@include media-breakpoint-between(sm, lg) {
 			padding: ($header-height + $layout-spacer) $layout-spacer 0;
 		}
 
-		@include media-breakpoint-down(xs) {
-			padding: ($header-height + calc($layout-spacer/2)) calc($layout-spacer/2) 0;
+		@include media-breakpoint-up(xl) {
+			padding: ($header-height + $layout-spacer) $layout-spacer 0 ($sidebar-width + $layout-spacer);
 		}
 	}
 }

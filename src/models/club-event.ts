@@ -122,7 +122,7 @@ export class ClubEvent {
 		this.defaultTag = json.default_tag
 		this.eventType = json.event_type
 		this.externalUrl = json.external_url
-		this.fees = json.fees?.sort((a, b) => a.display_order - b.display_order).map((f) => new EventFee(f)) ?? []		
+		this.fees = json.fees?.sort((a, b) => a.display_order - b.display_order).map((f) => new EventFee(f)) ?? []
 		this.ghinRequired = json.ghin_required
 		this.groupSize = json.group_size
 		this.maximumSignupGroupSize = json.maximum_signup_group_size
