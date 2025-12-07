@@ -15,7 +15,7 @@ export function EditRegistrationButton({
 	if (hasSignedUp && clubEvent.canEditRegistration() && clubEvent.paymentsAreOpen()) {
 		return (
 			<button className="btn btn-warning btn-sm" onClick={onClick} {...rest}>
-				Skins
+				Edit
 			</button>
 		)
 	}
