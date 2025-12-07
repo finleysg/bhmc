@@ -52,21 +52,7 @@ export function ReserveScreen() {
 		navigate("../register", { replace: true })
 	}
 
-	const currentWave = () => {
-		const isPriorityPeriod = clubEvent.priorityRegistrationIsOpen()
-		if (isPriorityPeriod) {
-			const currentMinute = currentTime.getMinutes()
-			if (currentMinute < 15) {
-				return 1
-			} else if (currentMinute < 30) {
-				return 2
-			} else if (currentMinute < 45) {
-				return 3
-			}
-			return 4
-		}
-		return 0
-	}
+	const currentWave = clubEvent.getCurrentWave()
 
 	return (
 		<div className="row">
@@ -99,9 +85,10 @@ export function ReserveScreen() {
 					</Tabs>
 					<ReserveGrid
 						table={reserveTables[selectedTableIndex]}
+						clubEvent={clubEvent}
 						mode="edit"
 						error={error}
-						wave={currentWave()}
+						wave={currentWave}
 						onReserve={handleReserve}
 					/>
 				</div>

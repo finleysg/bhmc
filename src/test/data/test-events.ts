@@ -538,6 +538,7 @@ type dateFieldTypes = {
 	payments_end: string
 	registration_window: string
 	season: number
+	signup_waves: number | null
 }
 
 const getTestEvent = (eventType: number, state: string = "registration") => {
@@ -557,6 +558,7 @@ const getTestEvent = (eventType: number, state: string = "registration") => {
 		payments_end: subDays(now, 1).toISOString(),
 		registration_window: state,
 		season: now.getFullYear(),
+		signup_waves: null,
 	}
 	return Object.assign(getEvent(eventType), dateFields)
 }

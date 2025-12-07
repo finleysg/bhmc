@@ -97,7 +97,7 @@ export class ReserveGroup {
 	name: string
 	wave: number
 
-	constructor(course: Course, hole: Hole, slots: RegistrationSlot[], name: string) {
+	constructor(course: Course, hole: Hole, slots: RegistrationSlot[], name: string, wave?: number) {
 		this.id = `${course.name.toLowerCase()}-${name.toLowerCase()}`
 		this.courseId = course.id
 		this.holeId = hole.id
@@ -105,7 +105,7 @@ export class ReserveGroup {
 		this.slots = slots.map((slot) => new ReserveSlot(this.id, slot))
 		this.startingOrder = this.slots[0]?.startingOrder
 		this.name = name // starting hole or tee time
-		this.wave = deriveWave(name)
+		this.wave = wave ?? deriveWave(name)
 	}
 
 	isRegistered = (playerId: number) => {
@@ -249,7 +249,8 @@ const createTeeTimes = (clubEvent: ClubEvent, slots: RegistrationSlot[]) => {
 				return slot.startingOrder === i && slot.holeId === firstHole.id
 			})
 			const teetime = calculateTeetime(startingTime, i, teeTimeSplits)
-			table.groups.push(new ReserveGroup(course, firstHole, group, teetime))
+			const wave = calculateWave(i, clubEvent.totalGroups!, clubEvent.signupWaves)
+			table.groups.push(new ReserveGroup(course, firstHole, group, teetime, wave))
 		}
 		tables.push(table)
 	})
@@ -262,6 +263,7 @@ const createShotgun = (clubEvent: ClubEvent, slots: RegistrationSlot[]) => {
 
 	clubEvent.courses.forEach((course) => {
 		const table = new ReserveTable(course)
+		let groupIndex = 0
 		course.holes.forEach((hole) => {
 			const aGroup = slots.filter((slot) => {
 				return slot.holeId === hole.id && slot.startingOrder === 0
@@ -269,8 +271,25 @@ const createShotgun = (clubEvent: ClubEvent, slots: RegistrationSlot[]) => {
 			const bGroup = slots.filter((slot) => {
 				return slot.holeId === hole.id && slot.startingOrder === 1
 			})
-			table.groups.push(new ReserveGroup(course, hole, aGroup, `${hole.holeNumber}A`))
-			table.groups.push(new ReserveGroup(course, hole, bGroup, `${hole.holeNumber}B`))
+			const totalGroups = course.holes.length * 2 // A and B groups per hole
+			table.groups.push(
+				new ReserveGroup(
+					course,
+					hole,
+					aGroup,
+					`${hole.holeNumber}A`,
+					calculateWave(groupIndex++, totalGroups, clubEvent.signupWaves),
+				),
+			)
+			table.groups.push(
+				new ReserveGroup(
+					course,
+					hole,
+					bGroup,
+					`${hole.holeNumber}B`,
+					calculateWave(groupIndex++, totalGroups, clubEvent.signupWaves),
+				),
+			)
 		})
 		tables.push(table)
 	})
@@ -330,12 +349,12 @@ export const ConvertRegistrationsToReservations = (registrations: Registration[]
 }
 
 const calculateWave = (groupIndex: number, totalGroups: number, signupWaves?: number | null) => {
-  if (!signupWaves || signupWaves <= 0) {
-    return 0 // No wave restrictions
-  }
+	if (!signupWaves || signupWaves <= 0) {
+		return 0 // No wave restrictions
+	}
 
-  const groupsPerWave = Math.ceil(totalGroups / signupWaves)
-  return Math.floor(groupIndex / groupsPerWave) + 1
+	const groupsPerWave = Math.ceil(totalGroups / signupWaves)
+	return Math.floor(groupIndex / groupsPerWave) + 1
 }
 
 const deriveWave = (timeAsString: string) => {

@@ -9,11 +9,21 @@ interface ReserveRowProps extends Omit<ComponentPropsWithoutRef<"div">, "onSelec
 	group: ReserveGroup
 	mode: "view" | "edit"
 	wave: number
+	waveUnlockTimes?: Date[]
 	onSelect: (slot: ReserveSlot[]) => void
 	onReserve: (groupName: string) => void
 }
 
-export function ReserveRow({ courseName, group, mode, wave, onSelect, onReserve, ...rest }: ReserveRowProps) {
+export function ReserveRow({
+	courseName,
+	group,
+	mode,
+	wave,
+	waveUnlockTimes,
+	onSelect,
+	onReserve,
+	...rest
+}: ReserveRowProps) {
 	const waveAvailable = () => {
 		if (wave > 0) {
 			return wave >= group.wave
@@ -23,6 +33,13 @@ export function ReserveRow({ courseName, group, mode, wave, onSelect, onReserve,
 
 	const availabilityMessage = () => {
 		if (!waveAvailable()) {
+			// Use dynamic wave unlock times if available
+			if (waveUnlockTimes && group.wave > 0 && group.wave <= waveUnlockTimes.length) {
+				const unlockTime = waveUnlockTimes[group.wave - 1] // waves are 1-based, array is 0-based
+				return `Available at ${format(unlockTime, "h:mm a")}`
+			}
+
+			// Fallback to legacy hardcoded times
 			let startTime = "5:00 PM"
 			if (group.wave === 2) {
 				startTime = "5:15 PM"

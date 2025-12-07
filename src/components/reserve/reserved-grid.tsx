@@ -38,6 +38,7 @@ export function ReservedGrid({ clubEvent }: ClubEventProps) {
 							<ReserveGrid
 								mode="view"
 								table={reserveTables[selectedTableIndex]}
+								clubEvent={clubEvent}
 								error={null}
 								wave={0}
 								onReserve={() => {

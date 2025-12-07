@@ -3,21 +3,22 @@ import React, { ComponentPropsWithoutRef, useEffect } from "react"
 import { toast } from "react-toastify"
 
 import { useEventRegistration } from "../../hooks/use-event-registration"
-import { ClubEvent } from "../../models/club-event"
 import { Course } from "../../models/course"
 import { ReserveSlot, ReserveTable } from "../../models/reserve"
 import { OverlaySpinner } from "../spinners/overlay-spinner"
 import { ReserveRow } from "./reserve-row"
+import { ClubEvent } from "../../models/club-event"
 
 interface ReserveGridProps extends ComponentPropsWithoutRef<"div"> {
 	table: ReserveTable
+	clubEvent: ClubEvent
 	error: Error | null
 	mode: "view" | "edit"
 	wave: number
 	onReserve: (course: Course, groupName: string, slots: ReserveSlot[]) => void
 }
 
-export function ReserveGrid({ table, mode, wave, onReserve, ...rest }: ReserveGridProps) {
+export function ReserveGrid({ table, clubEvent, mode, wave, onReserve, ...rest }: ReserveGridProps) {
 	const [selectedSlots, updateSelectedSlots] = React.useState<ReserveSlot[]>([])
 	const { error, setError } = useEventRegistration()
 
@@ -75,6 +76,8 @@ export function ReserveGrid({ table, mode, wave, onReserve, ...rest }: ReserveGr
 		table.applySelectedSlots(selectedSlots)
 	}
 
+	const waveUnlockTimes = clubEvent.getWaveUnlockTimes()
+
 	return (
 		<div className="card mt-4" {...rest}>
 			<div className="card-body">
@@ -87,6 +90,7 @@ export function ReserveGrid({ table, mode, wave, onReserve, ...rest }: ReserveGr
 							courseName={table.course.name}
 							group={group}
 							wave={wave}
+							waveUnlockTimes={waveUnlockTimes}
 							onSelect={handleSelect}
 							onReserve={handleReserve}
 						/>

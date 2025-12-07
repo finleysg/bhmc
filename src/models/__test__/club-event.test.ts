@@ -170,188 +170,182 @@ test.each(["2024-06-11T16:59:00Z", "2024-06-11T18:01:00Z"])(
 	},
 )
 
-describe("Wave Registration", () => {
-  describe("getWaveUnlockTimes", () => {
-    test("returns empty array when waves are not configured", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = null
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T18:00:00Z"
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getWaveUnlockTimes returns empty array when waves are not configured", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = null
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T18:00:00Z"
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      expect(event.getWaveUnlockTimes()).toEqual([])
-    })
+	expect(event.getWaveUnlockTimes()).toEqual([])
+})
 
-    test("returns empty array when signup_waves is 0", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 0
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T18:00:00Z"
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getWaveUnlockTimes returns empty array when signup_waves is 0", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 0
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T18:00:00Z"
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      expect(event.getWaveUnlockTimes()).toEqual([])
-    })
+	expect(event.getWaveUnlockTimes()).toEqual([])
+})
 
-    test("returns empty array when priority signup start is missing", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 4
-      eventData.priority_signup_start = null
-      eventData.signup_start = "2024-06-11T18:00:00Z"
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getWaveUnlockTimes returns empty array when priority signup start is missing", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 4
+	eventData.priority_signup_start = null
+	eventData.signup_start = "2024-06-11T18:00:00Z"
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      expect(event.getWaveUnlockTimes()).toEqual([])
-    })
+	expect(event.getWaveUnlockTimes()).toEqual([])
+})
 
-    test("returns empty array when signup start is missing", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 4
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = null
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getWaveUnlockTimes returns empty array when signup start is missing", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 4
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = ""
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      expect(event.getWaveUnlockTimes()).toEqual([])
-    })
+	expect(event.getWaveUnlockTimes()).toEqual([])
+})
 
-    test("returns correct unlock times for 4-wave setup", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 4
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T18:00:00Z" // 1 hour priority window
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getWaveUnlockTimes returns correct unlock times for 4-wave setup", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 4
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T18:00:00Z" // 1 hour priority window
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      const unlockTimes = event.getWaveUnlockTimes()
-      expect(unlockTimes).toHaveLength(4)
+	const unlockTimes = event.getWaveUnlockTimes()
+	expect(unlockTimes).toHaveLength(4)
 
-      // Wave 1 unlocks at priority start
-      expect(unlockTimes[0]).toEqual(new Date("2024-06-11T17:00:00Z"))
+	// Wave 1 unlocks at priority start
+	expect(unlockTimes[0]).toEqual(new Date("2024-06-11T17:00:00Z"))
 
-      // Wave 2 unlocks at 15 minutes later (17:15)
-      expect(unlockTimes[1]).toEqual(new Date("2024-06-11T17:15:00Z"))
+	// Wave 2 unlocks at 15 minutes later (17:15)
+	expect(unlockTimes[1]).toEqual(new Date("2024-06-11T17:15:00Z"))
 
-      // Wave 3 unlocks at 30 minutes later (17:30)
-      expect(unlockTimes[2]).toEqual(new Date("2024-06-11T17:30:00Z"))
+	// Wave 3 unlocks at 30 minutes later (17:30)
+	expect(unlockTimes[2]).toEqual(new Date("2024-06-11T17:30:00Z"))
 
-      // Wave 4 unlocks at 45 minutes later (17:45)
-      expect(unlockTimes[3]).toEqual(new Date("2024-06-11T17:45:00Z"))
-    })
+	// Wave 4 unlocks at 45 minutes later (17:45)
+	expect(unlockTimes[3]).toEqual(new Date("2024-06-11T17:45:00Z"))
+})
 
-    test("returns correct unlock times for 3-wave setup", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 3
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T17:30:00Z" // 30 minute priority window
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getWaveUnlockTimes returns correct unlock times for 3-wave setup", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 3
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T17:30:00Z" // 30 minute priority window
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      const unlockTimes = event.getWaveUnlockTimes()
-      expect(unlockTimes).toHaveLength(3)
+	const unlockTimes = event.getWaveUnlockTimes()
+	expect(unlockTimes).toHaveLength(3)
 
-      // Wave 1 unlocks at priority start
-      expect(unlockTimes[0]).toEqual(new Date("2024-06-11T17:00:00Z"))
+	// Wave 1 unlocks at priority start
+	expect(unlockTimes[0]).toEqual(new Date("2024-06-11T17:00:00Z"))
 
-      // Wave 2 unlocks at 10 minutes later (17:10)
-      expect(unlockTimes[1]).toEqual(new Date("2024-06-11T17:10:00Z"))
+	// Wave 2 unlocks at 10 minutes later (17:10)
+	expect(unlockTimes[1]).toEqual(new Date("2024-06-11T17:10:00Z"))
 
-      // Wave 3 unlocks at 20 minutes later (17:20)
-      expect(unlockTimes[2]).toEqual(new Date("2024-06-11T17:20:00Z"))
-    })
-  })
+	// Wave 3 unlocks at 20 minutes later (17:20)
+	expect(unlockTimes[2]).toEqual(new Date("2024-06-11T17:20:00Z"))
+})
 
-  describe("getCurrentWave", () => {
-    test("returns 0 when waves are not configured", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = null
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T18:00:00Z"
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getCurrentWave returns 0 when waves are not configured", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = null
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T18:00:00Z"
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      expect(event.getCurrentWave(new Date("2024-06-11T17:30:00Z"))).toBe(0)
-    })
+	expect(event.getCurrentWave(new Date("2024-06-11T17:30:00Z"))).toBe(0)
+})
 
-    test("returns 0 when signup_waves is 0", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 0
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T18:00:00Z"
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getCurrentWave returns 0 when signup_waves is 0", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 0
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T18:00:00Z"
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      expect(event.getCurrentWave(new Date("2024-06-11T17:30:00Z"))).toBe(0)
-    })
+	expect(event.getCurrentWave(new Date("2024-06-11T17:30:00Z"))).toBe(0)
+})
 
-    test("returns 0 when outside priority registration window (before start)", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 4
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T18:00:00Z"
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getCurrentWave returns 0 when outside priority registration window (before start)", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 4
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T18:00:00Z"
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      expect(event.getCurrentWave(new Date("2024-06-11T16:59:00Z"))).toBe(0)
-    })
+	expect(event.getCurrentWave(new Date("2024-06-11T16:59:00Z"))).toBe(0)
+})
 
-    test("returns 0 when outside priority registration window (after end)", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 4
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T18:00:00Z"
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getCurrentWave returns 0 when outside priority registration window (after end)", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 4
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T18:00:00Z"
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      expect(event.getCurrentWave(new Date("2024-06-11T18:01:00Z"))).toBe(0)
-    })
+	expect(event.getCurrentWave(new Date("2024-06-11T18:01:00Z"))).toBe(0)
+})
 
-    test("returns correct wave number for 4-wave setup", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 4
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T18:00:00Z"
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getCurrentWave returns correct wave number for 4-wave setup", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 4
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T18:00:00Z"
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      // At priority start - wave 1
-      expect(event.getCurrentWave(new Date("2024-06-11T17:00:00Z"))).toBe(1)
+	// At priority start - wave 1
+	expect(event.getCurrentWave(new Date("2024-06-11T17:00:00Z"))).toBe(1)
 
-      // Just after priority start - still wave 1
-      expect(event.getCurrentWave(new Date("2024-06-11T17:01:00Z"))).toBe(1)
+	// Just after priority start - still wave 1
+	expect(event.getCurrentWave(new Date("2024-06-11T17:01:00Z"))).toBe(1)
 
-      // At 15 minutes - wave 2 starts
-      expect(event.getCurrentWave(new Date("2024-06-11T17:15:00Z"))).toBe(2)
+	// At 15 minutes - wave 2 starts
+	expect(event.getCurrentWave(new Date("2024-06-11T17:15:00Z"))).toBe(2)
 
-      // At 30 minutes - wave 3 starts
-      expect(event.getCurrentWave(new Date("2024-06-11T17:30:00Z"))).toBe(3)
+	// At 30 minutes - wave 3 starts
+	expect(event.getCurrentWave(new Date("2024-06-11T17:30:00Z"))).toBe(3)
 
-      // At 45 minutes - wave 4 starts
-      expect(event.getCurrentWave(new Date("2024-06-11T17:45:00Z"))).toBe(4)
+	// At 45 minutes - wave 4 starts
+	expect(event.getCurrentWave(new Date("2024-06-11T17:45:00Z"))).toBe(4)
 
-      // Just before signup start - still wave 4
-      expect(event.getCurrentWave(new Date("2024-06-11T17:59:00Z"))).toBe(4)
-    })
+	// Just before signup start - still wave 4
+	expect(event.getCurrentWave(new Date("2024-06-11T17:59:00Z"))).toBe(4)
+})
 
-    test("returns correct wave number for 3-wave setup", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 3
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T17:30:00Z" // 30 minute window
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getCurrentWave returns correct wave number for 3-wave setup", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 3
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T17:30:00Z" // 30 minute window
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      // At priority start - wave 1
-      expect(event.getCurrentWave(new Date("2024-06-11T17:00:00Z"))).toBe(1)
+	// At priority start - wave 1
+	expect(event.getCurrentWave(new Date("2024-06-11T17:00:00Z"))).toBe(1)
 
-      // At 10 minutes - wave 2 starts
-      expect(event.getCurrentWave(new Date("2024-06-11T17:10:00Z"))).toBe(2)
+	// At 10 minutes - wave 2 starts
+	expect(event.getCurrentWave(new Date("2024-06-11T17:10:00Z"))).toBe(2)
 
-      // At 20 minutes - wave 3 starts
-      expect(event.getCurrentWave(new Date("2024-06-11T17:20:00Z"))).toBe(3)
+	// At 20 minutes - wave 3 starts
+	expect(event.getCurrentWave(new Date("2024-06-11T17:20:00Z"))).toBe(3)
 
-      // Just before signup start - still wave 3
-      expect(event.getCurrentWave(new Date("2024-06-11T17:29:00Z"))).toBe(3)
-    })
+	// Just before signup start - still wave 3
+	expect(event.getCurrentWave(new Date("2024-06-11T17:29:00Z"))).toBe(3)
+})
 
-    test("does not exceed total waves when time exceeds last wave start but is still within priority window", () => {
-      const eventData = getTestEvent(TestEventType.weeknight)
-      eventData.signup_waves = 2
-      eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-      eventData.signup_start = "2024-06-11T17:30:00Z" // 30 minute window
-      const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
+test("getCurrentWave does not exceed total waves when time exceeds last wave start but is still within priority window", () => {
+	const eventData = getTestEvent(TestEventType.weeknight)
+	eventData.signup_waves = 2
+	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
+	eventData.signup_start = "2024-06-11T17:30:00Z" // 30 minute window
+	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
 
-      // At 25 minutes (within the 30 minute window) - should return wave 2
-      expect(event.getCurrentWave(new Date("2024-06-11T17:25:00Z"))).toBe(2)
-    })
-  })
+	// At 25 minutes (within the 30 minute window) - should return wave 2
+	expect(event.getCurrentWave(new Date("2024-06-11T17:25:00Z"))).toBe(2)
 })

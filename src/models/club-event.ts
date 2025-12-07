@@ -52,6 +52,7 @@ export const ClubEventApiSchema = z.object({
 	season_points: z.number().nullish(),
 	signup_start: z.coerce.date().nullish(),
 	signup_end: z.coerce.date().nullish(),
+	signup_waves: z.number().nullish(),
 	skins_type: z.string().nullish(),
 	start_date: z.string(),
 	start_time: z.string().nullish(),
@@ -99,6 +100,7 @@ export class ClubEvent {
 	signupStart?: Date | null
 	signupEnd?: Date | null
 	signupWindow: string
+	signupWaves?: number | null
 	skinsType?: string | null
 	slugName: string
 	slugDate: string
@@ -138,6 +140,7 @@ export class ClubEvent {
 		this.seasonPoints = json.season_points
 		this.signupStart = json.signup_start
 		this.signupEnd = json.signup_end
+		this.signupWaves = json.signup_waves
 		this.skinsType = json.skins_type
 		this.startDate = parse(json.start_date, "yyyy-MM-dd", new Date())
 		this.startDateString = json.start_date
@@ -324,6 +327,58 @@ export class ClubEvent {
 	normalizeFilename(filename: string) {
 		const name = filename.toLowerCase().trim().replace("/", " ").replace(/\s+/g, "-").replace(/--+/g, "-")
 		return `${this.slugDate}-${this.slugName}-${name}`
+	}
+
+	/**
+	 * Returns an array of Date objects representing when each wave unlocks during priority registration.
+	 * @returns Array of wave unlock times, or empty array if wave registration is not configured
+	 */
+	getWaveUnlockTimes(): Date[] {
+		if (!this.signupWaves || this.signupWaves <= 0 || !this.prioritySignupStart || !this.signupStart) {
+			return []
+		}
+
+		const unlockTimes: Date[] = []
+		const priorityStart = this.prioritySignupStart
+		const priorityDuration = this.signupStart.getTime() - priorityStart.getTime()
+		const waveDuration = priorityDuration / this.signupWaves
+
+		for (let i = 0; i < this.signupWaves; i++) {
+			unlockTimes.push(new Date(priorityStart.getTime() + i * waveDuration))
+		}
+
+		return unlockTimes
+	}
+
+	/**
+	 * Returns the current active wave number during priority registration.
+	 * @param now The current date and time
+	 * @returns Current wave number (1-based), or 0 if wave registration is not active
+	 */
+	getCurrentWave(now: Date = new Date()): number {
+		if (!this.signupWaves || this.signupWaves <= 0) {
+			return 0 // No wave restrictions
+		}
+
+		const isPriorityPeriod = this.priorityRegistrationIsOpen(now)
+		if (!isPriorityPeriod) {
+			return 0 // Outside priority period, no restrictions
+		}
+
+		// Calculate wave duration in milliseconds
+		const priorityStart = this.prioritySignupStart!
+		const signupStart = this.signupStart!
+		const priorityDuration = signupStart.getTime() - priorityStart.getTime()
+		const waveDuration = priorityDuration / this.signupWaves
+
+		// Calculate elapsed time since priority start
+		const elapsedTime = now.getTime() - priorityStart.getTime()
+
+		// Determine current wave (1-based)
+		const currentWaveNumber = Math.floor(elapsedTime / waveDuration) + 1
+
+		// Ensure we don't exceed the total waves
+		return Math.min(currentWaveNumber, this.signupWaves)
 	}
 
 	static getClubEvent(events?: ClubEvent[], eventDate?: string, eventName?: string) {
