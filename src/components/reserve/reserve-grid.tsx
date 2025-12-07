@@ -12,7 +12,6 @@ import { ClubEvent } from "../../models/club-event"
 interface ReserveGridProps extends ComponentPropsWithoutRef<"div"> {
 	table: ReserveTable
 	clubEvent: ClubEvent
-	error: Error | null
 	mode: "view" | "edit"
 	wave: number
 	onReserve: (course: Course, groupName: string, slots: ReserveSlot[]) => void

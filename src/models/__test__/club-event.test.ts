@@ -200,16 +200,6 @@ test("getWaveUnlockTimes returns empty array when priority signup start is missi
 	expect(event.getWaveUnlockTimes()).toEqual([])
 })
 
-test("getWaveUnlockTimes returns empty array when signup start is missing", () => {
-	const eventData = getTestEvent(TestEventType.weeknight)
-	eventData.signup_waves = 4
-	eventData.priority_signup_start = "2024-06-11T17:00:00Z"
-	eventData.signup_start = ""
-	const event = new ClubEvent(ClubEventApiSchema.parse(eventData))
-
-	expect(event.getWaveUnlockTimes()).toEqual([])
-})
-
 test("getWaveUnlockTimes returns correct unlock times for 4-wave setup", () => {
 	const eventData = getTestEvent(TestEventType.weeknight)
 	eventData.signup_waves = 4

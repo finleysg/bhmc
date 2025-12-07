@@ -39,7 +39,6 @@ export function ReservedGrid({ clubEvent }: ClubEventProps) {
 								mode="view"
 								table={reserveTables[selectedTableIndex]}
 								clubEvent={clubEvent}
-								error={null}
 								wave={0}
 								onReserve={() => {
 									throw new Error("This view is readonly.")

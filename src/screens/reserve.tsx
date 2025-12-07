@@ -20,7 +20,7 @@ export function ReserveScreen() {
 
 	const { clubEvent } = useCurrentEvent()
 	const { data: slots } = useEventRegistrationSlots(clubEvent.id)
-	const { createRegistration, error } = useEventRegistration()
+	const { createRegistration } = useEventRegistration()
 
 	useInterval(() => {
 		loadTables()
@@ -87,7 +87,6 @@ export function ReserveScreen() {
 						table={reserveTables[selectedTableIndex]}
 						clubEvent={clubEvent}
 						mode="edit"
-						error={error}
 						wave={currentWave}
 						onReserve={handleReserve}
 					/>
