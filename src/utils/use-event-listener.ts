@@ -2,7 +2,7 @@ import React from "react"
 
 const useEventListener = (eventName: keyof WindowEventMap, handler: (event: Event) => void, element = window) => {
 	// Create a ref that stores handler
-	const savedHandler = React.useRef<(event: Event) => void>()
+	const savedHandler = React.useRef<(event: Event) => void | null>(null)
 
 	// Update ref.current value if handler changes.
 	// You should memoize the handler with useCallback.

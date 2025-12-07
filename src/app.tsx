@@ -66,7 +66,9 @@ export function App() {
 		<QueryClientProvider client={queryClient}>
 			<LayoutProvider>
 				<AuthProvider authenticationProvider={new DefaultAuthenticationProvider()}>
-					<RouterProvider router={routes} fallbackElement={<FullPageSpinner />} />
+					<React.Suspense fallback={<FullPageSpinner />}>
+						<RouterProvider router={routes} />
+					</React.Suspense>
 				</AuthProvider>
 			</LayoutProvider>
 			<ReactQueryDevtools />
