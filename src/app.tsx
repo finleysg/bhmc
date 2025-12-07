@@ -9,7 +9,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { FullPageSpinner } from "./components/spinners/full-screen-spinner"
 import { AuthProvider } from "./context/auth-context"
 import { DefaultAuthenticationProvider } from "./context/authentication"
-import { LayoutProvider } from "./context/layout-context"
+import { LayoutProvider } from "./context/layout-provider"
 import { ErrorScreen } from "./screens/error"
 
 const AdminLayout = React.lazy(() => import("./admin/layout/admin-layout"))
