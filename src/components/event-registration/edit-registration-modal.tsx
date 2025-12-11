@@ -1,14 +1,11 @@
-// src/components/event-registration/edit-registration-modal.tsx
-
 import { Modal } from "../dialog/modal"
-import type { Player } from "../../models/player"
 
 export type EditRegistrationAction = "addPlayers" | "dropPlayers" | "moveGroup" | "replacePlayer" | "updateRegistration"
 
 export interface EditRegistrationModalProps {
 	show: boolean
 	onClose: () => void
-	onAction: (action: EditRegistrationAction, payload?: Player[] | undefined) => void
+	onAction: (action: EditRegistrationAction) => void
 }
 
 const OPTIONS: {
