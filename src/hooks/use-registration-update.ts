@@ -45,27 +45,3 @@ export function useChangeEvent() {
 		},
 	})
 }
-
-interface AddPlayersArgs {
-	registrationId: number
-	playerIds: number[]
-}
-
-export function useAddPlayersToRegistration() {
-	const queryClient = useQueryClient()
-
-	return useMutation({
-		mutationFn: ({ registrationId, playerIds }: AddPlayersArgs) => {
-			return httpClient(apiUrl(`registration/${registrationId}/add-players`), {
-				method: "PUT",
-				body: JSON.stringify({
-					players: playerIds.map((id) => ({ id })),
-				}),
-			})
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["event-registrations"] })
-			queryClient.invalidateQueries({ queryKey: ["event-registration-slots"] })
-		},
-	})
-}
