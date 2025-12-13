@@ -10,9 +10,11 @@ import { RegisterStep, ReserveStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
 import { useMyPlayerRecord } from "../hooks/use-my-player-record"
 import { usePlayerRegistrations } from "../hooks/use-player-registrations"
+import { useSwapPlayers } from "../hooks/use-swap-players"
 import { useCurrentEvent } from "./event-detail"
 import { EditRegistrationModal, EditRegistrationAction } from "../components/event-registration/edit-registration-modal"
 import { PlayerSearchModal } from "../components/event-registration/player-search-modal"
+import { ReplacePlayerModal } from "../components/event-registration/replace-player-modal"
 import type { Player } from "../models/player"
 
 export function EventViewScreen() {
@@ -22,8 +24,10 @@ export function EventViewScreen() {
 	const { data: player } = useMyPlayerRecord()
 	const { data: myRegistrations } = usePlayerRegistrations(player?.id, clubEvent.season)
 	const navigate = useNavigate()
+	const swapPlayers = useSwapPlayers()
 	const [showEditModal, setShowEditModal] = useState(false)
 	const [showPlayerSearch, setShowPlayerSearch] = useState(false)
+	const [showReplacePlayer, setShowReplacePlayer] = useState(false)
 
 	const handleStart = async () => {
 		initiateStripeSession()
@@ -55,6 +59,8 @@ export function EventViewScreen() {
 			}
 		} else if (action === "addPlayers") {
 			setShowPlayerSearch(true)
+		} else if (action === "replacePlayer") {
+			setShowReplacePlayer(true)
 		} else {
 			// Placeholder for other actions
 			console.log("Selected action:", action)
@@ -78,6 +84,16 @@ export function EventViewScreen() {
 		setShowPlayerSearch(false)
 	}
 
+	const handleReplacePlayer = async (sourcePlayerId: number, targetPlayerId: number) => {
+		setShowReplacePlayer(false)
+		const registration = myRegistrations?.find((r) => r.eventId === clubEvent.id)
+		const slot = registration?.slots.find((s) => s.playerId === sourcePlayerId)
+		if (slot) {
+			await swapPlayers.mutateAsync({ slotId: slot.id, playerId: targetPlayerId })
+			toast.success("Player replaced")
+		}
+	}
+
 	return (
 		<>
 			<EditRegistrationModal show={showEditModal} onClose={() => setShowEditModal(false)} onAction={handleEditAction} />
@@ -87,6 +103,15 @@ export function EventViewScreen() {
 				onConfirm={handlePlayerSearchConfirm}
 				clubEvent={clubEvent}
 			/>
+			{myRegistrations?.find((r) => r.eventId === clubEvent.id) && (
+				<ReplacePlayerModal
+					show={showReplacePlayer}
+					onClose={() => setShowReplacePlayer(false)}
+					onReplace={handleReplacePlayer}
+					registration={myRegistrations.find((r) => r.eventId === clubEvent.id)!}
+					clubEvent={clubEvent}
+				/>
+			)}
 			<div className="row">
 				<div className="col-md-8">
 					<EventDetail clubEvent={clubEvent} onRegister={handleStart} onEditRegistration={handleEdit} />
