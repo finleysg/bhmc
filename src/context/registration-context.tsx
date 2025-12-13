@@ -311,31 +311,38 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 */
 	const editRegistration = useCallback(
 		async (registrationId: number, playerIds: number[]) => {
-			const registrationData = await httpClient(apiUrl(`registration/${registrationId}/add_players`), {
-				method: "PUT",
-				body: JSON.stringify({
-					players: playerIds.map((id) => ({ id })),
-				}),
-			})
-			if (registrationData) {
-				const registration = new Registration(registrationData.registration)
-				const payment = await getOne(`payments/${registrationData.payment_id}/`, PaymentApiSchema)
-				const feeData = await getMany(
-					`registration-fees/?registration_id=${registration.id}`,
-					RegistrationFeeApiSchema,
-				)
-				const fees = feeData?.map((f) => new RegistrationFee(f))
-				dispatch({
-					type: "load-registration",
-					payload: {
-						registration,
-						payment: new Payment(payment!),
-						existingFees: fees,
-					},
+			try {
+				const registrationData = await httpClient(apiUrl(`registration/${registrationId}/add_players`), {
+					method: "PUT",
+					body: JSON.stringify({
+						players: playerIds.map((id) => ({ id })),
+					}),
 				})
-				queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
+				if (registrationData) {
+					const registration = new Registration(registrationData.registration)
+					const payment = await getOne(`payments/${registrationData.payment_id}/`, PaymentApiSchema)
+					const feeData = await getMany(
+						`registration-fees/?registration_id=${registration.id}`,
+						RegistrationFeeApiSchema,
+					)
+					const fees = feeData?.map((f) => new RegistrationFee(f))
+					dispatch({
+						type: "load-registration",
+						payload: {
+							registration,
+							payment: new Payment(payment!),
+							existingFees: fees,
+						},
+					})
+					queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
+					queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
+					queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
+				}
+			} catch (error) {
+				dispatch({ type: "update-error", payload: { error: error as Error } })
 			}
-		}, [queryClient, state.clubEvent?.id],
+		},
+		[queryClient, state.clubEvent?.id],
 	)
 
 	/**
