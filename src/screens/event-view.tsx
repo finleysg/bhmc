@@ -10,9 +10,11 @@ import { RegisterStep, ReserveStep } from "../context/registration-reducer"
 import { useEventRegistration } from "../hooks/use-event-registration"
 import { useMyPlayerRecord } from "../hooks/use-my-player-record"
 import { usePlayerRegistrations } from "../hooks/use-player-registrations"
+import { useMovePlayers } from "../hooks/use-move-players"
 import { useSwapPlayers } from "../hooks/use-swap-players"
 import { useCurrentEvent } from "./event-detail"
 import { EditRegistrationModal, EditRegistrationAction } from "../components/event-registration/edit-registration-modal"
+import { MoveGroupModal } from "../components/event-registration/move-group-modal"
 import { PlayerSearchModal } from "../components/event-registration/player-search-modal"
 import { ReplacePlayerModal } from "../components/event-registration/replace-player-modal"
 import type { Player } from "../models/player"
@@ -24,9 +26,11 @@ export function EventViewScreen() {
 	const { data: player } = useMyPlayerRecord()
 	const { data: myRegistrations } = usePlayerRegistrations(player?.id, clubEvent.season)
 	const navigate = useNavigate()
+	const movePlayers = useMovePlayers()
 	const swapPlayers = useSwapPlayers()
 	const [availableSlots, setAvailableSlots] = useState<number>(0)
 	const [showEditModal, setShowEditModal] = useState(false)
+	const [showMoveGroup, setShowMoveGroup] = useState(false)
 	const [showPlayerSearch, setShowPlayerSearch] = useState(false)
 	const [showReplacePlayer, setShowReplacePlayer] = useState(false)
 
@@ -34,8 +38,10 @@ export function EventViewScreen() {
 		const currentSlots = registration?.slots.filter((slot) => slot.playerId).length ?? 0
 		if (clubEvent.canChoose) {
 			setAvailableSlots(currentSlots)
+			return currentSlots
 		} else {
 			setAvailableSlots((clubEvent.maximumSignupGroupSize ?? 0) - currentSlots)
+			return (clubEvent.maximumSignupGroupSize ?? 0) - currentSlots
 		}
 	}
 
@@ -69,14 +75,16 @@ export function EventViewScreen() {
 			}
 		} else if (action === "addPlayers") {
 			await loadRegistration(player!)
-			deriveAvailableSlots()
-			if (availableSlots <= 0) {
+			const available = deriveAvailableSlots()
+			if (available <= 0) {
 				toast.info("No available slots to add players.")
 				return
 			}
 			setShowPlayerSearch(true)
 		} else if (action === "replacePlayer") {
 			setShowReplacePlayer(true)
+		} else if (action === "moveGroup") {
+			setShowMoveGroup(true)
 		} else {
 			// Placeholder for other actions
 			console.log("Selected action:", action)
@@ -114,6 +122,23 @@ export function EventViewScreen() {
 		}
 	}
 
+	const handleMoveGroup = async (destinationSlotIds: number[]) => {
+		setShowMoveGroup(false)
+		const registration = myRegistrations?.find((r) => r.eventId === clubEvent.id)
+		if (registration) {
+			try {
+				await movePlayers.mutateAsync({
+					registrationId: registration.id,
+					sourceSlotIds: registration.slots.map((s) => s.id),
+					destinationSlotIds,
+				})
+				toast.success("Group moved")
+			} catch (error: unknown) {
+				toast.error(error instanceof Error ? error.message : "Failed to move group")
+			}
+		}
+	}
+
 	return (
 		<>
 			<EditRegistrationModal show={showEditModal} onClose={() => setShowEditModal(false)} onAction={handleEditAction} />
@@ -129,6 +154,15 @@ export function EventViewScreen() {
 					show={showReplacePlayer}
 					onClose={() => setShowReplacePlayer(false)}
 					onReplace={handleReplacePlayer}
+					registration={myRegistrations.find((r) => r.eventId === clubEvent.id)!}
+					clubEvent={clubEvent}
+				/>
+			)}
+			{myRegistrations?.find((r) => r.eventId === clubEvent.id) && (
+				<MoveGroupModal
+					show={showMoveGroup}
+					onClose={() => setShowMoveGroup(false)}
+					onMove={handleMoveGroup}
 					registration={myRegistrations.find((r) => r.eventId === clubEvent.id)!}
 					clubEvent={clubEvent}
 				/>
