@@ -40,7 +40,6 @@ export function ReplacePlayerModal({ show, onClose, onReplace, registration, clu
 
 	const handleReplace = () => {
 		if (sourcePlayerId && targetPlayer) {
-			console.log({ sourcePlayerId, targetPlayerId: targetPlayer.id })
 			onReplace(sourcePlayerId, targetPlayer.id)
 		}
 	}
@@ -73,6 +72,7 @@ export function ReplacePlayerModal({ show, onClose, onReplace, registration, clu
 						isLoading={isLoading}
 						excludeIds={registeredPlayerIds}
 						membersOnly={isMembersOnly}
+						limit={1}
 						id="replace-player-picker"
 					/>
 				</div>

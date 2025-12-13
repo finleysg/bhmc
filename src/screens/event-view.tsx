@@ -19,15 +19,25 @@ import type { Player } from "../models/player"
 
 export function EventViewScreen() {
 	const { clubEvent } = useCurrentEvent()
-	const { createRegistration, editRegistration, initiateStripeSession, loadRegistration, updateStep } =
+	const { createRegistration, editRegistration, initiateStripeSession, loadRegistration, registration, updateStep } =
 		useEventRegistration()
 	const { data: player } = useMyPlayerRecord()
 	const { data: myRegistrations } = usePlayerRegistrations(player?.id, clubEvent.season)
 	const navigate = useNavigate()
 	const swapPlayers = useSwapPlayers()
+	const [availableSlots, setAvailableSlots] = useState<number>(0)
 	const [showEditModal, setShowEditModal] = useState(false)
 	const [showPlayerSearch, setShowPlayerSearch] = useState(false)
 	const [showReplacePlayer, setShowReplacePlayer] = useState(false)
+
+	const deriveAvailableSlots = () => {
+		const currentSlots = registration?.slots.filter((slot) => slot.playerId).length ?? 0
+		if (clubEvent.canChoose) {
+			setAvailableSlots(currentSlots)
+		} else {
+			setAvailableSlots((clubEvent.maximumSignupGroupSize ?? 0) - currentSlots)
+		}
+	}
 
 	const handleStart = async () => {
 		initiateStripeSession()
@@ -58,6 +68,12 @@ export function EventViewScreen() {
 				navigate("edit")
 			}
 		} else if (action === "addPlayers") {
+			await loadRegistration(player!)
+			deriveAvailableSlots()
+			if (availableSlots <= 0) {
+				toast.info("No available slots to add players.")
+				return
+			}
 			setShowPlayerSearch(true)
 		} else if (action === "replacePlayer") {
 			setShowReplacePlayer(true)
@@ -89,8 +105,12 @@ export function EventViewScreen() {
 		const registration = myRegistrations?.find((r) => r.eventId === clubEvent.id)
 		const slot = registration?.slots.find((s) => s.playerId === sourcePlayerId)
 		if (slot) {
-			await swapPlayers.mutateAsync({ slotId: slot.id, playerId: targetPlayerId })
-			toast.success("Player replaced")
+			try {
+				await swapPlayers.mutateAsync({ slotId: slot.id, playerId: targetPlayerId })
+				toast.success("Player replaced")
+			} catch (error: unknown) {
+				toast.error(error instanceof Error ? error.message : "Failed to replace player")
+			}
 		}
 	}
 
@@ -102,6 +122,7 @@ export function EventViewScreen() {
 				onClose={handlePlayerSearchClose}
 				onConfirm={handlePlayerSearchConfirm}
 				clubEvent={clubEvent}
+				availableSlots={availableSlots}
 			/>
 			{myRegistrations?.find((r) => r.eventId === clubEvent.id) && (
 				<ReplacePlayerModal

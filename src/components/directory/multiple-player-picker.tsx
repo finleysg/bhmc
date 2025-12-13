@@ -1,6 +1,7 @@
 import { useState, useRef } from "react"
 import { Typeahead, TypeaheadRef } from "react-bootstrap-typeahead"
 import { MdClose } from "react-icons/md"
+import { toast } from "react-toastify"
 import type { Player } from "../../models/player"
 
 interface MultiplePlayerPickerProps {
@@ -12,6 +13,7 @@ interface MultiplePlayerPickerProps {
 	membersOnly?: boolean
 	placeholder?: string
 	minChars?: number
+	limit?: number
 	id?: string
 	typeaheadRef?: React.RefObject<TypeaheadRef | null>
 }
@@ -25,6 +27,7 @@ export function MultiplePlayerPicker({
 	membersOnly = false,
 	placeholder = "Search for players...",
 	minChars = 3,
+	limit,
 	id = "multiple-player-picker",
 	typeaheadRef: externalRef,
 }: MultiplePlayerPickerProps) {
@@ -43,6 +46,12 @@ export function MultiplePlayerPicker({
 	)
 
 	const handleSelect = (selected: Player[]) => {
+		if (limit !== undefined && selectedPlayers.length >= limit) {
+			toast.warning("No more space available.")
+			typeaheadRef.current?.clear()
+			setSearchText("")
+			return
+		}
 		const newPlayers = selected.filter((player) => !selectedPlayers.some((p) => p.id === player.id))
 		onChange([...selectedPlayers, ...newPlayers])
 		typeaheadRef.current?.clear()

@@ -13,10 +13,18 @@ interface PlayerSearchModalProps {
 	onClose: () => void
 	onConfirm: (players: Player[]) => void
 	clubEvent: ClubEvent
+	availableSlots: number
 	minChars?: number
 }
 
-export function PlayerSearchModal({ show, onClose, onConfirm, clubEvent, minChars = 3 }: PlayerSearchModalProps) {
+export function PlayerSearchModal({
+	show,
+	onClose,
+	onConfirm,
+	clubEvent,
+	availableSlots,
+	minChars = 3,
+}: PlayerSearchModalProps) {
 	const { data: allPlayers = [], isLoading } = usePlayers()
 	const { data: slots = [] } = useEventRegistrationSlots(clubEvent.id)
 	const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([])
@@ -59,6 +67,7 @@ export function PlayerSearchModal({ show, onClose, onConfirm, clubEvent, minChar
 					isLoading={isLoading}
 					excludeIds={registeredPlayerIds}
 					membersOnly={isMembersOnly}
+					limit={availableSlots}
 					minChars={minChars}
 					typeaheadRef={typeaheadRef}
 					id="player-search-typeahead"

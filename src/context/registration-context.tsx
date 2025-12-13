@@ -321,16 +321,22 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				if (registrationData) {
 					const registration = new Registration(registrationData.registration)
 					const payment = await getOne(`payments/${registrationData.payment_id}/`, PaymentApiSchema)
+					if (!payment) {
+						throw new Error("Failed to load payment data after editing registration.")
+					}
 					const feeData = await getMany(
 						`registration-fees/?registration_id=${registration.id}`,
 						RegistrationFeeApiSchema,
 					)
-					const fees = feeData?.map((f) => new RegistrationFee(f))
+					if (!feeData) {
+						throw new Error("Failed to load registration fee data after editing registration.")
+					}
+					const fees = feeData.map((f) => new RegistrationFee(f))
 					dispatch({
 						type: "load-registration",
 						payload: {
 							registration,
-							payment: new Payment(payment!),
+							payment: new Payment(payment),
 							existingFees: fees,
 						},
 					})
