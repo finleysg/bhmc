@@ -7,6 +7,12 @@ import { ContactScreen } from "../screens/contact"
 import { DamCupScreen } from "../screens/dam-cup"
 import { DirectoryScreen } from "../screens/directory"
 import { EditRegistrationScreen } from "../screens/edit-registration"
+import { AddPlayersScreen } from "../screens/add-players"
+import { DropPlayersScreen } from "../screens/drop-players"
+import { ManageRegistrationMenu, ManageRegistrationScreen } from "../screens/manage-registration"
+import { MoveGroupScreen } from "../screens/move-group"
+import { ReplacePlayerScreen } from "../screens/replace-player"
+import { AddNotesScreen } from "../screens/add-notes"
 import { EventDetailScreen } from "../screens/event-detail"
 import { EventViewScreen } from "../screens/event-view"
 import { GalleryImageScreen } from "../screens/gallery-image"
@@ -46,6 +52,18 @@ export const mainRoutes = () =>
 						{ path: "reserve", element: <ReserveScreen /> },
 						{ path: "register", element: <RegisterScreen /> },
 						{ path: "edit", element: <EditRegistrationScreen /> },
+						{
+							path: "manage",
+							element: <ManageRegistrationScreen />,
+							children: [
+								{ index: true, element: <ManageRegistrationMenu /> },
+								{ path: "add", element: <AddPlayersScreen /> },
+								{ path: "drop", element: <DropPlayersScreen /> },
+								{ path: "move", element: <MoveGroupScreen /> },
+								{ path: "replace", element: <ReplacePlayerScreen /> },
+								{ path: "notes", element: <AddNotesScreen /> },
+							],
+						},
 						{ path: "review", element: <ReviewRegistrationScreen /> },
 						{
 							path: ":paymentId",

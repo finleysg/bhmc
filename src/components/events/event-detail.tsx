@@ -7,7 +7,7 @@ import { useMyRegistrationStatus } from "../../hooks/use-my-registration-status"
 import { ClubEvent } from "../../models/club-event"
 import { EventStatusType, getRegistrationTypeName, getStartTypeName } from "../../models/codes"
 import { dayAndDateFormat, dayDateAndTimeFormat } from "../../utils/date-utils"
-import { EditRegistrationButton } from "../buttons/edit-registration-button"
+import { ManageRegistrationButton } from "../buttons/manage-registration-button"
 import { EventAdminButton } from "../buttons/event-admin-button"
 import { EventPortalButton } from "../buttons/portal-button"
 import { RegisterButton } from "../buttons/register-button"
@@ -42,7 +42,7 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
 						<EventAdminButton clubEvent={clubEvent} />
 						<EventPortalButton clubEvent={clubEvent} />
 						<RegisteredButton clubEvent={clubEvent} />
-						<EditRegistrationButton clubEvent={clubEvent} hasSignedUp={hasSignedUp} onClick={onEditRegistration} />
+						<ManageRegistrationButton clubEvent={clubEvent} hasSignedUp={hasSignedUp} onClick={onEditRegistration} />
 						<RegisterButton clubEvent={clubEvent} hasSignedUp={hasSignedUp} onClick={onRegister} />
 					</div>
 				</div>
