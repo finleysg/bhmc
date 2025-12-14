@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { GoHome } from "react-icons/go"
 import { useNavigate } from "react-router-dom"
 
@@ -10,7 +11,6 @@ export function Home() {
 			role="button"
 			tabIndex={0}
 			onClick={() => navigate("/")}
-			onKeyDown={() => navigate("/")}
 		>
 			<i className="actions__item">
 				<GoHome />

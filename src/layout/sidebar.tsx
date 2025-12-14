@@ -45,8 +45,8 @@ export function Sidebar() {
 				<MenuItem path="gallery" icon={<RiGalleryFill />} name="Photo Gallery" />
 				{groups.indexOf(Groups.Guests) >= 0 && (
 					<React.Fragment>
-						<MenuItem path="session/login" icon={<BiLogInCircle />} name="Login" />
-						<MenuItem path="session/account" icon={<MdPersonAdd />} name="Create an Account" />
+						<MenuItem path="/session/login" icon={<BiLogInCircle />} name="Login" />
+						<MenuItem path="/session/account" icon={<MdPersonAdd />} name="Create an Account" />
 					</React.Fragment>
 				)}
 				{groups.indexOf(Groups.PaulHelpers) >= 0 && (

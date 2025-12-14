@@ -21,7 +21,7 @@ export function UserMenu() {
 			<li style={{ float: "right", color: colors.base }}>
 				<ul style={{ listStyle: "none" }}>
 					<li>
-						<Link to="session/login" className="text-white">
+						<Link to="/session/login" className="text-white">
 							Login
 						</Link>
 					</li>

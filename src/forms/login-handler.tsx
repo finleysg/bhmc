@@ -30,6 +30,12 @@ export function LoginHandler() {
 		<div>
 			<LoginView form={form} onSubmit={submitHandler} />
 			{error && <ErrorDisplay error={error.message} delay={3000} />}
+			<hr />
+			<div className="flex">
+				<button className="btn btn-link" onClick={() => navigate("/session/reset-password")}>
+					Forgot My Password
+				</button>
+			</div>
 		</div>
 	)
 }
