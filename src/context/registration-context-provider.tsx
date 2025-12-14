@@ -164,6 +164,9 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				headers: { "X-Correlation-ID": state.correlationId },
 			})
 		},
+		onError: (error) => {
+			dispatch({ type: "update-error", payload: { error } })
+		},
 	})
 
 	const { mutateAsync: _createRegistration } = useMutation({
@@ -254,26 +257,30 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 */
 	const loadRegistration = useCallback(
 		async (player: Player) => {
-			const registrationData = await getOne(
-				`registration/?event_id=${state.clubEvent?.id}&player_id=${player.id}`,
-				RegistrationApiSchema,
-			)
-			if (registrationData) {
-				const registration = new Registration(registrationData)
-				const feeData = await getMany(
-					`registration-fees/?registration_id=${registration.id}&confirmed=true`,
-					RegistrationFeeApiSchema,
+			try {
+				const registrationData = await getOne(
+					`registration/?event_id=${state.clubEvent?.id}&player_id=${player.id}`,
+					RegistrationApiSchema,
 				)
-				const fees = feeData?.map((f) => new RegistrationFee(f))
-				dispatch({
-					type: "load-registration",
-					payload: {
-						registration,
-						payment: Payment.createPlaceholder(state.clubEvent?.id ?? 0, user.id ?? 0),
-						existingFees: fees,
-					},
-				})
-				queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
+				if (registrationData) {
+					const registration = new Registration(registrationData)
+					const feeData = await getMany(
+						`registration-fees/?registration_id=${registration.id}&confirmed=true`,
+						RegistrationFeeApiSchema,
+					)
+					const fees = feeData?.map((f) => new RegistrationFee(f))
+					dispatch({
+						type: "load-registration",
+						payload: {
+							registration,
+							payment: Payment.createPlaceholder(state.clubEvent?.id ?? 0, user.id ?? 0),
+							existingFees: fees,
+						},
+					})
+					queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
+				}
+			} catch (error) {
+				dispatch({ type: "update-error", payload: { error: error as Error } })
 			}
 		},
 		[state.clubEvent?.id, queryClient, user.id],

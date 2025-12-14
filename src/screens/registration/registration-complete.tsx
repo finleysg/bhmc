@@ -40,7 +40,8 @@ export function RegistrationCompleteScreen() {
 				}
 			})
 			.catch((err) => {
-				setError(new Error(err.message || "Failed to retrieve payment intent"))
+				const message = err instanceof Error ? err.message : "Failed to retrieve payment intent"
+				setError(new Error(message))
 			})
 	}, [stripe, params])
 

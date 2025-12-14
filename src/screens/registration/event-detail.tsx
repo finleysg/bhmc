@@ -5,6 +5,7 @@ import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
 import { useClubEvents } from "../../hooks/use-club-events"
 import { ClubEvent } from "../../models/club-event"
 import { EventRegistrationProvider } from "../../context/registration-context-provider"
+import { useEffect } from "react"
 
 export type ClubEventContextType = { clubEvent: ClubEvent }
 
@@ -16,9 +17,10 @@ export function EventDetailScreen() {
 	const year = isValid(startDate) ? startDate.getFullYear() : new Date().getFullYear()
 	const { data: clubEvents } = useClubEvents(year)
 	const { found, clubEvent } = ClubEvent.getClubEvent(clubEvents ?? [], eventDate, eventName)
-	if (!eventDate || !eventName) {
-		navigate("/home")
-	}
+
+	useEffect(() => {
+		if (!eventDate || !eventName) navigate("/home", { replace: true })
+	}, [eventDate, eventName, navigate])
 
 	return (
 		<div className="content__inner">

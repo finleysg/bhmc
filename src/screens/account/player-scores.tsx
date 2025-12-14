@@ -10,9 +10,15 @@ export function PlayerScoresScreen() {
 	const { scoreType, season } = useParams()
 	const year = season === "all" ? 0 : season && !isNaN(+season) ? +season : currentSeason
 
+	let renderedScoreType = scoreType ?? "gross"
+	const validScoreTypes = ["gross", "net"]
+	if (!scoreType || !validScoreTypes.includes(scoreType)) {
+		renderedScoreType = "gross"
+	}
+
 	return (
 		<div className="content__inner">
-			<SeasonMenu baseUrl={`/my-scores/${scoreType}`} includeAll={true} season={year} startAt={2021} />
+			<SeasonMenu baseUrl={`/my-scores/${renderedScoreType}`} includeAll={true} season={year} startAt={2021} />
 			<div>
 				<Tabs>
 					<Tab to={`/my-scores/gross/${season ?? currentSeason}`}>Gross Scores</Tab>
