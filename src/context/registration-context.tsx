@@ -10,7 +10,7 @@ import { EventType } from "../models/codes"
 import { ClubEventProps } from "../models/common-props"
 import { Course } from "../models/course"
 import { EventFee } from "../models/event-fee"
-import { Payment, PaymentDetail } from "../models/payment"
+import { Payment, PaymentApiSchema, PaymentDetail } from "../models/payment"
 import { Player } from "../models/player"
 import {
 	Registration,
@@ -50,6 +50,7 @@ export interface IRegistrationContext {
 	createPaymentIntent: () => Promise<PaymentIntent>
 	createRegistration: (course?: Course, slots?: RegistrationSlot[], selectedStart?: string) => Promise<void>
 	initiateStripeSession: () => void
+	editRegistration: (registrationId: number, playerIds: number[]) => Promise<void>
 	loadRegistration: (player: Player) => Promise<void>
 	removeFee: (slot: RegistrationSlot, eventFee: EventFee) => void
 	removePlayer: (slot: RegistrationSlot) => void
@@ -306,6 +307,51 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	)
 
 	/**
+	 * Adds one or more players to an existing registration.
+	 */
+	const editRegistration = useCallback(
+		async (registrationId: number, playerIds: number[]) => {
+			try {
+				const registrationData = await httpClient(apiUrl(`registration/${registrationId}/add_players`), {
+					method: "PUT",
+					body: JSON.stringify({
+						players: playerIds.map((id) => ({ id })),
+					}),
+				})
+				if (registrationData) {
+					const registration = new Registration(registrationData.registration)
+					const payment = await getOne(`payments/${registrationData.payment_id}/`, PaymentApiSchema)
+					if (!payment) {
+						throw new Error("Failed to load payment data after editing registration.")
+					}
+					const feeData = await getMany(
+						`registration-fees/?registration_id=${registration.id}`,
+						RegistrationFeeApiSchema,
+					)
+					if (!feeData) {
+						throw new Error("Failed to load registration fee data after editing registration.")
+					}
+					const fees = feeData.map((f) => new RegistrationFee(f))
+					dispatch({
+						type: "load-registration",
+						payload: {
+							registration,
+							payment: new Payment(payment),
+							existingFees: fees,
+						},
+					})
+					queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
+					queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
+					queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
+				}
+			} catch (error) {
+				dispatch({ type: "update-error", payload: { error: error as Error } })
+			}
+		},
+		[queryClient, state.clubEvent?.id],
+	)
+
+	/**
 	 * Creates a new registration record for the current user.
 	 */
 	const createRegistration = useCallback(
@@ -454,6 +500,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		completeRegistration,
 		createPaymentIntent,
 		createRegistration,
+		editRegistration,
 		initiateStripeSession,
 		loadRegistration,
 		removeFee,
