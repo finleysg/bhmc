@@ -28,7 +28,7 @@ export function DropPlayersScreen() {
 		setIsSubmitting(true)
 		try {
 			await dropPlayers.mutateAsync({ registrationId: currentRegistration.id, slotIds })
-			toast.success(`${selectedPlayerIds.length} player(s) dropped`)
+			toast.success(`${slotIds.length} player(s) dropped`)
 			navigate("../")
 		} catch (error: unknown) {
 			toast.error(error instanceof Error ? error.message : "Failed to drop players")

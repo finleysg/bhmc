@@ -8,7 +8,7 @@ export function useOpenSlots(eventId: number, holeId: number, startingOrder: num
 	return useQuery({
 		queryKey: ["open-slots", eventId, holeId, startingOrder],
 		queryFn: () => getMany(endpoint, RegistrationSlotApiSchema),
-		enabled: !!eventId && !!holeId,
+		enabled: !!eventId && !!holeId && startingOrder != null,
 		staleTime: Infinity,
 		gcTime: 0,
 		select: (data) => data.map((s) => new RegistrationSlot(s)),

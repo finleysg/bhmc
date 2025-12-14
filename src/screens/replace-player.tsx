@@ -33,7 +33,7 @@ export function ReplacePlayerScreen() {
 	}
 
 	const handleTargetChange = (players: Player[]) => {
-		setTargetPlayer(players.length > 0 ? players[players.length - 1] : null)
+		setTargetPlayer(players[0] ?? null)
 	}
 
 	const handleReplace = async () => {
