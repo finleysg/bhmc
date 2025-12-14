@@ -165,9 +165,9 @@ export function PaymentScreen() {
 		setProcessingStartTime(Date.now())
 
 		// Ensure the screen is showing the latest step
-		setTimeout(() => {
-			// no-op
-		}, 10)
+		// setTimeout(() => {
+		// 	// no-op
+		// }, 10)
 
 		try {
 			// Check if operation was cancelled before starting

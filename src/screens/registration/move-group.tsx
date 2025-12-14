@@ -8,7 +8,7 @@ import { useMovePlayers } from "../../hooks/use-move-players"
 import { useManageRegistration } from "./manage-registration"
 import type { AvailableGroup } from "../../models/available-group"
 import type { Course } from "../../models/course"
-import { RegistrationSlot } from "../../models/registration"
+import type { RegistrationSlot } from "../../models/registration"
 
 export function MoveGroupScreen() {
 	const { clubEvent, registration: currentRegistration } = useManageRegistration()

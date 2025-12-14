@@ -47,8 +47,8 @@ export function RegisterScreen() {
 	const [showPriorityDialog, setShowPriorityDialog] = useState(false)
 
 	const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
-	const layout =
-		clubEvent?.maximumSignupGroupSize === 1 ? "vertical" : (clubEvent?.fees.length ?? 0) > 5 ? "vertical" : "horizontal"
+	const feeCount = clubEvent?.fees?.length ?? 0
+	const layout = clubEvent?.maximumSignupGroupSize === 1 || feeCount > 5 ? "vertical" : "horizontal"
 	const showPickers = (clubEvent?.maximumSignupGroupSize ?? 0) > 1
 
 	const handlePriorityCancel = () => {
@@ -83,10 +83,6 @@ export function RegisterScreen() {
 		}
 
 		setIsBusy(true)
-		setTimeout(() => {
-			console.log("Saving payment record...")
-		}, 50)
-
 		try {
 			updateRegistrationNotes(notes)
 			await savePayment()

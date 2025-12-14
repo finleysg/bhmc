@@ -31,7 +31,6 @@ export function ReviewRegistrationScreen() {
 	}
 
 	const handleRegistrationConfirm = () => {
-		const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
 		if (amountDue.total > 0) {
 			updateStep(PaymentStep)
 		} else {

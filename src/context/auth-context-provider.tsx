@@ -35,7 +35,7 @@ export function AuthProvider({ children, authenticationProvider }: PropsWithChil
 	const loadUser = useCallback(async () => {
 		try {
 			const currentUser = await authenticationProvider.getUser()
-			const endpoint = apiUrl(`players/?email=${currentUser.email}`)
+			const endpoint = apiUrl(`players/?email=${encodeURIComponent(currentUser.email ?? "missing")}`)
 			const players = await httpClient(endpoint)
 			if (players?.length === 1 && players[0] !== null) {
 				const playerData = PlayerApiSchema.parse(players[0])

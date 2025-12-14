@@ -15,18 +15,18 @@ export function EventViewScreen() {
 	const navigate = useNavigate()
 
 	const handleStart = async () => {
-		initiateStripeSession()
-		if (clubEvent.canChoose) {
-			updateStep(ReserveStep)
-			navigate("reserve")
-		} else {
-			try {
+		try {
+			initiateStripeSession()
+			if (clubEvent.canChoose) {
+				updateStep(ReserveStep)
+				navigate("reserve")
+			} else {
 				await createRegistration(undefined, [], undefined)
 				updateStep(RegisterStep)
 				navigate("register")
-			} catch (error: unknown) {
-				toast.error(error instanceof Error ? error.message : "Failed to start registration")
 			}
+		} catch (error: unknown) {
+			toast.error(error instanceof Error ? error.message : "Failed to start registration")
 		}
 	}
 

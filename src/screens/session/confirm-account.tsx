@@ -5,6 +5,10 @@ import { useAuth } from "../../hooks/use-auth"
 export function ConfirmAccountScreen() {
 	const { user } = useAuth()
 
+	if (!user) {
+		return null // or a loading spinner
+	}
+
 	return (
 		<div className="login">
 			<div className="login__block active">
@@ -18,7 +22,7 @@ export function ConfirmAccountScreen() {
 				<div className="login__body">
 					<h3>You&apos;re Almost Done...</h3>
 					<p>
-						A verification email was sent to: <strong>{user.email}</strong>.
+						A verification email was sent to: <strong>{user?.email}</strong>.
 					</p>
 					<p>
 						Open this email and click the link to activate your account. If you did not receive this email, please check

@@ -58,6 +58,7 @@ export function AddPlayersScreen() {
 			navigate("../../edit")
 		} catch (error: unknown) {
 			toast.error(error instanceof Error ? error.message : "Failed to add players")
+		} finally {
 			setIsSubmitting(false)
 		}
 	}

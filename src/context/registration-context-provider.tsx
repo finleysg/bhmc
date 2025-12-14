@@ -64,8 +64,8 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				headers: { "X-Correlation-ID": state.correlationId },
 			})
 		},
-		onSuccess: (data, variables) => {
-			queryClient.setQueryData(["payment", variables.eventId], data)
+		onSuccess: (data) => {
+			queryClient.setQueryData(["payment", state.clubEvent?.id], data)
 			dispatch({ type: "update-payment", payload: { payment: new Payment(data) } })
 		},
 		onError: (error) => {
@@ -92,8 +92,8 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				headers: { "X-Correlation-ID": state.correlationId },
 			})
 		},
-		onSuccess: (data, variables) => {
-			queryClient.setQueryData(["payment", variables.eventId], data)
+		onSuccess: (data) => {
+			queryClient.setQueryData(["payment", state.clubEvent?.id], data)
 			dispatch({ type: "update-payment", payload: { payment: new Payment(data) } })
 		},
 		onError: (error) => {
@@ -141,8 +141,10 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				headers: { "X-Correlation-ID": state.correlationId },
 			})
 		},
-		onSettled: () => {
+		onSuccess: () => {
 			dispatch({ type: "cancel-registration", payload: null })
+		},
+		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ["registration"] })
 			queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
 			queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
@@ -200,6 +202,9 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	const _createInitialPaymentRecord = (registration: RegistrationData) => {
 		if (!state.clubEvent || !user.id) {
 			throw new Error("Cannot create an initial payment record without a club event or user.")
+		}
+		if (!registration.slots?.length) {
+			throw new Error("Cannot create an initial payment record without registration slots.")
 		}
 		const payment = Payment.createPlaceholder(state.clubEvent.id, user.id)
 		state.clubEvent.fees
@@ -373,12 +378,16 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 			method: "POST",
 			body: JSON.stringify({}),
 			headers: { "X-Correlation-ID": state.correlationId },
-		}).then((data) => {
-			dispatch({
-				type: "initiate-stripe-session",
-				payload: { clientSessionKey: data.client_secret },
-			})
 		})
+			.then((data) => {
+				dispatch({
+					type: "initiate-stripe-session",
+					payload: { clientSessionKey: data.client_secret },
+				})
+			})
+			.catch((error) => {
+				dispatch({ type: "update-error", payload: { error } })
+			})
 	}, [state.correlationId])
 
 	/**
@@ -438,7 +447,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	}, [])
 
 	/**
-	 * Removes an event fee from a given registation slot.
+	 * Removes an event fee from a given registration slot.
 	 */
 	const removeFee = useCallback((slot: RegistrationSlot, eventFee: EventFee) => {
 		dispatch({ type: "remove-fee", payload: { eventFeeId: eventFee.id, slotId: slot.id } })

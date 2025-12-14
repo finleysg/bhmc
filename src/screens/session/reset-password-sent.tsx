@@ -6,6 +6,9 @@ import { useAuth } from "../../hooks/use-auth"
 export function ResetPasswordSentScreen() {
 	const { user } = useAuth()
 
+	if (!user) {
+		return null // or a loading spinner
+	}
 	return (
 		<div className="login">
 			<div className="login__block active">

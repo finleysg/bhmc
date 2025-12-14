@@ -1,4 +1,4 @@
-import { parse } from "date-fns"
+import { isValid, parse } from "date-fns"
 import { Outlet, useNavigate, useOutletContext, useParams } from "react-router-dom"
 
 import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
@@ -13,16 +13,17 @@ export function EventDetailScreen() {
 	const navigate = useNavigate()
 
 	const startDate = eventDate ? parse(eventDate, "yyyy-MM-dd", new Date()) : new Date()
-	const { data: clubEvents } = useClubEvents(startDate.getFullYear())
-	const { found, clubEvent } = ClubEvent.getClubEvent(clubEvents, eventDate, eventName)
-
+	const year = isValid(startDate) ? startDate.getFullYear() : new Date().getFullYear()
+	const { data: clubEvents } = useClubEvents(year)
+	const { found, clubEvent } = ClubEvent.getClubEvent(clubEvents ?? [], eventDate, eventName)
 	if (!eventDate || !eventName) {
 		navigate("/home")
 	}
 
 	return (
 		<div className="content__inner">
-			<OverlaySpinner loading={!found} />
+			<OverlaySpinner loading={!clubEvents} />
+			{!clubEvents ? null : !found ? <p>Event not found</p> : null}
 			{clubEvent && (
 				<EventRegistrationProvider clubEvent={clubEvent}>
 					<Outlet context={{ clubEvent } satisfies ClubEventContextType} />

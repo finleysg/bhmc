@@ -45,10 +45,6 @@ export function EditRegistrationScreen() {
 
 	const handleNextStep = async () => {
 		setIsBusy(true)
-		setTimeout(() => {
-			console.log("Saving payment record from edit screen...")
-		}, 10)
-
 		try {
 			updateRegistrationNotes(notes)
 			await savePayment()
@@ -96,7 +92,7 @@ export function EditRegistrationScreen() {
 									id="notes"
 									name="notes"
 									className="form-control fc-alt"
-									defaultValue={registration?.notes ?? ""}
+									value={notes}
 									onChange={handleNotesChange}
 									readOnly={false}
 									rows={5}

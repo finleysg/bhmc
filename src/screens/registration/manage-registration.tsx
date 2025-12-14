@@ -56,14 +56,13 @@ export function useManageRegistration() {
 
 export function ManageRegistrationScreen() {
 	const { clubEvent } = useCurrentEvent()
-	const { data: player } = useMyPlayerRecord()
+	const { data: player, isLoading: isPlayerLoading } = useMyPlayerRecord()
 	const { data: registration, isLoading } = usePlayerRegistration(player?.id, clubEvent.id)
 	const navigate = useNavigate()
 
-	if (isLoading) {
+	if (isLoading || isPlayerLoading) {
 		return <OverlaySpinner loading={true} />
 	}
-
 	if (!registration) {
 		return (
 			<div className="row">

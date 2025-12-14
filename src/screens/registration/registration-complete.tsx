@@ -30,13 +30,18 @@ export function RegistrationCompleteScreen() {
 			return
 		}
 
-		stripe.retrievePaymentIntent(clientSecret).then(({ error, paymentIntent }) => {
-			setIntent(paymentIntent ?? null)
-			if (error) {
-				setError(new Error(error.message))
-				return
-			}
-		})
+		stripe
+			.retrievePaymentIntent(clientSecret)
+			.then(({ error, paymentIntent }) => {
+				setIntent(paymentIntent ?? null)
+				if (error) {
+					setError(new Error(error.message))
+					return
+				}
+			})
+			.catch((err) => {
+				setError(new Error(err.message || "Failed to retrieve payment intent"))
+			})
 	}, [stripe, params])
 
 	return (
@@ -44,7 +49,7 @@ export function RegistrationCompleteScreen() {
 			<div className="col-12 col-md-6">
 				<div className="card border border-primary mb-4">
 					<div className="card-body">
-						<h4 className="card-header mb-2">Payment Complete</h4>
+						<h4 className="card-header mb-2">{error ? "Payment Failed" : "Payment Complete"}</h4>
 						<div className="row mb-4">
 							<div className="col-12">
 								{error && (
@@ -59,7 +64,7 @@ export function RegistrationCompleteScreen() {
 											Your payment for {config.currencyFormatter.format(stripeAmount / 100)} has been processed.
 										</h5>
 										<p>
-											A confirmation email will be sent to {user.email} and anyone you signed up unless this is just an
+											A confirmation email will be sent to {user?.email} and anyone you signed up unless this is just an
 											update (skins, for example). A payment receipt will also be sent from Stripe, our payment
 											provider.
 										</p>

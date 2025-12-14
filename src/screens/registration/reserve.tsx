@@ -1,7 +1,6 @@
-import { useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
-import { useInterval } from "usehooks-ts"
 
 import { ReserveGrid } from "../../components/reserve/reserve-grid"
 import { IndexTab } from "../../components/tab/index-tab"
@@ -22,21 +21,28 @@ export function ReserveScreen() {
 	const { data: slots } = useEventRegistrationSlots(clubEvent.id)
 	const { createRegistration } = useEventRegistration()
 
-	useInterval(() => {
-		loadTables()
-	}, 10 * 1000)
-
-	// Simple guard.
-	const currentTime = new Date()
-	if (!clubEvent.paymentsAreOpen(currentTime)) {
-		navigate("../")
-		return null
-	}
-
-	const loadTables = () => {
+	const loadTables = useCallback(() => {
 		const tables = LoadReserveTables(clubEvent, slots ?? [])
 		setReserveTables(tables)
-	}
+	}, [clubEvent, slots])
+
+	// TODO: do we really want to do this?
+	// useInterval(() => {
+	// 	loadTables()
+	// }, 10 * 1000)
+
+	useEffect(() => {
+		const currentTime = new Date()
+		if (!clubEvent.paymentsAreOpen(currentTime)) {
+			navigate("../")
+		}
+	}, [clubEvent, navigate])
+
+	useEffect(() => {
+		if (reserveTables.length === 0) {
+			loadTables()
+		}
+	}, [reserveTables.length, loadTables])
 
 	if (reserveTables.length === 0) {
 		setTimeout(() => {
@@ -46,9 +52,8 @@ export function ReserveScreen() {
 
 	const handleReserve = async (course: Course, groupName: string, slots: ReserveSlot[]) => {
 		const selectedSlots = slots.map((slot) => slot.toRegistrationSlot())
-		const registationSlots = selectedSlots.filter((slot) => !slot.playerId)
-
-		await createRegistration(course, registationSlots, `${clubEvent.name}: ${course.name} ${groupName}`)
+		const registrationSlots = selectedSlots.filter((slot) => !slot.playerId)
+		await createRegistration(course, registrationSlots, `${clubEvent.name}: ${course.name} ${groupName}`)
 		navigate("../register", { replace: true })
 	}
 
@@ -83,13 +88,15 @@ export function ReserveScreen() {
 							</button>
 						</li>
 					</Tabs>
-					<ReserveGrid
-						table={reserveTables[selectedTableIndex]}
-						clubEvent={clubEvent}
-						mode="edit"
-						wave={currentWave}
-						onReserve={handleReserve}
-					/>
+					{reserveTables.length > 0 && (
+						<ReserveGrid
+							table={reserveTables[selectedTableIndex]}
+							clubEvent={clubEvent}
+							mode="edit"
+							wave={currentWave}
+							onReserve={handleReserve}
+						/>
+					)}
 				</div>
 			</div>
 		</div>

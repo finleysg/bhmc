@@ -14,11 +14,16 @@ export type PaymentAmountContextType = { amount: number }
 export function PaymentFlow() {
 	const { paymentId } = useParams()
 	const [stripePromise] = useState(() => loadStripe(config.stripePublicKey))
-	const { data: stripeAmount, status } = usePaymentAmount(+paymentId!)
+	const { data: stripeAmount, status } = usePaymentAmount(Number(paymentId))
 	const { stripeClientSession } = useEventRegistration()
 
-	if (status === "pending") {
+	if (status === "pending" || !stripeAmount) {
 		return null
+	}
+
+	if (status === "error") {
+		// Handle error state - show error message to user
+		return <div>Error loading payment information</div>
 	}
 
 	return (
@@ -31,7 +36,7 @@ export function PaymentFlow() {
 				customerSessionClientSecret: stripeClientSession,
 			}}
 		>
-			<Outlet context={{ amount: stripeAmount! } satisfies PaymentAmountContextType} />
+			<Outlet context={{ amount: stripeAmount } satisfies PaymentAmountContextType} />
 		</Elements>
 	)
 }
