@@ -1,7 +1,7 @@
 import { MdAccountCircle } from "react-icons/md"
 
 import { LoginHandler } from "../forms/login-handler"
-import { RoutingMenu } from "../layout/routing-menu"
+import { Home } from "../layout/home"
 
 export function LoginScreen() {
 	return (
@@ -12,13 +12,7 @@ export function LoginScreen() {
 						<MdAccountCircle />
 					</i>
 					Sign In to Your Account
-					<RoutingMenu
-						links={[
-							{ to: "/session/account", name: "Create an Account" },
-							{ to: "/session/reset-password", name: "Reset My Password" },
-							{ to: "/home", name: "Home" },
-						]}
-					/>
+					<Home />
 				</div>
 
 				<div className="login__body">
