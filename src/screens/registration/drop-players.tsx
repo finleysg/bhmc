@@ -2,9 +2,9 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 
-import { ConfirmDialog } from "../components/dialog/confirm"
-import { RegisteredPlayerSelector } from "../components/event-registration/registered-player-selector"
-import { useDropPlayers } from "../hooks/use-drop-players"
+import { ConfirmDialog } from "../../components/dialog/confirm"
+import { RegisteredPlayerSelector } from "../../components/event-registration/registered-player-selector"
+import { useDropPlayers } from "../../hooks/use-drop-players"
 import { useManageRegistration } from "./manage-registration"
 
 export function DropPlayersScreen() {

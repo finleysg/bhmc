@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom"
 import { TypeaheadRef } from "react-bootstrap-typeahead"
 import { toast } from "react-toastify"
 
-import { MultiplePlayerPicker } from "../components/directory/multiple-player-picker"
-import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationSlots } from "../hooks/use-event-registration-slots"
-import { useOpenSlots } from "../hooks/use-open-slots"
-import { usePlayers } from "../hooks/use-players"
+import { MultiplePlayerPicker } from "../../components/directory/multiple-player-picker"
+import { useEventRegistration } from "../../hooks/use-event-registration"
+import { useEventRegistrationSlots } from "../../hooks/use-event-registration-slots"
+import { useOpenSlots } from "../../hooks/use-open-slots"
+import { usePlayers } from "../../hooks/use-players"
 import { useManageRegistration } from "./manage-registration"
-import { RegistrationType } from "../models/codes"
-import type { Player } from "../models/player"
+import { RegistrationType } from "../../models/codes"
+import type { Player } from "../../models/player"
 
 export function AddPlayersScreen() {
 	const { clubEvent, registration: currentRegistration } = useManageRegistration()

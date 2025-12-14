@@ -1,6 +1,6 @@
 import { MdAccountCircle } from "react-icons/md"
 
-import { useAuth } from "../hooks/use-auth"
+import { useAuth } from "../../hooks/use-auth"
 
 export function ConfirmAccountScreen() {
 	const { user } = useAuth()

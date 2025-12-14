@@ -1,10 +1,10 @@
 import { parse } from "date-fns"
 import { Outlet, useNavigate, useOutletContext, useParams } from "react-router-dom"
 
-import { OverlaySpinner } from "../components/spinners/overlay-spinner"
-import { EventRegistrationProvider } from "../context/registration-context"
-import { useClubEvents } from "../hooks/use-club-events"
-import { ClubEvent } from "../models/club-event"
+import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
+import { useClubEvents } from "../../hooks/use-club-events"
+import { ClubEvent } from "../../models/club-event"
+import { EventRegistrationProvider } from "../../context/registration-context-provider"
 
 export type ClubEventContextType = { clubEvent: ClubEvent }
 

@@ -1,6 +1,6 @@
-import { PlayerInfo } from "../components/account/player-info"
-import { PlayerPassword } from "../components/account/player-password"
-import { ProfilePhoto } from "../components/account/profile-photo"
+import { PlayerInfo } from "../../components/account/player-info"
+import { PlayerPassword } from "../../components/account/player-password"
+import { ProfilePhoto } from "../../components/account/profile-photo"
 
 export function AccountScreen() {
 	return (

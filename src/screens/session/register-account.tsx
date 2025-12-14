@@ -1,9 +1,9 @@
 import { MdAccountCircle } from "react-icons/md"
 
-import { LoginHandler } from "../forms/login-handler"
-import { Home } from "../layout/home"
+import { RegisterAccountHandler } from "../../forms/register-account-handler"
+import { Home } from "../../layout/home"
 
-export function LoginScreen() {
+export function RegisterAccountScreen() {
 	return (
 		<div className="login">
 			<div className="login__block active">
@@ -11,12 +11,11 @@ export function LoginScreen() {
 					<i>
 						<MdAccountCircle />
 					</i>
-					Sign In to Your Account
+					Create an Account
 					<Home />
 				</div>
-
 				<div className="login__body">
-					<LoginHandler />
+					<RegisterAccountHandler />
 				</div>
 			</div>
 		</div>

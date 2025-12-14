@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 
-import { EventDocuments } from "../components/document/event-documents"
-import { EventDetail } from "../components/events/event-detail"
-import { EventPhotos } from "../components/events/event-photos"
-import { FeesAndPoints } from "../components/events/fees-and-points"
-import { RegisterStep, ReserveStep } from "../context/registration-reducer"
-import { useEventRegistration } from "../hooks/use-event-registration"
+import { EventDocuments } from "../../components/document/event-documents"
+import { EventDetail } from "../../components/events/event-detail"
+import { EventPhotos } from "../../components/events/event-photos"
+import { FeesAndPoints } from "../../components/events/fees-and-points"
+import { RegisterStep, ReserveStep } from "../../context/registration-reducer"
+import { useEventRegistration } from "../../hooks/use-event-registration"
 import { useCurrentEvent } from "./event-detail"
 
 export function EventViewScreen() {

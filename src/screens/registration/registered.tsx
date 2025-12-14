@@ -1,11 +1,11 @@
 import { parse } from "date-fns"
 import { useNavigate, useParams } from "react-router-dom"
 
-import { ReservedGrid } from "../components/reserve/reserved-grid"
-import { ReservedList } from "../components/reserve/reserved-list"
-import { LoadingSpinner } from "../components/spinners/loading-spinner"
-import { useClubEvents } from "../hooks/use-club-events"
-import { ClubEvent } from "../models/club-event"
+import { ReservedGrid } from "../../components/reserve/reserved-grid"
+import { ReservedList } from "../../components/reserve/reserved-list"
+import { LoadingSpinner } from "../../components/spinners/loading-spinner"
+import { useClubEvents } from "../../hooks/use-club-events"
+import { ClubEvent } from "../../models/club-event"
 
 export function RegisteredScreen() {
 	const { eventDate, eventName } = useParams()

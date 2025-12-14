@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 
-import { useRegistrationUpdate } from "../hooks/use-registration-update"
+import { useRegistrationUpdate } from "../../hooks/use-registration-update"
 import { useManageRegistration } from "./manage-registration"
 
 export function AddNotesScreen() {

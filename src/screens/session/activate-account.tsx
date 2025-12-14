@@ -3,9 +3,9 @@ import { useEffect } from "react"
 import { MdAccountCircle } from "react-icons/md"
 import { useNavigate, useParams } from "react-router-dom"
 
-import { ErrorDisplay } from "../components/feedback/error-display"
-import { FidgetSpinner } from "../components/spinners/spinner"
-import { useAuth } from "../hooks/use-auth"
+import { ErrorDisplay } from "../../components/feedback/error-display"
+import { FidgetSpinner } from "../../components/spinners/spinner"
+import { useAuth } from "../../hooks/use-auth"
 
 export function ActivateAccountScreen() {
 	const { uid, token } = useParams()

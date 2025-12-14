@@ -2,14 +2,15 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 
-import { MultiplePlayerPicker } from "../components/directory/multiple-player-picker"
-import { RegisteredPlayerSelector } from "../components/event-registration/registered-player-selector"
-import { useEventRegistrationSlots } from "../hooks/use-event-registration-slots"
-import { usePlayers } from "../hooks/use-players"
+import { MultiplePlayerPicker } from "../../components/directory/multiple-player-picker"
+import { RegisteredPlayerSelector } from "../../components/event-registration/registered-player-selector"
+import { useEventRegistrationSlots } from "../../hooks/use-event-registration-slots"
+import { usePlayers } from "../../hooks/use-players"
 import { useManageRegistration } from "./manage-registration"
-import { useSwapPlayers } from "../hooks/use-swap-players"
-import { RegistrationType } from "../models/codes"
-import type { Player } from "../models/player"
+import { useSwapPlayers } from "../../hooks/use-swap-players"
+import { RegistrationType } from "../../models/codes"
+import type { Player } from "../../models/player"
+import { RegistrationSlot } from "../../models/registration"
 
 export function ReplacePlayerScreen() {
 	const { clubEvent, registration: currentRegistration } = useManageRegistration()
@@ -39,7 +40,7 @@ export function ReplacePlayerScreen() {
 	const handleReplace = async () => {
 		if (!sourcePlayerId || !targetPlayer) return
 
-		const slot = currentRegistration.slots.find((s) => s.playerId === sourcePlayerId)
+		const slot = currentRegistration.slots.find((s: RegistrationSlot) => s.playerId === sourcePlayerId)
 		if (!slot) return
 
 		setIsSubmitting(true)

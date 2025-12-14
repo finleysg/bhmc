@@ -5,9 +5,9 @@ import { Outlet, useOutletContext, useParams } from "react-router-dom"
 import { Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 
-import { useEventRegistration } from "../hooks/use-event-registration"
-import { usePaymentAmount } from "../hooks/use-payments"
-import * as config from "../utils/app-config"
+import { useEventRegistration } from "../../hooks/use-event-registration"
+import { usePaymentAmount } from "../../hooks/use-payments"
+import * as config from "../../utils/app-config"
 
 export type PaymentAmountContextType = { amount: number }
 

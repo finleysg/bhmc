@@ -5,11 +5,11 @@ import { Link, useSearchParams } from "react-router-dom"
 import { useStripe } from "@stripe/react-stripe-js"
 import { PaymentIntent } from "@stripe/stripe-js"
 
-import { ErrorDisplay } from "../components/feedback/error-display"
-import { RandomGif } from "../components/giphy/random-gif"
-import { useAuth } from "../hooks/use-auth"
-import { useEventRegistration } from "../hooks/use-event-registration"
-import * as config from "../utils/app-config"
+import { ErrorDisplay } from "../../components/feedback/error-display"
+import { RandomGif } from "../../components/giphy/random-gif"
+import { useAuth } from "../../hooks/use-auth"
+import { useEventRegistration } from "../../hooks/use-event-registration"
+import * as config from "../../utils/app-config"
 import { useCurrentPaymentAmount } from "./payment-flow"
 
 export function RegistrationCompleteScreen() {

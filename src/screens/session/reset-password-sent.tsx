@@ -1,7 +1,7 @@
 import { MdAccountCircle } from "react-icons/md"
 import { Link } from "react-router-dom"
 
-import { useAuth } from "../hooks/use-auth"
+import { useAuth } from "../../hooks/use-auth"
 
 export function ResetPasswordSentScreen() {
 	const { user } = useAuth()

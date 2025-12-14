@@ -1,6 +1,6 @@
-import { MyEvents } from "../components/account/my-events"
-import { MyFriends } from "../components/account/my-friends"
-import { MyPoints } from "../components/points/my-points"
+import { MyEvents } from "../../components/account/my-events"
+import { MyFriends } from "../../components/account/my-friends"
+import { MyPoints } from "../../components/points/my-points"
 
 export function AccountSettingsScreen() {
 	return (

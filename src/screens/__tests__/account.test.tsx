@@ -3,7 +3,7 @@ import { expect, test } from "vitest"
 import userEvent from "@testing-library/user-event"
 
 import { renderWithAuth, screen, setupAuthenticatedUser, waitForLoadingToFinish } from "../../test/test-utils"
-import { AccountScreen } from "../account"
+import { AccountScreen } from "../account/account"
 
 test("can edit profile on the player account screen", async () => {
 	const user = userEvent.setup()

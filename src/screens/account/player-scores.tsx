@@ -1,10 +1,10 @@
 import { useParams } from "react-router-dom"
 
-import { PlayerScores } from "../components/scores/player-scores"
-import { Tab } from "../components/tab/tab"
-import { Tabs } from "../components/tab/tabs"
-import { SeasonMenu } from "../layout/season-menu"
-import { currentSeason } from "../utils/app-config"
+import { PlayerScores } from "../../components/scores/player-scores"
+import { Tab } from "../../components/tab/tab"
+import { Tabs } from "../../components/tab/tabs"
+import { SeasonMenu } from "../../layout/season-menu"
+import { currentSeason } from "../../utils/app-config"
 
 export function PlayerScoresScreen() {
 	const { scoreType, season } = useParams()

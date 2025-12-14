@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom"
 
-import { CancelButton } from "../components/event-registration/cancel-button"
-import { RegisterCountdown } from "../components/event-registration/register-countdown"
-import { RegistrationSlotLineItemReview } from "../components/event-registration/registration-slot-line-item-review"
-import { ErrorDisplay } from "../components/feedback/error-display"
-import { OverlaySpinner } from "../components/spinners/overlay-spinner"
-import { CompleteStep, PaymentStep, RegisterStep } from "../context/registration-reducer"
-import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
-import { NoAmount } from "../models/payment"
+import { CancelButton } from "../../components/event-registration/cancel-button"
+import { RegisterCountdown } from "../../components/event-registration/register-countdown"
+import { RegistrationSlotLineItemReview } from "../../components/event-registration/registration-slot-line-item-review"
+import { ErrorDisplay } from "../../components/feedback/error-display"
+import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
+import { CompleteStep, PaymentStep, RegisterStep } from "../../context/registration-reducer"
+import { useEventRegistration } from "../../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../../hooks/use-event-registration-guard"
+import { NoAmount } from "../../models/payment"
 import { useCurrentEvent } from "./event-detail"
 
 export function ReviewRegistrationScreen() {
