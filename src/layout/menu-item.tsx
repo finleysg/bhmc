@@ -15,9 +15,11 @@ function MenuItem(props: IMenuItem) {
 	const { closeSidebar } = useLayout()
 	const match = useMatch(path)
 
+	const linkPath = path.startsWith("/") ? path : `/${path}`
+
 	return (
 		<li className={match ? "navigation__active" : ""}>
-			<RouterLink to={path} onClick={closeSidebar}>
+			<RouterLink to={linkPath} onClick={closeSidebar}>
 				<i>{icon}</i>
 				{name}
 			</RouterLink>

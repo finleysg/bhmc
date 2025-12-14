@@ -1,7 +1,7 @@
 import { MdAccountCircle } from "react-icons/md"
 
 import { RequestPasswordResetHandler } from "../forms/request-password-reset-handler"
-import { RoutingMenu } from "../layout/routing-menu"
+import { Home } from "../layout/home"
 
 export function ResetPasswordRequestScreen() {
 	return (
@@ -12,13 +12,7 @@ export function ResetPasswordRequestScreen() {
 						<MdAccountCircle />
 					</i>
 					Reset My Password
-					<RoutingMenu
-						links={[
-							{ to: "/session/login", name: "Login" },
-							{ to: "/session/account", name: "Create an Account" },
-							{ to: "/home", name: "Home" },
-						]}
-					/>
+					<Home />
 				</div>
 
 				<div className="login__body">
