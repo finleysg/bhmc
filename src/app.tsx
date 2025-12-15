@@ -7,10 +7,10 @@ import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-qu
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 import { FullPageSpinner } from "./components/spinners/full-screen-spinner"
-import { AuthProvider } from "./context/auth-context"
 import { DefaultAuthenticationProvider } from "./context/authentication"
 import { LayoutProvider } from "./context/layout-provider"
 import { ErrorScreen } from "./screens/error"
+import { AuthProvider } from "./context/auth-context-provider"
 
 const AdminLayout = React.lazy(() => import("./admin/layout/admin-layout"))
 const AuthLayout = React.lazy(() => import("./layout/auth-layout"))

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 
-import { useRegistrationUpdate } from "../hooks/use-registration-update"
+import { useRegistrationUpdate } from "../../hooks/use-registration-update"
 import { useManageRegistration } from "./manage-registration"
 
 export function AddNotesScreen() {
@@ -10,15 +10,17 @@ export function AddNotesScreen() {
 	const updateRegistration = useRegistrationUpdate()
 	const navigate = useNavigate()
 
-	const [notes, setNotes] = useState(registration.notes ?? "")
+	const initialNotes = registration.notes ?? ""
+	const [notes, setNotes] = useState(initialNotes)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
 	const handleSave = async () => {
+		if (notes === initialNotes) return // No changes to save
 		setIsSubmitting(true)
 		try {
 			await updateRegistration.mutateAsync({ registrationId: registration.id, notes })
 			toast.success("Notes saved")
-			navigate("../")
+			navigate("..")
 		} catch (error: unknown) {
 			toast.error(error instanceof Error ? error.message : "Failed to save notes")
 			setIsSubmitting(false)

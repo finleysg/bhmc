@@ -3,22 +3,23 @@ import { useEffect } from "react"
 import { MdAccountCircle } from "react-icons/md"
 import { useNavigate, useParams } from "react-router-dom"
 
-import { ErrorDisplay } from "../components/feedback/error-display"
-import { FidgetSpinner } from "../components/spinners/spinner"
-import { useAuth } from "../hooks/use-auth"
+import { ErrorDisplay } from "../../components/feedback/error-display"
+import { FidgetSpinner } from "../../components/spinners/spinner"
+import { useAuth } from "../../hooks/use-auth"
 
 export function ActivateAccountScreen() {
 	const { uid, token } = useParams()
 	const {
-		activate: { mutate, isPending, isError, error },
+		activate: { mutate, isPending, isError, isSuccess, error },
 	} = useAuth()
 	const navigate = useNavigate()
 
 	useEffect(() => {
-		if (uid && token) {
-			const args = { uid, token }
-			mutate(args)
+		if (!uid || !token) {
+			// Handle missing params - could set an error state or navigate away
+			return
 		}
+		mutate({ uid, token })
 	}, [mutate, uid, token])
 
 	const handleLogin = () => {
@@ -45,10 +46,10 @@ export function ActivateAccountScreen() {
 				{!isPending && isError && (
 					<div className="login__body">
 						<h3>Activation Failed</h3>
-						{error && <ErrorDisplay error={error.message} delay={3000} />}
+						{error && <ErrorDisplay error={error instanceof Error ? error.message : String(error)} delay={3000} />}
 					</div>
 				)}
-				{!isPending && !isError && (
+				{isSuccess && (
 					<div className="login__body">
 						<h3>Your Account is Active</h3>
 						<p>

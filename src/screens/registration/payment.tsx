@@ -4,16 +4,16 @@ import { useBlocker, useNavigate } from "react-router-dom"
 
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 
-import { CancelButton } from "../components/event-registration/cancel-button"
-import { RegisterCountdown } from "../components/event-registration/register-countdown"
-import { ErrorDisplay } from "../components/feedback/error-display"
-import { PaymentStatusIndicator } from "../components/payment/payment-status-indicator"
-import { ReviewStep } from "../context/registration-reducer"
-import { useAuth } from "../hooks/use-auth"
-import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
-import { usePaymentTimeout } from "../hooks/use-payment-timeout"
-import * as config from "../utils/app-config"
+import { CancelButton } from "../../components/event-registration/cancel-button"
+import { RegisterCountdown } from "../../components/event-registration/register-countdown"
+import { ErrorDisplay } from "../../components/feedback/error-display"
+import { PaymentStatusIndicator } from "../../components/payment/payment-status-indicator"
+import { ReviewStep } from "../../context/registration-reducer"
+import { useAuth } from "../../hooks/use-auth"
+import { useEventRegistration } from "../../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../../hooks/use-event-registration-guard"
+import { usePaymentTimeout } from "../../hooks/use-payment-timeout"
+import * as config from "../../utils/app-config"
 import { useCurrentPaymentAmount } from "./payment-flow"
 
 export function PaymentScreen() {
@@ -165,9 +165,9 @@ export function PaymentScreen() {
 		setProcessingStartTime(Date.now())
 
 		// Ensure the screen is showing the latest step
-		setTimeout(() => {
-			// no-op
-		}, 10)
+		// setTimeout(() => {
+		// 	// no-op
+		// }, 10)
 
 		try {
 			// Check if operation was cancelled before starting

@@ -6,7 +6,7 @@ import { buildLoginForm } from "../../test/data/auth"
 import { http, HttpResponse, server } from "../../test/test-server"
 import { renderRoute, renderWithAuth, screen } from "../../test/test-utils"
 import { authUrl } from "../../utils/api-utils"
-import { LoginScreen } from "../login"
+import { LoginScreen } from "../session/login"
 
 test("successful login", async () => {
 	renderRoute("/session/login")

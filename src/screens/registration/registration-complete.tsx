@@ -5,11 +5,11 @@ import { Link, useSearchParams } from "react-router-dom"
 import { useStripe } from "@stripe/react-stripe-js"
 import { PaymentIntent } from "@stripe/stripe-js"
 
-import { ErrorDisplay } from "../components/feedback/error-display"
-import { RandomGif } from "../components/giphy/random-gif"
-import { useAuth } from "../hooks/use-auth"
-import { useEventRegistration } from "../hooks/use-event-registration"
-import * as config from "../utils/app-config"
+import { ErrorDisplay } from "../../components/feedback/error-display"
+import { RandomGif } from "../../components/giphy/random-gif"
+import { useAuth } from "../../hooks/use-auth"
+import { useEventRegistration } from "../../hooks/use-event-registration"
+import * as config from "../../utils/app-config"
 import { useCurrentPaymentAmount } from "./payment-flow"
 
 export function RegistrationCompleteScreen() {
@@ -30,13 +30,19 @@ export function RegistrationCompleteScreen() {
 			return
 		}
 
-		stripe.retrievePaymentIntent(clientSecret).then(({ error, paymentIntent }) => {
-			setIntent(paymentIntent ?? null)
-			if (error) {
-				setError(new Error(error.message))
-				return
-			}
-		})
+		stripe
+			.retrievePaymentIntent(clientSecret)
+			.then(({ error, paymentIntent }) => {
+				setIntent(paymentIntent ?? null)
+				if (error) {
+					setError(new Error(error.message))
+					return
+				}
+			})
+			.catch((err) => {
+				const message = err instanceof Error ? err.message : "Failed to retrieve payment intent"
+				setError(new Error(message))
+			})
 	}, [stripe, params])
 
 	return (
@@ -44,7 +50,7 @@ export function RegistrationCompleteScreen() {
 			<div className="col-12 col-md-6">
 				<div className="card border border-primary mb-4">
 					<div className="card-body">
-						<h4 className="card-header mb-2">Payment Complete</h4>
+						<h4 className="card-header mb-2">{error ? "Payment Failed" : "Payment Complete"}</h4>
 						<div className="row mb-4">
 							<div className="col-12">
 								{error && (
@@ -59,7 +65,7 @@ export function RegistrationCompleteScreen() {
 											Your payment for {config.currencyFormatter.format(stripeAmount / 100)} has been processed.
 										</h5>
 										<p>
-											A confirmation email will be sent to {user.email} and anyone you signed up unless this is just an
+											A confirmation email will be sent to {user?.email} and anyone you signed up unless this is just an
 											update (skins, for example). A payment receipt will also be sent from Stripe, our payment
 											provider.
 										</p>

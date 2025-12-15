@@ -2,15 +2,15 @@ import { ChangeEvent, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
 
-import { CancelButton } from "../components/event-registration/cancel-button"
-import { RegistrationAmountDue } from "../components/event-registration/registration-amount-due"
-import { RegistrationSlotGroup } from "../components/event-registration/registration-slot-group"
-import { ErrorDisplay } from "../components/feedback/error-display"
-import { OverlaySpinner } from "../components/spinners/overlay-spinner"
-import { ReviewStep } from "../context/registration-reducer"
-import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
-import { NoAmount } from "../models/payment"
+import { CancelButton } from "../../components/event-registration/cancel-button"
+import { RegistrationAmountDue } from "../../components/event-registration/registration-amount-due"
+import { RegistrationSlotGroup } from "../../components/event-registration/registration-slot-group"
+import { ErrorDisplay } from "../../components/feedback/error-display"
+import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
+import { ReviewStep } from "../../context/registration-reducer"
+import { useEventRegistration } from "../../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../../hooks/use-event-registration-guard"
+import { NoAmount } from "../../models/payment"
 import { useCurrentEvent } from "./event-detail"
 
 export function EditRegistrationScreen() {
@@ -45,10 +45,6 @@ export function EditRegistrationScreen() {
 
 	const handleNextStep = async () => {
 		setIsBusy(true)
-		setTimeout(() => {
-			console.log("Saving payment record from edit screen...")
-		}, 10)
-
 		try {
 			updateRegistrationNotes(notes)
 			await savePayment()
@@ -96,7 +92,7 @@ export function EditRegistrationScreen() {
 									id="notes"
 									name="notes"
 									className="form-control fc-alt"
-									defaultValue={registration?.notes ?? ""}
+									value={notes}
 									onChange={handleNotesChange}
 									readOnly={false}
 									rows={5}

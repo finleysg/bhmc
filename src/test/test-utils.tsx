@@ -15,7 +15,6 @@ import {
 	waitForOptions,
 } from "@testing-library/react"
 
-import { AuthProvider } from "../context/auth-context"
 import { DefaultAuthenticationProvider } from "../context/authentication"
 import AuthLayout from "../layout/auth-layout"
 import MainLayout from "../layout/main-layout"
@@ -26,6 +25,7 @@ import { apiUrl, authUrl } from "../utils/api-utils"
 import { playerBuilder } from "./data/account"
 import { buildUser } from "./data/auth"
 import { http, HttpResponse, server } from "./test-server"
+import { AuthProvider } from "../context/auth-context-provider"
 
 const routeConfig = [
 	{

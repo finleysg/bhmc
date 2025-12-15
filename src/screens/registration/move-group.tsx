@@ -2,12 +2,13 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "react-toastify"
 
-import { AvailableSpotsSelector } from "../components/event-registration/available-spots-selector"
-import { CourseSelector } from "../components/course-selector/course-selector"
-import { useMovePlayers } from "../hooks/use-move-players"
+import { AvailableSpotsSelector } from "../../components/event-registration/available-spots-selector"
+import { CourseSelector } from "../../components/course-selector/course-selector"
+import { useMovePlayers } from "../../hooks/use-move-players"
 import { useManageRegistration } from "./manage-registration"
-import type { AvailableGroup } from "../models/available-group"
-import type { Course } from "../models/course"
+import type { AvailableGroup } from "../../models/available-group"
+import type { Course } from "../../models/course"
+import type { RegistrationSlot } from "../../models/registration"
 
 export function MoveGroupScreen() {
 	const { clubEvent, registration: currentRegistration } = useManageRegistration()
@@ -18,7 +19,7 @@ export function MoveGroupScreen() {
 	const [selectedGroup, setSelectedGroup] = useState<AvailableGroup | undefined>(undefined)
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
-	const playerCount = currentRegistration.slots.filter((s) => s.playerId).length
+	const playerCount = currentRegistration.slots.filter((s: RegistrationSlot) => s.playerId).length
 
 	const handleCourseChange = (course: Course) => {
 		setSelectedCourse(course)
@@ -36,7 +37,7 @@ export function MoveGroupScreen() {
 		try {
 			await movePlayers.mutateAsync({
 				registrationId: currentRegistration.id,
-				sourceSlotIds: currentRegistration.slots.map((s) => s.id),
+				sourceSlotIds: currentRegistration.slots.map((s: RegistrationSlot) => s.id),
 				destinationSlotIds: selectedGroup.slots.map((s) => s.id),
 			})
 			toast.success("Group moved")

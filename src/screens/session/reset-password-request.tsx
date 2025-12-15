@@ -1,7 +1,7 @@
 import { MdAccountCircle } from "react-icons/md"
 
-import { RequestPasswordResetHandler } from "../forms/request-password-reset-handler"
-import { Home } from "../layout/home"
+import { RequestPasswordResetHandler } from "../../forms/request-password-reset-handler"
+import { Home } from "../../layout/home"
 
 export function ResetPasswordRequestScreen() {
 	return (

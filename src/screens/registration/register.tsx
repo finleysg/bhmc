@@ -2,22 +2,22 @@ import { ChangeEvent, useState } from "react"
 
 import { useNavigate } from "react-router-dom"
 
-import { Dialog } from "../components/dialog/dialog"
-import { FriendPickerCard } from "../components/directory/friend-picker-card"
-import { FriendPickerPullout } from "../components/directory/friend-picker-pullout"
-import { PeoplePicker } from "../components/directory/people-picker"
-import { CancelButton } from "../components/event-registration/cancel-button"
-import { RegisterCountdown } from "../components/event-registration/register-countdown"
-import { RegistrationAmountDue } from "../components/event-registration/registration-amount-due"
-import { RegistrationSlotGroup } from "../components/event-registration/registration-slot-group"
-import { ErrorDisplay } from "../components/feedback/error-display"
-import { OverlaySpinner } from "../components/spinners/overlay-spinner"
-import { ReviewStep } from "../context/registration-reducer"
-import { useEventRegistration } from "../hooks/use-event-registration"
-import { useEventRegistrationGuard } from "../hooks/use-event-registration-guard"
-import { useAddFriend } from "../hooks/use-my-friends"
-import { NoAmount } from "../models/payment"
-import { Player } from "../models/player"
+import { Dialog } from "../../components/dialog/dialog"
+import { FriendPickerCard } from "../../components/directory/friend-picker-card"
+import { FriendPickerPullout } from "../../components/directory/friend-picker-pullout"
+import { PeoplePicker } from "../../components/directory/people-picker"
+import { CancelButton } from "../../components/event-registration/cancel-button"
+import { RegisterCountdown } from "../../components/event-registration/register-countdown"
+import { RegistrationAmountDue } from "../../components/event-registration/registration-amount-due"
+import { RegistrationSlotGroup } from "../../components/event-registration/registration-slot-group"
+import { ErrorDisplay } from "../../components/feedback/error-display"
+import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
+import { ReviewStep } from "../../context/registration-reducer"
+import { useEventRegistration } from "../../hooks/use-event-registration"
+import { useEventRegistrationGuard } from "../../hooks/use-event-registration-guard"
+import { useAddFriend } from "../../hooks/use-my-friends"
+import { NoAmount } from "../../models/payment"
+import { Player } from "../../models/player"
 import { useCurrentEvent } from "./event-detail"
 
 export function RegisterScreen() {
@@ -47,8 +47,8 @@ export function RegisterScreen() {
 	const [showPriorityDialog, setShowPriorityDialog] = useState(false)
 
 	const amountDue = payment?.getAmountDue(clubEvent?.feeMap) ?? NoAmount
-	const layout =
-		clubEvent?.maximumSignupGroupSize === 1 ? "vertical" : (clubEvent?.fees.length ?? 0) > 5 ? "vertical" : "horizontal"
+	const feeCount = clubEvent?.fees?.length ?? 0
+	const layout = clubEvent?.maximumSignupGroupSize === 1 || feeCount > 5 ? "vertical" : "horizontal"
 	const showPickers = (clubEvent?.maximumSignupGroupSize ?? 0) > 1
 
 	const handlePriorityCancel = () => {
@@ -83,10 +83,6 @@ export function RegisterScreen() {
 		}
 
 		setIsBusy(true)
-		setTimeout(() => {
-			console.log("Saving payment record...")
-		}, 50)
-
 		try {
 			updateRegistrationNotes(notes)
 			await savePayment()

@@ -6,12 +6,7 @@ export function Home() {
 	const navigate = useNavigate()
 
 	return (
-		<div
-			className="actions actions--inverse login__actions"
-			role="button"
-			tabIndex={0}
-			onClick={() => navigate("/")}
-		>
+		<div className="actions actions--inverse login__actions" role="button" tabIndex={0} onClick={() => navigate("/")}>
 			<i className="actions__item">
 				<GoHome />
 			</i>
