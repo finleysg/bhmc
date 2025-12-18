@@ -40,7 +40,8 @@ export function MultiplePlayerPicker({
 			(!membersOnly || player.isMember) &&
 			!selectedPlayers.some((sel) => sel.id === player.id) &&
 			!excludeIds.includes(player.id) &&
-			(player.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+			(player.name.toLowerCase().includes(searchText.toLowerCase()) ||
+				player.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
 				player.lastName.toLowerCase().includes(searchText.toLowerCase()) ||
 				(player.email?.toLowerCase() ?? "").includes(searchText.toLowerCase())),
 	)

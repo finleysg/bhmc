@@ -22,6 +22,7 @@ export function useRegistrationUpdate() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["event-registrations"] })
+			queryClient.invalidateQueries({ queryKey: ["player-registration"] })
 		},
 	})
 }

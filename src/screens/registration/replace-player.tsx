@@ -46,7 +46,7 @@ export function ReplacePlayerScreen() {
 		setIsSubmitting(true)
 		try {
 			await swapPlayers.mutateAsync({ slotId: slot.id, playerId: targetPlayer.id })
-			toast.success("Player replaced")
+			toast.success(`${slot.playerName} replaced by ${targetPlayer.name}`)
 			navigate("../")
 		} catch (error: unknown) {
 			toast.error(error instanceof Error ? error.message : "Failed to replace player")

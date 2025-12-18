@@ -9,6 +9,7 @@ import { useManageRegistration } from "./manage-registration"
 import type { AvailableGroup } from "../../models/available-group"
 import type { Course } from "../../models/course"
 import type { RegistrationSlot } from "../../models/registration"
+import { GetGroupStartName } from "../../models/reserve"
 
 export function MoveGroupScreen() {
 	const { clubEvent, registration: currentRegistration } = useManageRegistration()
@@ -40,7 +41,8 @@ export function MoveGroupScreen() {
 				sourceSlotIds: currentRegistration.slots.map((s: RegistrationSlot) => s.id),
 				destinationSlotIds: selectedGroup.slots.map((s) => s.id),
 			})
-			toast.success("Group moved")
+			const newLocation = GetGroupStartName(clubEvent, selectedGroup.hole_number, selectedGroup.starting_order)
+			toast.success(`Group moved to ${selectedCourse?.name} ${newLocation}`)
 			navigate("../")
 		} catch (error: unknown) {
 			toast.error(error instanceof Error ? error.message : "Failed to move group")

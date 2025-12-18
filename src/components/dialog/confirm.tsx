@@ -22,7 +22,7 @@ export function ConfirmDialog({ title, message, show, onClose }: ConfirmDialogPr
 	}
 
 	return (
-		<dialog ref={dialogRef} className="border border-primary border-opacity-25 focus-ring">
+		<dialog ref={dialogRef} className="border-0">
 			<div className="text-center p-2">
 				{title && <h5 className="text-primary">{title}</h5>}
 				<div className="p-2">{message}</div>

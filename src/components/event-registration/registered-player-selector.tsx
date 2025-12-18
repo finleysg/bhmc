@@ -59,7 +59,7 @@ export function RegisteredPlayerSelector({ registration, limit, onChange }: Regi
 			)}
 			{players.map((player) => {
 				const isSelected = selectedIds.includes(player.id)
-				const isDisabled = !isSelected && atLimit
+				const isDisabled = !isSelected && atLimit && limit > 1
 
 				return (
 					<div key={player.id} className="form-check">

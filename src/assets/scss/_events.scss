@@ -52,7 +52,7 @@
 }
 
 .registration-start-item {
-	margin-bottom: 0.25rem;
+	margin-bottom: 0.2rem;
 	display: flex;
 
 	.label {
@@ -85,16 +85,17 @@
 	}
 
 	.registration-start-item {
-		margin-bottom: 0.25rem;
+		margin-bottom: 0.2rem;
 
 		.label {
-			font-weight: 400;
 			color: $info;
+			width: 100px;
 		}
 
 		.value {
 			white-space: nowrap;
-			font-size: 0.9em;
+			flex-grow: 1;
+			font-size: 0.9rem;
 		}
 	}
 }

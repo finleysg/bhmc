@@ -6,6 +6,7 @@ import { useMyPlayerRecord } from "../../hooks/use-my-player-record"
 import { usePlayerRegistration } from "../../hooks/use-player-registrations"
 import { ClubEvent } from "../../models/club-event"
 import { Registration } from "../../models/registration"
+import { GetGroupStartName } from "../../models/reserve"
 import { useCurrentEvent } from "./event-detail"
 
 type ManageAction = "addPlayers" | "dropPlayers" | "moveGroup" | "replacePlayer" | "addNotes" | "updateRegistration"
@@ -88,9 +89,19 @@ export function ManageRegistrationScreen() {
 }
 
 export function ManageRegistrationMenu() {
+	const { clubEvent, registration } = useManageRegistration()
 	const { initiateStripeSession, loadRegistration } = useEventRegistration()
 	const { data: player } = useMyPlayerRecord()
 	const navigate = useNavigate()
+
+	// Deriving course and start info is messy
+	const course = clubEvent.courses.find((c) => c.id === registration.courseId)
+	const courseName = course?.name
+	const startingHoleId = registration.slots[0]?.holeId
+	const startingHole = course?.holes.find((h) => h.id === startingHoleId)
+	const startingHoleNumber = startingHole ? startingHole.holeNumber : 1
+	const startingOrder = registration.slots[0]?.startingOrder ?? 0
+	const startName = GetGroupStartName(clubEvent, startingHoleNumber, startingOrder)
 
 	const handleAction = async (action: ManageAction) => {
 		if (action === "updateRegistration") {
@@ -117,9 +128,12 @@ export function ManageRegistrationMenu() {
 			<div className="col-12 col-md-6">
 				<div className="card border border-primary mb-4">
 					<div className="card-body">
-						<h4 className="card-header mb-2 text-primary">Manage My Group</h4>
+						<h4 className="card-header mb-2 text-primary">
+							Manage My Group
+							<span className="text-muted fs-6">&nbsp;({course ? `${courseName} ${startName}` : startName})</span>
+						</h4>
 						<ul className="list-group">
-							{OPTIONS.map((opt) => (
+							{OPTIONS.filter((opt) => opt.key !== "moveGroup" || clubEvent.canChoose).map((opt) => (
 								<li key={opt.key} className="list-group-item border-0">
 									<button
 										type="button"
