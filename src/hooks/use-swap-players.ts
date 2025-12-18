@@ -23,6 +23,7 @@ export function useSwapPlayers() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["event-registrations"] })
 			queryClient.invalidateQueries({ queryKey: ["event-registration-slots"] })
+			queryClient.invalidateQueries({ queryKey: ["player-registration"] })
 		},
 	})
 }

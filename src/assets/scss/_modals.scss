@@ -1,3 +1,12 @@
+dialog {
+	box-shadow: 0 4px 12px rgba($black, 0.15);
+	border-radius: $card-border-radius;
+
+	&::backdrop {
+		background: rgba($black, 0.3);
+	}
+}
+
 .add-player-modal {
 	min-width: 300px;
 	min-height: 240px;

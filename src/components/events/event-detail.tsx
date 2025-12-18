@@ -58,34 +58,32 @@ export function EventDetail({ clubEvent, onRegister, onEditRegistration }: Event
 							{clubEvent.startTime} {getStartTypeName(clubEvent.startType)}
 						</div>
 					</div>
+					<div className="registration-start-item">
+						<div className="label">&nbsp;</div>
+						<div className="value">{getRegistrationTypeName(clubEvent.registrationType)}</div>
+					</div>
 					{clubEvent.registrationType !== "None" && (
 						<React.Fragment>
+							<hr />
+							<h6 className="text-primary">Signup Times</h6>
 							<div className="registration-start-item">
-								<div className="label">Registration opens:</div>
-								<div className="value">{dayDateAndTimeFormat(clubEvent.signupStart)}</div>
+								<div className="label">Open:</div>
+								<div className="value">{dayDateAndTimeFormat(clubEvent.prioritySignupStart)}</div>
 							</div>
-							{clubEvent.prioritySignupStart && (
-								<div className="registration-start-item">
-									<div className="label">Priority registration:</div>
-									<div className="value">{dayDateAndTimeFormat(clubEvent.prioritySignupStart)}</div>
-								</div>
-							)}
 							<div className="registration-start-item">
-								<div className="label">Registration closes:</div>
+								<div className="label">Close:</div>
 								<div className="value">{dayDateAndTimeFormat(clubEvent.signupEnd)}</div>
 							</div>
 							{clubEvent.paymentsEnd && (
 								<div className="registration-start-item">
-									<div className="label">Skins closes:</div>
+									<div className="label">Changes:</div>
 									<div className="value">{dayDateAndTimeFormat(clubEvent.paymentsEnd)}</div>
 								</div>
 							)}
 						</React.Fragment>
 					)}
-					<div className="registration-start-item">
-						<div className="label">Registration type:</div>
-						<div className="value">{getRegistrationTypeName(clubEvent.registrationType)}</div>
-					</div>
+					<hr />
+
 					{hasSignedUp && (
 						<p className="text-danger-emphasis">
 							<strong>You are registered for this event.</strong>

@@ -5,10 +5,12 @@ import { toast } from "react-toastify"
 import { ConfirmDialog } from "../../components/dialog/confirm"
 import { RegisteredPlayerSelector } from "../../components/event-registration/registered-player-selector"
 import { useDropPlayers } from "../../hooks/use-drop-players"
+import { useMyPlayerRecord } from "../../hooks/use-my-player-record"
 import { useManageRegistration } from "./manage-registration"
 
 export function DropPlayersScreen() {
 	const { registration: currentRegistration } = useManageRegistration()
+	const { data: player } = useMyPlayerRecord()
 	const dropPlayers = useDropPlayers()
 	const navigate = useNavigate()
 
@@ -29,7 +31,16 @@ export function DropPlayersScreen() {
 		try {
 			await dropPlayers.mutateAsync({ registrationId: currentRegistration.id, slotIds })
 			toast.success(`${slotIds.length} player(s) dropped`)
-			navigate("../")
+
+			const totalPlayers = currentRegistration.slots.filter((s) => s.playerId).length
+			const remainingPlayers = totalPlayers - selectedPlayerIds.length
+			const isDroppingMyself = player && selectedPlayerIds.includes(player.id)
+
+			if (remainingPlayers === 0 || isDroppingMyself) {
+				navigate("../..") // event screen
+			} else {
+				navigate("../") // manage menu
+			}
 		} catch (error: unknown) {
 			toast.error(error instanceof Error ? error.message : "Failed to drop players")
 			setIsSubmitting(false)
@@ -74,13 +85,13 @@ export function DropPlayersScreen() {
 						</div>
 					</div>
 				</div>
+				<ConfirmDialog
+					title="Drop Players"
+					message={`Are you sure you want to remove ${selectedPlayerIds.length} player(s) from your group?`}
+					show={showConfirm}
+					onClose={handleConfirmClose}
+				/>
 			</div>
-			<ConfirmDialog
-				title="Drop Players"
-				message={`Are you sure you want to remove ${selectedPlayerIds.length} player(s) from your group?`}
-				show={showConfirm}
-				onClose={handleConfirmClose}
-			/>
 		</div>
 	)
 }

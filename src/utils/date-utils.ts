@@ -9,14 +9,14 @@ const isoDayFormat = (dt: number | Date) => {
 
 const dayAndDateFormat = (dt: number | Date) => {
 	if (dt && isDate(dt) && isValid(dt)) {
-		return format(dt, "iii, MMMM do")
+		return format(dt, "iiii, MMM do")
 	}
 	return "--"
 }
 
 const dayDateAndTimeFormat = (dt: number | Date | null | undefined) => {
 	if (dt && isDate(dt) && isValid(dt)) {
-		return format(dt, "iii, MMMM do h:mm aaaa")
+		return format(dt, "iiii, MMM d h:mm aaaa")
 	}
 	return "--"
 }

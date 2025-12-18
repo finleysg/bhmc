@@ -105,8 +105,8 @@ export class Registration {
 	courseId?: number | null
 	signedUpBy: string
 	expires: Date
-	startingHole: number
-	startingOrder: number
+	// startingHole: number
+	// startingOrder: number
 	notes?: string | null
 	createdDate: Date
 	selectedStart?: string
@@ -118,8 +118,8 @@ export class Registration {
 		this.courseId = json.course
 		this.signedUpBy = json.signed_up_by
 		this.expires = new Date(json.expires)
-		this.startingHole = json.starting_hole
-		this.startingOrder = json.starting_order
+		// this.startingHole = json.starting_hole
+		// this.startingOrder = json.starting_order
 		this.notes = json.notes
 		this.createdDate = new Date(json.created_date)
 		this.selectedStart = selectedStart
