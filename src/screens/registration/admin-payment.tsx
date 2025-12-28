@@ -54,13 +54,13 @@ export function AdminPaymentScreen() {
 	}
 
 	const handleSubmitPayment = async () => {
-		if (!buttonRef.current) {
-			throw new Error("Button ref not found.")
-		}
-
-		buttonRef.current.disabled = true
-
 		try {
+			if (!buttonRef.current) {
+				throw new Error("Button ref not found.")
+			}
+
+			buttonRef.current.disabled = true
+
 			setPaymentStep("Validating payment information...")
 			const { error: submitError } = await elements!.submit()
 			if (submitError) {
