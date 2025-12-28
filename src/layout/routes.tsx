@@ -1,4 +1,7 @@
 import { AboutUsScreen } from "../screens/about-us"
+import { AdminPaymentCompleteScreen } from "../screens/registration/admin-payment-complete"
+import { AdminPaymentFlow } from "../screens/registration/admin-payment-flow"
+import { AdminPaymentScreen } from "../screens/registration/admin-payment"
 import { AccountScreen } from "../screens/account/account"
 import { AccountSettingsScreen } from "../screens/account/account-settings"
 import { CalendarScreen } from "../screens/calendar"
@@ -91,5 +94,13 @@ export const mainRoutes = () =>
 				{ path: "/gallery/:id", element: <GalleryImageScreen /> },
 				{ path: "/my-account", element: <AccountScreen /> },
 				{ path: "/my-activity", element: <AccountSettingsScreen /> },
+				{
+					path: "/registration/:registrationId/payment/:paymentId",
+					element: <AdminPaymentFlow />,
+					children: [
+						{ index: true, element: <AdminPaymentScreen /> },
+						{ path: "complete", element: <AdminPaymentCompleteScreen /> },
+					],
+				},
 				{ path: "*", element: <NotFoundScreen /> },
 			]

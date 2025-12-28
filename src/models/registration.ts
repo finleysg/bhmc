@@ -29,8 +29,6 @@ export const RegistrationApiSchema = z.object({
 	course: z.number().nullish(),
 	signed_up_by: z.string(),
 	expires: z.coerce.date(),
-	starting_hole: z.number(),
-	starting_order: z.number(),
 	notes: z.string().nullish(),
 	created_date: z.coerce.date(),
 	slots: z.array(RegistrationSlotApiSchema),
@@ -105,8 +103,6 @@ export class Registration {
 	courseId?: number | null
 	signedUpBy: string
 	expires: Date
-	// startingHole: number
-	// startingOrder: number
 	notes?: string | null
 	createdDate: Date
 	selectedStart?: string
@@ -118,8 +114,6 @@ export class Registration {
 		this.courseId = json.course
 		this.signedUpBy = json.signed_up_by
 		this.expires = new Date(json.expires)
-		// this.startingHole = json.starting_hole
-		// this.startingOrder = json.starting_order
 		this.notes = json.notes
 		this.createdDate = new Date(json.created_date)
 		this.selectedStart = selectedStart
@@ -136,8 +130,6 @@ export class Registration {
 			event: 0,
 			signed_up_by: "",
 			expires: new Date(),
-			starting_hole: 0,
-			starting_order: 0,
 			created_date: new Date(),
 			slots: [],
 			notes: "",
