@@ -13,6 +13,6 @@ export function useEventRegistrationSlots(eventId?: number) {
 			// Transform the data into RegistrationSlot instances
 			return data.map((s) => new RegistrationSlot(s))
 		},
-		refetchInterval: 10 * 1000,
+		// refetchInterval: 10 * 1000,
 	})
 }

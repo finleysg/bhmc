@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect, useReducer } from "react"
+import { PropsWithChildren, useCallback, useEffect, useReducer, useRef } from "react"
 
 import { PaymentIntent } from "@stripe/stripe-js"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -14,13 +14,14 @@ import { Player } from "../models/player"
 import {
 	Registration,
 	RegistrationApiSchema,
-	RegistrationData,
 	RegistrationFee,
 	RegistrationFeeApiSchema,
 	RegistrationSlot,
+	ServerRegistrationApiSchema,
+	ServerRegistrationData,
 } from "../models/registration"
 import { getMany, getOne, httpClient } from "../utils/api-client"
-import { apiUrl } from "../utils/api-utils"
+import { apiUrl, serverUrl } from "../utils/api-utils"
 import { currentSeason } from "../utils/app-config"
 import { getCorrelationId } from "../utils/correlation"
 import {
@@ -169,23 +170,23 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const { mutateAsync: _createRegistration } = useMutation({
-		mutationFn: ({ courseId, slots }: { courseId?: number; slots?: RegistrationSlot[]; selectedStart?: string }) => {
-			return httpClient(apiUrl("registration"), {
+	const { mutateAsync: createRegistrationMutate } = useMutation({
+		mutationFn: ({ course, slots }: { course?: Course; slots?: RegistrationSlot[]; selectedStart?: string }) => {
+			return httpClient(serverUrl("registration"), {
 				body: JSON.stringify({
-					event: state.clubEvent?.id,
-					course: courseId,
-					slots: slots?.map((s) => s.obj),
+					eventId: state.clubEvent?.id,
+					courseId: course?.id,
+					slotIds: slots?.map((s) => s.id),
 				}),
 				headers: { "X-Correlation-ID": state.correlationId },
 			})
 		},
 		onSuccess: (data, args) => {
-			const registrationData = RegistrationApiSchema.parse(data)
+			const registrationData = ServerRegistrationApiSchema.parse(data)
 			dispatch({
 				type: "create-registration",
 				payload: {
-					registration: new Registration(registrationData, args.selectedStart),
+					registration: Registration.fromServerData(registrationData, args.selectedStart),
 					payment: _createInitialPaymentRecord(registrationData),
 				},
 			})
@@ -202,7 +203,18 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const _createInitialPaymentRecord = (registration: RegistrationData) => {
+	/**
+	 * Creates a new registration record for the current user, attempting to
+	 * reserve the specified slots.
+	 */
+	const createRegistrationRef = useRef(createRegistrationMutate)
+	createRegistrationRef.current = createRegistrationMutate
+
+	const createRegistration = useCallback((course?: Course, slots?: RegistrationSlot[], selectedStart?: string) => {
+		return createRegistrationRef.current({ course, slots, selectedStart })
+	}, [])
+
+	const _createInitialPaymentRecord = (registration: ServerRegistrationData) => {
 		if (!state.clubEvent || !user.id) {
 			throw new Error("Cannot create an initial payment record without a club event or user.")
 		}
@@ -329,16 +341,6 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 			}
 		},
 		[queryClient, state.clubEvent?.id],
-	)
-
-	/**
-	 * Creates a new registration record for the current user.
-	 */
-	const createRegistration = useCallback(
-		(course?: Course, slots?: RegistrationSlot[], selectedStart?: string) => {
-			return _createRegistration({ courseId: course?.id, slots, selectedStart })
-		},
-		[_createRegistration],
 	)
 
 	/**

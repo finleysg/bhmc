@@ -26,11 +26,6 @@ export function ReserveScreen() {
 		setReserveTables(tables)
 	}, [clubEvent, slots])
 
-	// TODO: do we really want to do this?
-	// useInterval(() => {
-	// 	loadTables()
-	// }, 10 * 1000)
-
 	useEffect(() => {
 		const currentTime = new Date()
 		if (!clubEvent.paymentsAreOpen(currentTime)) {
@@ -43,12 +38,6 @@ export function ReserveScreen() {
 			loadTables()
 		}
 	}, [reserveTables.length, loadTables])
-
-	if (reserveTables.length === 0) {
-		setTimeout(() => {
-			loadTables()
-		}, 100)
-	}
 
 	const handleReserve = async (course: Course, groupName: string, slots: ReserveSlot[]) => {
 		const selectedSlots = slots.map((slot) => slot.toRegistrationSlot())
