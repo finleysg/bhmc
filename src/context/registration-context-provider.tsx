@@ -1,4 +1,4 @@
-import { PropsWithChildren, useCallback, useEffect, useReducer, useRef } from "react"
+import { PropsWithChildren, useCallback, useEffect, useReducer } from "react"
 
 import { PaymentIntent } from "@stripe/stripe-js"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -9,19 +9,16 @@ import { EventType } from "../models/codes"
 import { ClubEventProps } from "../models/common-props"
 import { Course } from "../models/course"
 import { EventFee } from "../models/event-fee"
-import { Payment, PaymentApiSchema, PaymentDetail } from "../models/payment"
+import { Payment, PaymentDetail } from "../models/payment"
 import { Player } from "../models/player"
 import {
 	Registration,
-	RegistrationApiSchema,
-	RegistrationFee,
-	RegistrationFeeApiSchema,
 	RegistrationSlot,
 	ServerRegistrationApiSchema,
 	ServerRegistrationData,
 } from "../models/registration"
-import { getMany, getOne, httpClient } from "../utils/api-client"
-import { apiUrl, serverUrl } from "../utils/api-utils"
+import { httpClient } from "../utils/api-client"
+import { serverUrl } from "../utils/api-utils"
 import { currentSeason } from "../utils/app-config"
 import { getCorrelationId } from "../utils/correlation"
 import {
@@ -47,17 +44,17 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		})
 	}, [clubEvent])
 
-	const { mutateAsync: _createPayment } = useMutation({
+	const { mutateAsync: createPaymentMutation } = useMutation({
 		mutationFn: (payment: Partial<Payment>) => {
-			return httpClient(apiUrl("payments"), {
+			return httpClient(serverUrl("registration/payments"), {
 				body: JSON.stringify({
-					event: state.clubEvent?.id,
-					user: user.id,
-					notification_type: payment.notificationType,
-					payment_details: payment.details?.map((f) => {
+					eventId: state.clubEvent?.id,
+					userId: user.id,
+					notificationType: payment.notificationType,
+					paymentDetails: payment.details?.map((f) => {
 						return {
-							event_fee: f.eventFeeId,
-							registration_slot: f.slotId,
+							eventFeeId: f.eventFeeId,
+							registrationSlotId: f.slotId,
 							amount: f.amount,
 						}
 					}),
@@ -74,18 +71,18 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const { mutateAsync: _updatePayment } = useMutation({
+	const { mutateAsync: updatePaymentMutation } = useMutation({
 		mutationFn: (payment: Payment) => {
-			return httpClient(apiUrl(`payments/${payment.id}`), {
+			return httpClient(serverUrl(`registration/payments/${payment.id}`), {
 				method: "PUT",
 				body: JSON.stringify({
-					event: state.clubEvent?.id,
-					user: user.id,
-					notification_type: payment.notificationType,
-					payment_details: payment.details?.map((f) => {
+					eventId: state.clubEvent?.id,
+					userId: user.id,
+					notificationType: payment.notificationType,
+					paymentDetails: payment.details?.map((f) => {
 						return {
-							event_fee: f.eventFeeId,
-							registration_slot: f.slotId,
+							eventFeeId: f.eventFeeId,
+							registrationSlotId: f.slotId,
 							amount: f.amount,
 						}
 					}),
@@ -102,24 +99,24 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const { mutateAsync: _createPaymentIntent } = useMutation({
+	const { mutateAsync: createPaymentIntentMutation } = useMutation({
 		mutationFn: () => {
-			return httpClient(apiUrl(`payments/${state.payment?.id}/payment_intent/`), {
+			return httpClient(serverUrl(`payments/${state.payment?.id}/payment-intent/`), {
 				body: JSON.stringify({
-					event_id: state.clubEvent?.id,
-					registration_id: state.registration?.id,
+					eventId: state.clubEvent?.id,
+					registrationId: state.registration?.id,
 				}),
 				headers: { "X-Correlation-ID": state.correlationId },
 			}) as Promise<PaymentIntent>
 		},
 	})
 
-	const { mutate: _updateRegistrationSlotPlayer } = useMutation({
+	const { mutate: updateRegistrationSlotPlayerMutation } = useMutation({
 		mutationFn: ({ slotId, playerId }: { slotId: number; playerId: number | null }) => {
-			return httpClient(apiUrl(`registration-slots/${slotId}`), {
+			return httpClient(serverUrl(`registration/slots/${slotId}`), {
 				method: "PATCH",
 				body: JSON.stringify({
-					player: playerId,
+					playerId: playerId,
 				}),
 				headers: { "X-Correlation-ID": state.correlationId },
 			})
@@ -132,13 +129,16 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const { mutateAsync: _cancelRegistration } = useMutation({
+	const { mutateAsync: cancelRegistrationMutation } = useMutation({
 		mutationFn: ({ reason }: { reason: "user" | "timeout" | "navigation" | "violation" }) => {
-			const regId = state.registration?.id ?? 0
-			const pmtId = state.payment?.id ?? 0
-			const endpoint = `registration/${regId}/cancel/?reason=${reason}&payment_id=${pmtId}`
-			return httpClient(apiUrl(endpoint), {
+			const registrationId = state.registration?.id ?? 0
+			const endpoint = `registration/${registrationId}/cancel/`
+			return httpClient(serverUrl(endpoint), {
 				method: "PUT",
+				body: JSON.stringify({
+					payment_id: state.payment?.id ?? null,
+					reason: reason,
+				}),
 				headers: { "X-Correlation-ID": state.correlationId },
 			})
 		},
@@ -155,9 +155,9 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const { mutate: _updateRegistrationNotes } = useMutation({
+	const { mutate: updateRegistrationNotesMutation } = useMutation({
 		mutationFn: (notes: string) => {
-			return httpClient(apiUrl(`registration/${state.registration?.id}`), {
+			return httpClient(serverUrl(`registration/${state.registration?.id}`), {
 				method: "PATCH",
 				body: JSON.stringify({
 					notes: notes,
@@ -170,7 +170,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const { mutateAsync: createRegistrationMutate } = useMutation({
+	const { mutateAsync: createRegistrationMutation } = useMutation({
 		mutationFn: ({ course, slots }: { course?: Course; slots?: RegistrationSlot[]; selectedStart?: string }) => {
 			return httpClient(serverUrl("registration"), {
 				body: JSON.stringify({
@@ -187,7 +187,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				type: "create-registration",
 				payload: {
 					registration: Registration.fromServerData(registrationData, args.selectedStart),
-					payment: _createInitialPaymentRecord(registrationData),
+					payment: createInitialPaymentRecord(registrationData),
 				},
 			})
 			queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
@@ -203,18 +203,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	/**
-	 * Creates a new registration record for the current user, attempting to
-	 * reserve the specified slots.
-	 */
-	const createRegistrationRef = useRef(createRegistrationMutate)
-	createRegistrationRef.current = createRegistrationMutate
-
-	const createRegistration = useCallback((course?: Course, slots?: RegistrationSlot[], selectedStart?: string) => {
-		return createRegistrationRef.current({ course, slots, selectedStart })
-	}, [])
-
-	const _createInitialPaymentRecord = (registration: ServerRegistrationData) => {
+	const createInitialPaymentRecord = (registration: ServerRegistrationData) => {
 		if (!state.clubEvent || !user.id) {
 			throw new Error("Cannot create an initial payment record without a club event or user.")
 		}
@@ -241,7 +230,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	/**
 	 * Updates query state so the UI reflects the completed registration.
 	 */
-	const _invalidateQueries = useCallback(() => {
+	const invalidateQueries = useCallback(() => {
 		if (state.clubEvent?.eventType === EventType.Membership) {
 			queryClient.setQueryData(["player", user.email], {
 				...player?.data,
@@ -265,22 +254,23 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	}, [])
 
 	/**
+	 * Creates a new registration record for the current user, attempting to
+	 * reserve the specified slots.
+	 */
+	const createRegistration = useCallback((course?: Course, slots?: RegistrationSlot[], selectedStart?: string) => {
+		return createRegistrationMutation({ course, slots, selectedStart })
+	}, [createRegistrationMutation])
+
+	/**
 	 * Loads an existing registration for a given player, if it exists.
 	 */
 	const loadRegistration = useCallback(
 		async (player: Player) => {
 			try {
-				const registrationData = await getOne(
-					`registration/?event_id=${state.clubEvent?.id}&player_id=${player.id}`,
-					RegistrationApiSchema,
-				)
-				if (registrationData) {
-					const registration = new Registration(registrationData)
-					const feeData = await getMany(
-						`registration-fees/?registration_id=${registration.id}&confirmed=true`,
-						RegistrationFeeApiSchema,
-					)
-					const fees = feeData?.map((f) => new RegistrationFee(f))
+				const result = await httpClient(serverUrl(`registration/?event_id=${state.clubEvent?.id}&player_id=${player.id}`))
+				if (result) {
+					const registration = Registration.fromServerData(result.registration)
+					const fees = registration.slots.flatMap((slot) => slot.fees)
 					dispatch({
 						type: "load-registration",
 						payload: {
@@ -289,7 +279,9 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 							existingFees: fees,
 						},
 					})
-					queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
+					queryClient.setQueryData(["registration", state.clubEvent?.id], result.registration)
+					queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
+					queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
 				}
 			} catch (error) {
 				dispatch({ type: "update-error", payload: { error: error as Error } })
@@ -300,39 +292,29 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 
 	/**
 	 * Adds one or more players to an existing registration.
+	 * TODO: this needs a better name
 	 */
 	const editRegistration = useCallback(
 		async (registrationId: number, playerIds: number[]) => {
 			try {
-				const registrationData = await httpClient(apiUrl(`registration/${registrationId}/add_players`), {
+				const result = await httpClient(serverUrl(`registration/${registrationId}/add-players`), {
 					method: "PUT",
 					body: JSON.stringify({
 						players: playerIds.map((id) => ({ id })),
 					}),
 				})
-				if (registrationData) {
-					const registration = new Registration(registrationData.registration)
-					const payment = await getOne(`payments/${registrationData.payment_id}/`, PaymentApiSchema)
-					if (!payment) {
-						throw new Error("Failed to load payment data after editing registration.")
-					}
-					const feeData = await getMany(
-						`registration-fees/?registration_id=${registration.id}`,
-						RegistrationFeeApiSchema,
-					)
-					if (!feeData) {
-						throw new Error("Failed to load registration fee data after editing registration.")
-					}
-					const fees = feeData.map((f) => new RegistrationFee(f))
+				if (result) {
+					const registration = Registration.fromServerData(result.registration)
+					const fees = registration.slots.flatMap((slot) => slot.fees)
 					dispatch({
 						type: "load-registration",
 						payload: {
 							registration,
-							payment: new Payment(payment),
+							payment: Payment.createPlaceholder(state.clubEvent?.id ?? 0, user.id ?? 0),
 							existingFees: fees,
 						},
 					})
-					queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
+					queryClient.setQueryData(["registration", state.clubEvent?.id], result.registration)
 					queryClient.invalidateQueries({ queryKey: ["event-registrations", state.clubEvent?.id] })
 					queryClient.invalidateQueries({ queryKey: ["event-registration-slots", state.clubEvent?.id] })
 				}
@@ -340,7 +322,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				dispatch({ type: "update-error", payload: { error: error as Error } })
 			}
 		},
-		[queryClient, state.clubEvent?.id],
+		[state.clubEvent?.id, queryClient, user.id],
 	)
 
 	/**
@@ -349,9 +331,9 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	const updateRegistrationNotes = useCallback(
 		(notes: string) => {
 			dispatch({ type: "update-registration-notes", payload: { notes } })
-			_updateRegistrationNotes(notes)
+			updateRegistrationNotesMutation(notes)
 		},
-		[_updateRegistrationNotes],
+		[updateRegistrationNotesMutation],
 	)
 
 	/**
@@ -360,13 +342,13 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	const cancelRegistration = useCallback(
 		(reason: "user" | "timeout" | "navigation" | "violation", mode: RegistrationMode) => {
 			if (mode === "new") {
-				return _cancelRegistration({ reason })
+				return cancelRegistrationMutation({ reason })
 			} else {
 				queryClient.invalidateQueries({ queryKey: ["registration"] })
 				return Promise.resolve()
 			}
 		},
-		[_cancelRegistration, queryClient],
+		[cancelRegistrationMutation, queryClient],
 	)
 
 	/**
@@ -374,16 +356,16 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 * setting the mode to "idle", which enables the guard on the register routes.
 	 */
 	const completeRegistration = useCallback(() => {
-		_invalidateQueries()
+		invalidateQueries()
 		dispatch({ type: "complete-registration", payload: null })
-	}, [_invalidateQueries])
+	}, [invalidateQueries])
 
 	/**
 	 * Create and return a stripe customer session, which allows the user to
 	 * save their payment information for future use.
 	 */
 	const initiateStripeSession = useCallback(() => {
-		httpClient(apiUrl("payments/customer_session/"), {
+		httpClient(serverUrl("registration/payments/customer-session/"), {
 			method: "POST",
 			body: JSON.stringify({}),
 			headers: { "X-Correlation-ID": state.correlationId },
@@ -403,34 +385,34 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 * Create a payment intent for client-side processing.
 	 */
 	const createPaymentIntent = useCallback(() => {
-		return _createPaymentIntent()
-	}, [_createPaymentIntent])
+		return createPaymentIntentMutation()
+	}, [createPaymentIntentMutation])
 
 	/**
 	 * Saves the current payment record.
 	 */
 	const savePayment = useCallback(() => {
 		if (state.payment?.id) {
-			return _updatePayment(state.payment)
+			return updatePaymentMutation(state.payment)
 		} else {
 			const payment = { ...state.payment }
-			return _createPayment(payment)
+			return createPaymentMutation(payment)
 		}
-	}, [_createPayment, _updatePayment, state.payment])
+	}, [createPaymentMutation, updatePaymentMutation, state.payment])
 
 	/**
 	 * Add a player to a given registration slot.
 	 */
 	const addPlayer = useCallback(
 		(slot: RegistrationSlot, player: Player) => {
-			_updateRegistrationSlotPlayer(
+			updateRegistrationSlotPlayerMutation(
 				{ slotId: slot.id, playerId: player.id },
 				{
 					onSuccess: () => dispatch({ type: "add-player", payload: { slot, player } }),
 				},
 			)
 		},
-		[_updateRegistrationSlotPlayer],
+		[updateRegistrationSlotPlayerMutation],
 	)
 
 	/**
@@ -438,14 +420,14 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 */
 	const removePlayer = useCallback(
 		(slot: RegistrationSlot) => {
-			_updateRegistrationSlotPlayer(
+			updateRegistrationSlotPlayerMutation(
 				{ slotId: slot.id, playerId: null },
 				{
 					onSuccess: () => dispatch({ type: "remove-player", payload: { slotId: slot.id } }),
 				},
 			)
 		},
-		[_updateRegistrationSlotPlayer],
+		[updateRegistrationSlotPlayerMutation],
 	)
 
 	/**

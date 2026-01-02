@@ -2,6 +2,7 @@ import { immerable } from "immer"
 import { z } from "zod"
 
 import { PlayerApiSchema, ServerPlayerApiSchema } from "./player"
+import { PaymentDetail } from "./payment"
 
 export const RegistrationFeeApiSchema = z.object({
 	id: z.number(),
@@ -57,6 +58,7 @@ export const ServerRegistrationSlotApiSchema = z.object({
 	startingOrder: z.number(),
 	slot: z.number(),
 	status: z.string(),
+	fees: z.array(ServerRegistrationFeeApiSchema),
 })
 
 export const ServerRegistrationApiSchema = z.object({
@@ -103,6 +105,17 @@ export class RegistrationFee {
 		fee.amount = json.amount ? +json.amount : 0
 		return fee
 	}
+
+	static fromPaymentDetail = (detail: PaymentDetail) => {
+		const fee = new RegistrationFee(undefined)
+		fee.id = 0
+		fee.eventFeeId = detail.eventFeeId
+		fee.registrationSlotId = detail.slotId ?? 0
+		fee.paymentId = detail.paymentId
+		fee.isPaid = detail.isPaid
+		fee.amount = detail.amount
+		return fee
+	}
 }
 
 export class RegistrationSlot {
@@ -117,6 +130,7 @@ export class RegistrationSlot {
 	startingOrder: number
 	slot: number
 	status: string
+	fees: RegistrationFee[] = []
 
 	constructor(json?: RegistrationSlotData) {
 		this.id = json?.id ?? 0
@@ -148,6 +162,7 @@ export class RegistrationSlot {
 		slot.startingOrder = json.startingOrder
 		slot.slot = json.slot
 		slot.status = json.status
+		slot.fees = json.fees ? json.fees.map((f) => RegistrationFee.fromServerData(f)) : []
 		return slot
 	}
 }
