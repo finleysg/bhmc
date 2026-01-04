@@ -17,19 +17,21 @@ export function CancelButton({ mode, onCanceled }: { mode: RegistrationMode; onC
 			? "Cancel this registration and return to the event detail page."
 			: "Cancel these changes and return to the event detail page."
 
-	const handleCancel = async () => {
+	const handleCancel = () => {
 		setShowCancelDialog(false)
-		await cancelRegistration("user", mode)
+		// Navigate FIRST, before cancelRegistration clears state
+		// (otherwise useEventRegistrationGuard's useLayoutEffect fires and navigates to wrong route)
 		if (onCanceled) {
 			onCanceled()
 		} else {
-			// TODO: Remove this else block so the caller is responsible for navigation
 			if (currentStep.name === "payment") {
 				navigate("../../")
 			} else {
 				navigate("../")
 			}
 		}
+		// Fire and forget - we've already navigated
+		cancelRegistration("user", mode)
 	}
 
 	return (

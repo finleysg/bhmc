@@ -22,7 +22,6 @@ import { GalleryImageScreen } from "../screens/gallery-image"
 import { HomeScreen } from "../screens/home"
 import { MaintenanceScreen } from "../screens/maintenance"
 import { MatchPlayScreen } from "../screens/match-play"
-import { MembershipFull } from "../screens/membership-full"
 import { NotFoundScreen } from "../screens/not-found"
 import { PaymentScreen } from "../screens/registration/payment"
 import { PaymentFlow } from "../screens/registration/payment-flow"
@@ -38,6 +37,7 @@ import { ReviewRegistrationScreen } from "../screens/registration/review-registr
 import { SeasonLongPointsScreen } from "../screens/season-long-points"
 import { SendMessageScreen } from "../screens/send-message"
 import * as config from "../utils/app-config"
+import { MembershipScreen } from "../screens/membership"
 
 export const mainRoutes = () =>
 	config.maintenanceMode
@@ -45,7 +45,7 @@ export const mainRoutes = () =>
 		: [
 				{ path: "/", element: <HomeScreen /> },
 				{ path: "/home", element: <HomeScreen /> },
-				{ path: "/membership", element: <MembershipFull /> },
+				{ path: "/membership", element: <MembershipScreen /> },
 				{ path: "/calendar/:year/:monthName", element: <CalendarScreen /> },
 				{
 					path: "/event/:eventDate/:eventName",

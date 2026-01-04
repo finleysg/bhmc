@@ -50,7 +50,19 @@ export function RegistrationCompleteScreen() {
 			<div className="col-12 col-md-6">
 				<div className="card border border-primary mb-4">
 					<div className="card-body">
-						<h4 className="card-header mb-2">{error ? "Payment Failed" : "Payment Complete"}</h4>
+						<h4 className="card-header mb-2">
+							{error
+								? "Payment Failed"
+								: intent?.status === "succeeded"
+									? "Payment Complete"
+									: intent?.status === "processing"
+										? "Payment Processing"
+										: intent?.status === "requires_action"
+											? "Action Required"
+											: intent?.status === "requires_payment_method"
+												? "Payment Failed"
+												: "Payment Status"}
+						</h4>
 						<div className="row mb-4">
 							<div className="col-12">
 								{error && (
@@ -62,7 +74,7 @@ export function RegistrationCompleteScreen() {
 								{intent?.status === "succeeded" && (
 									<>
 										<h5 className="text-primary-emphasis">
-											Your payment for {config.currencyFormatter.format(stripeAmount / 100)} has been processed.
+											Your payment for {config.currencyFormatter.format(stripeAmount.total)} has been processed.
 										</h5>
 										<p>
 											A confirmation email will be sent to {user?.email} and anyone you signed up unless this is just an
@@ -72,7 +84,43 @@ export function RegistrationCompleteScreen() {
 										<RandomGif enabled={true} />
 									</>
 								)}
-								{intent?.status !== "succeeded" && !error && <p>Payment status is {intent?.status}.</p>}
+								{intent?.status === "processing" && (
+									<>
+										<h5 className="text-warning">Your payment is being processed</h5>
+										<p>
+											Your payment is being processed by your bank. This usually takes a few moments. You will receive a
+											confirmation email once the payment is complete.
+										</p>
+									</>
+								)}
+								{intent?.status === "requires_action" && (
+									<>
+										<h5 className="text-warning">Additional verification required</h5>
+										<p>
+											Your bank requires additional verification. Please complete the verification process to finalize
+											your payment.
+										</p>
+									</>
+								)}
+								{intent?.status === "requires_payment_method" && (
+									<>
+										<h5 className="text-danger">Payment failed</h5>
+										<p>
+											Your payment method was declined. Please return to the payment page and try a different payment
+											method.
+										</p>
+										<Link to="../payment" className="btn btn-warning">
+											Try Again
+										</Link>
+									</>
+								)}
+								{!intent && !error && (
+									<div className="d-flex justify-content-center">
+										<div className="spinner-border text-primary" role="status">
+											<span className="visually-hidden">Loading...</span>
+										</div>
+									</div>
+								)}
 							</div>
 						</div>
 						<hr />

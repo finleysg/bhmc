@@ -22,9 +22,11 @@ export function PaymentScreen() {
 	const [paymentCanceled, setPaymentCanceled] = useState(false)
 	const [paymentStep, setPaymentStep] = useState<string>("")
 	const [processingStartTime, setProcessingStartTime] = useState<number | null>(null)
+	const [paymentSubmitted, setPaymentSubmitted] = useState(false)
 	const buttonRef = useRef<HTMLButtonElement>(null)
 	const abortControllerRef = useRef<AbortController | null>(null)
 	const paymentOperationRef = useRef<{ cancelled: boolean }>({ cancelled: false })
+	const stripeCallInProgressRef = useRef(false)
 	const { amount: stripeAmount } = useCurrentPaymentAmount()
 	const {
 		currentStep,
@@ -59,20 +61,25 @@ export function PaymentScreen() {
 			abortControllerRef.current.abort()
 		}
 
-		setPaymentStep("Payment timed out - please try again")
+		setPaymentStep("Payment timed out")
 		setPaymentProcessing(false)
 		setProcessingStartTime(null)
 
-		if (buttonRef.current) {
-			buttonRef.current.disabled = false
+		// If Stripe was called, don't allow retry - payment may have processed
+		if (paymentSubmitted) {
+			setError(
+				new Error(
+					"Payment may have been processed. Please check 'My Events' or your bank account before trying again. " +
+						"Do NOT retry immediately to avoid duplicate charges.",
+				),
+			)
+		} else {
+			// Safe to retry - Stripe was never called
+			if (buttonRef.current) {
+				buttonRef.current.disabled = false
+			}
+			setError(new Error("Payment timed out before processing. You can safely try again."))
 		}
-
-		setError(
-			new Error(
-				"Payment processing timed out. This may be due to network issues or bank verification delays. " +
-					"Please check if the payment was processed in your bank account before trying again.",
-			),
-		)
 	}
 
 	// Set up automatic timeout for stuck payments after 2 minutes
@@ -164,11 +171,6 @@ export function PaymentScreen() {
 		buttonRef.current.disabled = true
 		setProcessingStartTime(Date.now())
 
-		// Ensure the screen is showing the latest step
-		// setTimeout(() => {
-		// 	// no-op
-		// }, 10)
-
 		try {
 			// Check if operation was cancelled before starting
 			if (operationTracker.cancelled) {
@@ -203,8 +205,10 @@ export function PaymentScreen() {
 			setPaymentProcessing(true)
 
 			// 3. Confirm the payment.
-			// Note: Stripe's confirmPayment cannot be cancelled directly, but we can ignore its result
+			// Note: Stripe's confirmPayment cannot be cancelled directly
 			setPaymentStep("Processing payment...")
+			setPaymentSubmitted(true)
+			stripeCallInProgressRef.current = true
 			const confirmPaymentPromise = stripe!.confirmPayment({
 				elements: elements!,
 				clientSecret: intent.client_secret!,
@@ -222,27 +226,26 @@ export function PaymentScreen() {
 				},
 			})
 
-			// Wait for the confirmation, but check for cancellation
 			const { error: confirmError } = await confirmPaymentPromise
+			stripeCallInProgressRef.current = false
 
-			// CRITICAL: Check if operation was cancelled after Stripe call
-			// If cancelled, we ignore the result and don't proceed with completion
+			// CRITICAL: If Stripe succeeded, ALWAYS complete registration
+			// Money was taken - we cannot ignore this even if cancelled
+			if (!confirmError) {
+				console.log("Stripe payment succeeded - completing registration")
+				setPaymentProcessing(false)
+				setPaymentStep("Payment completed successfully!")
+				completeRegistration()
+				return
+			}
+
+			// Only ignore errors if operation was cancelled
 			if (operationTracker.cancelled) {
-				console.log("Payment operation was cancelled - ignoring Stripe confirmation result")
-				// Note: The payment may still have been processed by Stripe, but we don't
-				// proceed with our local registration completion
+				console.log("Payment operation was cancelled - ignoring Stripe error")
 				return
 			}
 
-			if (confirmError) {
-				handleError(confirmError)
-				return
-			}
-
-			// Payment processed = safe to navigate away.
-			setPaymentProcessing(false)
-			setPaymentStep("Payment completed successfully!")
-			completeRegistration()
+			handleError(confirmError)
 		} catch (err) {
 			// Check if the error is due to cancellation
 			if (operationTracker.cancelled) {
@@ -274,7 +277,7 @@ export function PaymentScreen() {
 					<div className="card-body">
 						<h4 className="card-header mb-2">{currentStep.title}</h4>
 						<p className="text-info fst-italic mb-4">{registration?.selectedStart}</p>
-						<h6 className="text-primary">Amount due: {config.currencyFormatter.format(stripeAmount / 100)}</h6>
+						<h6 className="text-primary">Amount due: {config.currencyFormatter.format(stripeAmount.total)}</h6>
 
 						<PaymentStatusIndicator
 							isProcessing={paymentProcessing}
@@ -317,6 +320,9 @@ export function PaymentScreen() {
 											address: { country: "never" },
 										},
 									},
+									terms: {
+										card: "auto",
+									},
 								}}
 							/>
 						</div>
@@ -328,7 +334,7 @@ export function PaymentScreen() {
 							</button>
 							<CancelButton mode={mode} onCanceled={handlePaymentCanceled} />
 							<button
-								disabled={!stripe || !elements || paymentProcessing}
+								disabled={!stripe || !elements || paymentProcessing || paymentSubmitted}
 								className="btn btn-primary ms-2"
 								ref={buttonRef}
 								onClick={handleSubmitPayment}
@@ -337,7 +343,9 @@ export function PaymentScreen() {
 										? "Loading payment system..."
 										: paymentProcessing
 											? "Processing payment - please wait"
-											: "Submit your payment"
+											: paymentSubmitted
+												? "Payment already submitted"
+												: "Submit your payment"
 								}
 							>
 								{paymentProcessing ? "Processing..." : "Submit Payment"}

@@ -48,7 +48,7 @@ export const ServerPaymentApiSchema = z.object({
 	transactionFee: z.coerce.number().nullish(),
 	notificationType: z.string().nullish(),
 	confirmed: z.boolean(),
-	paymentDetails: z.array(ServerPaymentDetailApiSchema).optional(),
+	details: z.array(ServerPaymentDetailApiSchema).optional(),
 })
 
 export type PaymentDetailData = z.infer<typeof PaymentDetailApiSchema>
@@ -57,6 +57,10 @@ export type PaymentAmount = {
 	subtotal: number
 	transactionFee: number
 	total: number
+}
+export type StripeAmount = {
+	amountDue: PaymentAmount
+	amountCents: number
 }
 export type ServerPaymentDetailData = z.infer<typeof ServerPaymentDetailApiSchema>
 export type ServerPaymentData = z.infer<typeof ServerPaymentApiSchema>
@@ -167,7 +171,7 @@ export class Payment {
 			notification_type: json.notificationType,
 			confirmed: json.confirmed,
 		})
-		payment.details = json.paymentDetails?.map((d) => PaymentDetail.fromServerData(d)) ?? []
+		payment.details = json.details?.map((d) => PaymentDetail.fromServerData(d)) ?? []
 		return payment
 	}
 

@@ -11,12 +11,7 @@ import { Course } from "../models/course"
 import { EventFee } from "../models/event-fee"
 import { Payment, PaymentDetail } from "../models/payment"
 import { Player } from "../models/player"
-import {
-	Registration,
-	RegistrationSlot,
-	ServerRegistrationApiSchema,
-	ServerRegistrationData,
-} from "../models/registration"
+import { Registration, RegistrationSlot, ServerRegistrationApiSchema } from "../models/registration"
 import { httpClient } from "../utils/api-client"
 import { serverUrl } from "../utils/api-utils"
 import { currentSeason } from "../utils/app-config"
@@ -46,11 +41,11 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 
 	const { mutateAsync: createPaymentMutation } = useMutation({
 		mutationFn: (payment: Partial<Payment>) => {
-			return httpClient(serverUrl("registration/payments"), {
+			return httpClient(serverUrl("payments"), {
 				body: JSON.stringify({
 					eventId: state.clubEvent?.id,
+					eventType: state.clubEvent?.eventType,
 					userId: user.id,
-					notificationType: payment.notificationType,
 					paymentDetails: payment.details?.map((f) => {
 						return {
 							eventFeeId: f.eventFeeId,
@@ -64,7 +59,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 		onSuccess: (data) => {
 			queryClient.setQueryData(["payment", state.clubEvent?.id], data)
-			dispatch({ type: "update-payment", payload: { payment: new Payment(data) } })
+			dispatch({ type: "update-payment", payload: { payment: Payment.fromServerData(data) } })
 		},
 		onError: (error) => {
 			dispatch({ type: "update-error", payload: { error } })
@@ -73,12 +68,12 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 
 	const { mutateAsync: updatePaymentMutation } = useMutation({
 		mutationFn: (payment: Payment) => {
-			return httpClient(serverUrl(`registration/payments/${payment.id}`), {
+			return httpClient(serverUrl(`payments/${payment.id}`), {
 				method: "PUT",
 				body: JSON.stringify({
 					eventId: state.clubEvent?.id,
+					eventType: state.clubEvent?.eventType,
 					userId: user.id,
-					notificationType: payment.notificationType,
 					paymentDetails: payment.details?.map((f) => {
 						return {
 							eventFeeId: f.eventFeeId,
@@ -92,7 +87,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 		onSuccess: (data) => {
 			queryClient.setQueryData(["payment", state.clubEvent?.id], data)
-			dispatch({ type: "update-payment", payload: { payment: new Payment(data) } })
+			dispatch({ type: "update-payment", payload: { payment: Payment.fromServerData(data) } })
 		},
 		onError: (error) => {
 			dispatch({ type: "update-error", payload: { error } })
@@ -108,6 +103,9 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				}),
 				headers: { "X-Correlation-ID": state.correlationId },
 			}) as Promise<PaymentIntent>
+		},
+		onError: (error) => {
+			dispatch({ type: "update-error", payload: { error } })
 		},
 	})
 
@@ -136,7 +134,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 			return httpClient(serverUrl(endpoint), {
 				method: "PUT",
 				body: JSON.stringify({
-					payment_id: state.payment?.id ?? null,
+					paymentId: state.payment?.id ?? null,
 					reason: reason,
 				}),
 				headers: { "X-Correlation-ID": state.correlationId },
@@ -155,7 +153,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const { mutate: updateRegistrationNotesMutation } = useMutation({
+	const { mutateAsync: updateRegistrationNotesMutation } = useMutation({
 		mutationFn: (notes: string) => {
 			return httpClient(serverUrl(`registration/${state.registration?.id}`), {
 				method: "PATCH",
@@ -164,6 +162,9 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 				}),
 				headers: { "X-Correlation-ID": state.correlationId },
 			})
+		},
+		onSuccess: (_, args) => {
+			dispatch({ type: "update-registration-notes", payload: { notes: args } })
 		},
 		onError: (error) => {
 			dispatch({ type: "update-error", payload: { error } })
@@ -183,11 +184,12 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 		onSuccess: (data, args) => {
 			const registrationData = ServerRegistrationApiSchema.parse(data)
+			const newRegistration = Registration.fromServerData(registrationData, args.selectedStart)
 			dispatch({
 				type: "create-registration",
 				payload: {
-					registration: Registration.fromServerData(registrationData, args.selectedStart),
-					payment: createInitialPaymentRecord(registrationData),
+					registration: newRegistration,
+					payment: createInitialPaymentRecord(newRegistration),
 				},
 			})
 			queryClient.setQueryData(["registration", state.clubEvent?.id], registrationData)
@@ -203,7 +205,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 		},
 	})
 
-	const createInitialPaymentRecord = (registration: ServerRegistrationData) => {
+	const createInitialPaymentRecord = (registration: Registration) => {
 		if (!state.clubEvent || !user.id) {
 			throw new Error("Cannot create an initial payment record without a club event or user.")
 		}
@@ -257,9 +259,12 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 * Creates a new registration record for the current user, attempting to
 	 * reserve the specified slots.
 	 */
-	const createRegistration = useCallback((course?: Course, slots?: RegistrationSlot[], selectedStart?: string) => {
-		return createRegistrationMutation({ course, slots, selectedStart })
-	}, [createRegistrationMutation])
+	const createRegistration = useCallback(
+		(course?: Course, slots?: RegistrationSlot[], selectedStart?: string) => {
+			return createRegistrationMutation({ course, slots, selectedStart })
+		},
+		[createRegistrationMutation],
+	)
 
 	/**
 	 * Loads an existing registration for a given player, if it exists.
@@ -267,7 +272,9 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	const loadRegistration = useCallback(
 		async (player: Player) => {
 			try {
-				const result = await httpClient(serverUrl(`registration/?event_id=${state.clubEvent?.id}&player_id=${player.id}`))
+				const result = await httpClient(
+					serverUrl(`registration/?event_id=${state.clubEvent?.id}&player_id=${player.id}`),
+				)
 				if (result) {
 					const registration = Registration.fromServerData(result.registration)
 					const fees = registration.slots.flatMap((slot) => slot.fees)
@@ -330,8 +337,11 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 */
 	const updateRegistrationNotes = useCallback(
 		(notes: string) => {
-			dispatch({ type: "update-registration-notes", payload: { notes } })
-			updateRegistrationNotesMutation(notes)
+			if (notes?.trim()?.length > 0) {
+				return updateRegistrationNotesMutation(notes)
+			} else {
+				return Promise.resolve()
+			}
 		},
 		[updateRegistrationNotesMutation],
 	)
@@ -365,7 +375,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 * save their payment information for future use.
 	 */
 	const initiateStripeSession = useCallback(() => {
-		httpClient(serverUrl("registration/payments/customer-session/"), {
+		httpClient(serverUrl("payments/customer-session"), {
 			method: "POST",
 			body: JSON.stringify({}),
 			headers: { "X-Correlation-ID": state.correlationId },
@@ -373,7 +383,7 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 			.then((data) => {
 				dispatch({
 					type: "initiate-stripe-session",
-					payload: { clientSessionKey: data.client_secret },
+					payload: { clientSessionKey: data.clientSecret },
 				})
 			})
 			.catch((error) => {
@@ -392,7 +402,10 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 	 * Saves the current payment record.
 	 */
 	const savePayment = useCallback(() => {
-		if (state.payment?.id) {
+		if (!state.payment) {
+			return Promise.reject(new Error("No payment to save"))
+		}
+		if (state.payment.id) {
 			return updatePaymentMutation(state.payment)
 		} else {
 			const payment = { ...state.payment }

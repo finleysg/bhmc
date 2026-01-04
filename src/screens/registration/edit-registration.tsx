@@ -46,7 +46,7 @@ export function EditRegistrationScreen() {
 	const handleNextStep = async () => {
 		setIsBusy(true)
 		try {
-			updateRegistrationNotes(notes)
+			await updateRegistrationNotes(notes)
 			await savePayment()
 			updateStep(ReviewStep)
 			navigate("../review", { replace: true })

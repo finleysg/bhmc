@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { httpClient } from "../utils/api-client"
 import { apiUrl, serverUrl } from "../utils/api-utils"
+import { StripeAmount } from "../models/payment"
 
 export function usePaymentAmount(paymentId: number) {
 	const endpoint = serverUrl(`payments/${paymentId}/stripe-amount/`)
@@ -9,6 +10,7 @@ export function usePaymentAmount(paymentId: number) {
 		queryKey: [endpoint],
 		queryFn: () => httpClient(endpoint),
 		staleTime: 0,
+		select: (data) => data as StripeAmount,
 	})
 }
 
