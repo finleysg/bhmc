@@ -127,6 +127,7 @@ export class RegistrationSlot {
 	holeId: number
 	playerId: number
 	playerName?: string
+	sortName?: string
 	startingOrder: number
 	slot: number
 	status: string
@@ -139,6 +140,7 @@ export class RegistrationSlot {
 		this.holeId = json?.hole ?? 0
 		this.playerId = json?.player?.id ?? 0
 		this.playerName = json?.player ? `${json.player?.first_name} ${json.player?.last_name}` : undefined
+		this.sortName = json?.player ? `${json.player?.last_name}, ${json.player?.first_name}` : undefined
 		this.startingOrder = json?.starting_order ?? 0
 		this.slot = json?.slot ?? 0
 		this.status = json?.status ?? ""
@@ -159,6 +161,7 @@ export class RegistrationSlot {
 		slot.holeId = json.holeId ?? 0
 		slot.playerId = json.player?.id ?? 0
 		slot.playerName = json.player ? `${json.player?.firstName} ${json.player?.lastName}` : undefined
+		slot.sortName = json.player ? `${json.player?.lastName}, ${json.player?.firstName}` : undefined
 		slot.startingOrder = json.startingOrder
 		slot.slot = json.slot
 		slot.status = json.status

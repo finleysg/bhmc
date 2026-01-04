@@ -187,6 +187,46 @@ All requests include `X-Correlation-ID` header.
 
 ## Payment Flow
 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant User
+    participant PaymentUI as Payment Screen
+    participant RegistrationCtx as Registration Context
+    participant Stripe
+    participant Server
+
+    User->>PaymentUI: Click Submit Payment
+    activate PaymentUI
+    PaymentUI->>PaymentUI: Set paymentSubmitted=true<br/>Mark stripeCallInProgress
+    PaymentUI->>Stripe: confirmPayment()
+    activate Stripe
+    Stripe-->>PaymentUI: Confirm response
+    deactivate Stripe
+    
+    alt Payment Confirmed (No Error)
+        PaymentUI->>PaymentUI: Clear stripeCallInProgress
+        PaymentUI->>RegistrationCtx: completeRegistration()
+        activate RegistrationCtx
+        RegistrationCtx->>Server: POST completion
+        Server-->>RegistrationCtx: Success
+        deactivate RegistrationCtx
+        PaymentUI->>PaymentUI: Navigate to success
+    else Cancelled/Timeout Before Confirmation
+        PaymentUI->>PaymentUI: Clear stripeCallInProgress
+        PaymentUI->>PaymentUI: Bail quietly or show<br/>timeout error
+    else Payment Error
+        PaymentUI->>PaymentUI: Clear stripeCallInProgress
+        alt Submitted Already
+            PaymentUI->>PaymentUI: Show "Don't retry"<br/>error
+        else Not Submitted
+            PaymentUI->>PaymentUI: Re-enable Submit<br/>Show retry message
+        end
+    end
+    
+    deactivate PaymentUI
+```
+
 ### Fee Calculation
 ```
 transactionFee = 2.9% + $0.30

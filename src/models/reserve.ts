@@ -337,9 +337,9 @@ export const ConvertRegistrationsToReservations = (registrations: Registration[]
 				reservations.push({
 					registrationId: r.id,
 					slotId: s.id,
-					playerId: s.playerId!,
-					name: s.playerName!,
-					sortName: s.playerName!.toUpperCase(),
+					playerId: s.playerId ?? 0,
+					name: s.playerName ?? "",
+					sortName: s.sortName ?? "",
 					signedUpBy: r.signedUpBy,
 					signupDate: r.createdDate,
 				})
