@@ -102,9 +102,7 @@ export function ReservedList({ clubEvent }: ClubEventProps) {
 												row.original.sortName
 											)}
 										</div>
-										<div className="text-muted small">
-											{format(row.original.signupDate, "MM/dd/yyyy h:mm aaaa")}
-										</div>
+										<div className="text-muted small">{format(row.original.signupDate, "MM/dd/yyyy h:mm aaaa")}</div>
 										<div className="text-muted small">Signed up by: {row.original.signedUpBy}</div>
 									</div>
 								))}

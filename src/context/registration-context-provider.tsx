@@ -1,9 +1,10 @@
-import { PropsWithChildren, useCallback, useEffect, useReducer } from "react"
+import { PropsWithChildren, useCallback, useEffect, useMemo, useReducer } from "react"
 
 import { PaymentIntent } from "@stripe/stripe-js"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 import { useAuth } from "../hooks/use-auth"
+import { useRegistrationSSE } from "../hooks/use-registration-sse"
 import { useMyPlayerRecord } from "../hooks/use-my-player-record"
 import { EventType } from "../models/codes"
 import { ClubEventProps } from "../models/common-props"
@@ -12,6 +13,7 @@ import { EventFee } from "../models/event-fee"
 import { Payment, PaymentDetail } from "../models/payment"
 import { Player } from "../models/player"
 import { Registration, RegistrationSlot, ServerRegistrationApiSchema } from "../models/registration"
+import { SSEUpdateEvent, transformSlotsToApiFormat } from "../types/sse"
 import { httpClient } from "../utils/api-client"
 import { serverUrl } from "../utils/api-utils"
 import { currentSeason } from "../utils/app-config"
@@ -30,6 +32,27 @@ export function EventRegistrationProvider({ clubEvent, children }: PropsWithChil
 
 	const { user } = useAuth()
 	const { data: player } = useMyPlayerRecord()
+
+	const isSSEEnabled = useMemo(() => {
+		if (!clubEvent) return false
+		return clubEvent.paymentsAreOpen(new Date())
+	}, [clubEvent])
+
+	const handleSSEUpdate = useCallback(
+		(data: SSEUpdateEvent) => {
+			const transformed = transformSlotsToApiFormat(data.slots)
+			queryClient.setQueryData(["event-registration-slots", clubEvent?.id], transformed)
+			queryClient.invalidateQueries({ queryKey: ["event-registrations", clubEvent?.id] })
+			dispatch({ type: "update-sse-wave", payload: { wave: data.currentWave } })
+		},
+		[clubEvent?.id, queryClient],
+	)
+
+	useRegistrationSSE({
+		eventId: clubEvent?.id,
+		enabled: isSSEEnabled,
+		onUpdate: handleSSEUpdate,
+	})
 
 	useEffect(() => {
 		const correlationId = getCorrelationId(clubEvent?.id)

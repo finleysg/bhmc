@@ -19,7 +19,7 @@ export function ReserveScreen() {
 
 	const { clubEvent } = useCurrentEvent()
 	const { data: slots } = useEventRegistrationSlots(clubEvent.id)
-	const { createRegistration } = useEventRegistration()
+	const { createRegistration, sseCurrentWave } = useEventRegistration()
 
 	const loadTables = useCallback(() => {
 		const tables = LoadReserveTables(clubEvent, slots ?? [])
@@ -46,7 +46,7 @@ export function ReserveScreen() {
 		navigate("../register", { replace: true })
 	}
 
-	const currentWave = clubEvent.getCurrentWave()
+	const currentWave = sseCurrentWave ?? clubEvent.getCurrentWave()
 
 	return (
 		<div className="row">
