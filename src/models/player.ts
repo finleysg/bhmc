@@ -45,7 +45,6 @@ export const ServerPlayerApiSchema = z.object({
 	tee: z.string().nullish(),
 	isMember: z.boolean().or(z.number()),
 	lastSeason: z.number().nullish(),
-	profilePicture: PhotoApiSchema.nullish(),
 })
 
 export type ServerPlayerData = z.infer<typeof ServerPlayerApiSchema>
@@ -129,7 +128,6 @@ export class Player {
 		player.isMember = Boolean(json.isMember) ?? false
 		player.isReturningMember = json.lastSeason === currentYear - 1
 		player.lastSeason = json.lastSeason
-		player.profilePicture = json.profilePicture && new Photo(json.profilePicture)
 
 		return player
 	}
