@@ -20,6 +20,7 @@ export interface IRegistrationContext {
 	payment: Payment | null
 	registration: Registration | null
 	selectedFees: EventFee[]
+	sseCurrentWave: number | null
 	stripeClientSession?: string
 	addFee: (slot: RegistrationSlot, eventFee: EventFee, player: Player) => void
 	addPlayer: (slot: RegistrationSlot, player: Player) => void
@@ -35,7 +36,7 @@ export interface IRegistrationContext {
 	removePlayer: (slot: RegistrationSlot) => void
 	savePayment: () => Promise<void>
 	setError: (error: Error | null) => void
-	updateRegistrationNotes: (notes: string) => void
+	updateRegistrationNotes: (notes: string) => Promise<void>
 	updateStep: (step: IRegistrationStep) => void
 }
 

@@ -1,14 +1,16 @@
 import { useQuery } from "@tanstack/react-query"
 
 import { httpClient } from "../utils/api-client"
-import { apiUrl } from "../utils/api-utils"
+import { apiUrl, serverUrl } from "../utils/api-utils"
+import { StripeAmount } from "../models/payment"
 
 export function usePaymentAmount(paymentId: number) {
-	const endpoint = apiUrl(`payments/${paymentId}/stripe_amount/`)
+	const endpoint = serverUrl(`payments/${paymentId}/stripe-amount/`)
 	return useQuery({
 		queryKey: [endpoint],
 		queryFn: () => httpClient(endpoint),
 		staleTime: 0,
+		select: (data) => data as StripeAmount,
 	})
 }
 

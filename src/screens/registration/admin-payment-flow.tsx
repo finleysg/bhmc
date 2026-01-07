@@ -9,7 +9,9 @@ import { useAuth } from "../../hooks/use-auth"
 import { useCustomerSession, usePaymentAmount } from "../../hooks/use-payments"
 import * as config from "../../utils/app-config"
 
-export type AdminPaymentAmountContextType = { amount: number }
+import { StripeAmount } from "../../models/payment"
+
+export type AdminPaymentAmountContextType = { amount: StripeAmount }
 
 export function AdminPaymentFlow() {
 	const { paymentId } = useParams()
@@ -65,7 +67,7 @@ export function AdminPaymentFlow() {
 			options={{
 				mode: "payment",
 				currency: "usd",
-				amount: stripeAmount,
+				amount: stripeAmount.amountCents,
 				customerSessionClientSecret: customerSession,
 			}}
 		>

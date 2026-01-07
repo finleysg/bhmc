@@ -64,7 +64,8 @@ export function AdminPaymentCompleteScreen() {
 								{intent?.status === "succeeded" && (
 									<>
 										<h5 className="text-primary-emphasis">
-											Your payment for {config.currencyFormatter.format(stripeAmount / 100)} has been processed.
+											Your payment for {config.currencyFormatter.format(stripeAmount.amountDue.total)} has been
+											processed.
 										</h5>
 										<p>
 											A confirmation email will be sent to {user?.email} and anyone you signed up. A payment receipt

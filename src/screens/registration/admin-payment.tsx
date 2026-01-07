@@ -167,7 +167,9 @@ export function AdminPaymentScreen() {
 						<p className="text-muted mb-2">
 							{clubEvent?.slugDate} {clubEvent?.name}
 						</p>
-						<h6 className="text-primary mb-4">Amount due: {config.currencyFormatter.format(stripeAmount / 100)}</h6>
+						<h6 className="text-primary mb-4">
+							Amount due: {config.currencyFormatter.format(stripeAmount.amountDue.total)}
+						</h6>
 
 						{paymentStep && (
 							<div className="alert alert-info mb-4">

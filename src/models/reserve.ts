@@ -4,7 +4,7 @@ import { ClubEvent } from "./club-event"
 import { getStatusName, RegistrationStatus, StartType } from "./codes"
 import { Course, Hole } from "./course"
 import { Refund } from "./refund"
-import { Registration, RegistrationSlot, RegistrationSlotData } from "./registration"
+import { Registration, RegistrationSlot } from "./registration"
 
 const DEFAULT_SPLIT = 8
 
@@ -36,10 +36,10 @@ export class ReserveSlot {
 	statusName: string
 	selected: boolean
 	fees: Refund[]
-	obj: RegistrationSlotData
+	obj: RegistrationSlot
 
 	constructor(groupId: string, slot: RegistrationSlot) {
-		this.obj = slot.obj
+		this.obj = slot
 		this.id = slot.id
 		this.groupId = groupId
 		this.holeId = slot.holeId
@@ -83,7 +83,7 @@ export class ReserveSlot {
 	}
 
 	toRegistrationSlot = () => {
-		return new RegistrationSlot(this.obj)
+		return this.obj
 	}
 }
 
@@ -337,9 +337,9 @@ export const ConvertRegistrationsToReservations = (registrations: Registration[]
 				reservations.push({
 					registrationId: r.id,
 					slotId: s.id,
-					playerId: s.playerId!,
-					name: s.playerName!,
-					sortName: s.playerName!.toUpperCase(),
+					playerId: s.playerId ?? 0,
+					name: s.playerName ?? "",
+					sortName: s.sortName ?? "",
 					signedUpBy: r.signedUpBy,
 					signupDate: r.createdDate,
 				})

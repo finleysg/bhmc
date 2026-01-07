@@ -19,17 +19,12 @@ export function ReserveScreen() {
 
 	const { clubEvent } = useCurrentEvent()
 	const { data: slots } = useEventRegistrationSlots(clubEvent.id)
-	const { createRegistration } = useEventRegistration()
+	const { createRegistration, sseCurrentWave } = useEventRegistration()
 
 	const loadTables = useCallback(() => {
 		const tables = LoadReserveTables(clubEvent, slots ?? [])
 		setReserveTables(tables)
 	}, [clubEvent, slots])
-
-	// TODO: do we really want to do this?
-	// useInterval(() => {
-	// 	loadTables()
-	// }, 10 * 1000)
 
 	useEffect(() => {
 		const currentTime = new Date()
@@ -44,12 +39,6 @@ export function ReserveScreen() {
 		}
 	}, [reserveTables.length, loadTables])
 
-	if (reserveTables.length === 0) {
-		setTimeout(() => {
-			loadTables()
-		}, 100)
-	}
-
 	const handleReserve = async (course: Course, groupName: string, slots: ReserveSlot[]) => {
 		const selectedSlots = slots.map((slot) => slot.toRegistrationSlot())
 		const registrationSlots = selectedSlots.filter((slot) => !slot.playerId)
@@ -57,7 +46,7 @@ export function ReserveScreen() {
 		navigate("../register", { replace: true })
 	}
 
-	const currentWave = clubEvent.getCurrentWave()
+	const currentWave = sseCurrentWave ?? clubEvent.getCurrentWave()
 
 	return (
 		<div className="row">

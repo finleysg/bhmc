@@ -4,7 +4,7 @@ import { CancelButton } from "../../components/event-registration/cancel-button"
 import { RegisterCountdown } from "../../components/event-registration/register-countdown"
 import { RegistrationSlotLineItemReview } from "../../components/event-registration/registration-slot-line-item-review"
 import { ErrorDisplay } from "../../components/feedback/error-display"
-import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
+// import { OverlaySpinner } from "../../components/spinners/overlay-spinner"
 import { CompleteStep, PaymentStep, RegisterStep } from "../../context/registration-reducer"
 import { useEventRegistration } from "../../hooks/use-event-registration"
 import { useEventRegistrationGuard } from "../../hooks/use-event-registration-guard"
@@ -13,7 +13,8 @@ import { useCurrentEvent } from "./event-detail"
 
 export function ReviewRegistrationScreen() {
 	const { clubEvent } = useCurrentEvent()
-	const { currentStep, registration, payment, mode, error, setError, updateStep } = useEventRegistration()
+	const { currentStep, registration, payment, mode, error, setError, updateStep, completeRegistration } =
+		useEventRegistration()
 	useEventRegistrationGuard(registration)
 
 	const navigate = useNavigate()
@@ -33,10 +34,12 @@ export function ReviewRegistrationScreen() {
 	const handleRegistrationConfirm = () => {
 		if (amountDue.total > 0) {
 			updateStep(PaymentStep)
+			navigate(`../${payment?.id}/payment`, { replace: true })
 		} else {
 			updateStep(CompleteStep)
+			completeRegistration()
+			navigate("../", { replace: true }) // event detail
 		}
-		navigate(`../${payment?.id}/payment`, { replace: true })
 	}
 
 	return (
@@ -44,7 +47,7 @@ export function ReviewRegistrationScreen() {
 			<div className="col-12 col-md-6">
 				<div className="card border border-primary mb-4">
 					<div className="card-body">
-						<OverlaySpinner loading={isBusy} />
+						{/* <OverlaySpinner loading={isBusy} /> */}
 						<h4 className="card-header mb-2">{currentStep.title}</h4>
 						{error && <ErrorDisplay error={error?.message} delay={5000} onClose={() => setError(null)} />}
 						<p className="text-info fst-italic">{registration?.selectedStart}</p>

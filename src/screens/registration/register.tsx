@@ -84,7 +84,7 @@ export function RegisterScreen() {
 
 		setIsBusy(true)
 		try {
-			updateRegistrationNotes(notes)
+			await updateRegistrationNotes(notes)
 			await savePayment()
 			updateStep(ReviewStep)
 			navigate("../review", { replace: true })

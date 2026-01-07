@@ -33,6 +33,22 @@ export const GuestPlayerApiSchema = z.object({
 export type PlayerApiData = z.infer<typeof PlayerApiSchema>
 export type GuestPlayerData = z.infer<typeof GuestPlayerApiSchema>
 
+/* The data from serverUrl (nestjs backend) uses standard js/ts naming conventions */
+export const ServerPlayerApiSchema = z.object({
+	id: z.number(),
+	email: z.string().nullish(),
+	firstName: z.string(),
+	lastName: z.string(),
+	ghin: z.string().nullish(),
+	birthDate: z.string().nullish(),
+	phoneNumber: z.string().nullish(),
+	tee: z.string().nullish(),
+	isMember: z.boolean().or(z.number()),
+	lastSeason: z.number().nullish(),
+})
+
+export type ServerPlayerData = z.infer<typeof ServerPlayerApiSchema>
+
 export class Player {
 	[immerable] = true
 
@@ -93,5 +109,26 @@ export class Player {
 			default:
 				return false
 		}
+	}
+
+	static fromServerData = (json: ServerPlayerData) => {
+		const player = new Player(undefined)
+		player.id = json.id
+		player.email = json.email ?? ""
+		player.firstName = json.firstName
+		player.lastName = json.lastName
+		player.name = json.id ? `${json.firstName} ${json.lastName}` : "Guest"
+		player.ghin = json.ghin
+		player.birthDay = json.birthDate
+		player.birthDate = json.birthDate ? new Date(json.birthDate) : undefined
+		player.phoneNumber = json.phoneNumber
+		player.tee = json.tee ?? "Club"
+		player.age = player.birthDate ? differenceInYears(new Date(), player.birthDate) : undefined
+		player.ageAtYearEnd = player.birthDate ? differenceInYears(lastDayOfYear(new Date()), player.birthDate) : undefined
+		player.isMember = Boolean(json.isMember) ?? false
+		player.isReturningMember = json.lastSeason === currentYear - 1
+		player.lastSeason = json.lastSeason
+
+		return player
 	}
 }

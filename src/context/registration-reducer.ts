@@ -26,6 +26,7 @@ export interface IRegistrationState {
 	readonly currentStep: IRegistrationStep
 	readonly stripeClientSession?: string
 	readonly correlationId: string
+	readonly sseCurrentWave: number | null
 }
 
 export const PendingStep: IRegistrationStep = {
@@ -79,6 +80,7 @@ export type RegistrationAction =
 	| { type: "add-fee"; payload: { slotId: number; eventFee: EventFee; player: Player } }
 	| { type: "remove-fee"; payload: { slotId: number; eventFeeId: number } }
 	| { type: "initiate-stripe-session"; payload: { clientSessionKey: string } }
+	| { type: "update-sse-wave"; payload: { wave: number } }
 
 export const defaultRegistrationState: IRegistrationState = {
 	mode: "idle",
@@ -91,6 +93,7 @@ export const defaultRegistrationState: IRegistrationState = {
 	currentStep: PendingStep,
 	stripeClientSession: undefined,
 	correlationId: "",
+	sseCurrentWave: null,
 }
 
 export const eventRegistrationReducer = produce((draft, action: RegistrationAction) => {
@@ -230,6 +233,10 @@ export const eventRegistrationReducer = produce((draft, action: RegistrationActi
 		}
 		case "initiate-stripe-session": {
 			draft.stripeClientSession = payload.clientSessionKey
+			return
+		}
+		case "update-sse-wave": {
+			draft.sseCurrentWave = payload.wave
 			return
 		}
 		default: {

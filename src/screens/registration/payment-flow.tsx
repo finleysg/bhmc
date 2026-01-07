@@ -8,8 +8,9 @@ import { loadStripe } from "@stripe/stripe-js"
 import { useEventRegistration } from "../../hooks/use-event-registration"
 import { usePaymentAmount } from "../../hooks/use-payments"
 import * as config from "../../utils/app-config"
+import { PaymentAmount } from "../../models/payment"
 
-export type PaymentAmountContextType = { amount: number }
+export type PaymentAmountContextType = { amount: PaymentAmount }
 
 export function PaymentFlow() {
 	const { paymentId } = useParams()
@@ -32,11 +33,11 @@ export function PaymentFlow() {
 			options={{
 				mode: "payment",
 				currency: "usd",
-				amount: stripeAmount,
+				amount: stripeAmount?.amountCents,
 				customerSessionClientSecret: stripeClientSession,
 			}}
 		>
-			<Outlet context={{ amount: stripeAmount } satisfies PaymentAmountContextType} />
+			<Outlet context={{ amount: stripeAmount.amountDue } satisfies PaymentAmountContextType} />
 		</Elements>
 	)
 }
