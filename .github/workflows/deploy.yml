@@ -48,7 +48,7 @@ jobs:
         run: tar -cvf deploy.tar captain-definition dist
 
       - name: Deploy to CapRover
-        uses: caprover/deploy-from-github@v1.1.2
+        uses: caprover/deploy-from-github@v1.2.0
         with:
           server: ${{ vars.CAPROVER_URL }}
           app: bhmc-web
