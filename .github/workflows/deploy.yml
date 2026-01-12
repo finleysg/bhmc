@@ -32,11 +32,14 @@ jobs:
       - run: npm ci
 
       - name: Inject secrets and version
+        env:
+          STRIPE_KEY: ${{ secrets.VITE_STRIPE_PUBLIC_KEY }}
+          GIPHY_KEY: ${{ secrets.VITE_GIPHY_API_KEY }}
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          sed -i "s/VITE_VERSION=.*/VITE_VERSION=$VERSION/" .env.production
-          sed -i "s/VITE_STRIPE_PUBLIC_KEY=.*/VITE_STRIPE_PUBLIC_KEY=${{ secrets.VITE_STRIPE_PUBLIC_KEY }}/" .env.production
-          sed -i "s/VITE_GIPHY_API_KEY=.*/VITE_GIPHY_API_KEY=${{ secrets.VITE_GIPHY_API_KEY }}/" .env.production
+          sed -i "s|VITE_VERSION=.*|VITE_VERSION=$VERSION|" .env.production
+          sed -i "s|VITE_STRIPE_PUBLIC_KEY=.*|VITE_STRIPE_PUBLIC_KEY=$STRIPE_KEY|" .env.production
+          sed -i "s|VITE_GIPHY_API_KEY=.*|VITE_GIPHY_API_KEY=$GIPHY_KEY|" .env.production
 
       - name: Build
         run: npm run build

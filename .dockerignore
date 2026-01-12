@@ -5,7 +5,6 @@ Dockerfile.prod
 .dockerignore
 .git
 .gitignore
-dist
 .github
 *.md
 .vscode
