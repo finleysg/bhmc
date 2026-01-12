@@ -27,7 +27,8 @@ dist-ssr
 firebase.json
 .firebase/
 
-.github/
-
-# Environment files
-.env*
+# Environment files (keep .env.production tracked)
+.env
+.env.local
+.env.development
+.env.development.local

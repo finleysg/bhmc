@@ -142,14 +142,14 @@ $layout-spacer: 20px;
 
 .sidebar--bg {
 	background-image:
-		linear-gradient(to right bottom, rgba($primary, 0.8), rgba($info, 0.8)), url("./assets/img/ThreeNorth.jpg");
+		linear-gradient(to right bottom, rgba($primary, 0.8), rgba($info, 0.8)), url("../img/ThreeNorth.jpg");
 	background-size: cover;
 	background-position: left;
 }
 
 .admin-sidebar--bg {
 	background-image:
-		linear-gradient(to right bottom, rgba($teal, 0.8), rgba($green, 0.8)), url("./assets/img/ThreeEastJimmy.jpg");
+		linear-gradient(to right bottom, rgba($teal, 0.8), rgba($green, 0.8)), url("../img/ThreeEastJimmy.jpg");
 	background-size: cover;
 	background-position: left;
 }
@@ -472,7 +472,7 @@ $layout-spacer: 20px;
 }
 
 .canceled {
-	background-image: url("./assets/img/canceled.png");
+	background-image: url("../img/canceled.png");
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: center;
@@ -491,7 +491,7 @@ $layout-spacer: 20px;
 		left: 0;
 		opacity: 0.75;
 		z-index: -1;
-		background-image: url("./assets/img/FourEastSunset.jpg");
+		background-image: url("../img/FourEastSunset.jpg");
 		background-size: cover;
 		background-position: center;
 	}
@@ -505,7 +505,7 @@ $layout-spacer: 20px;
 }
 
 .logo {
-	background: url("./assets/img/logo.png") transparent left 0.2em top 0.2rem no-repeat;
+	background: url("../img/logo.png") transparent left 0.2em top 0.2rem no-repeat;
 	background-size: contain;
 	a {
 		background-color: transparent;
@@ -526,12 +526,12 @@ $layout-spacer: 20px;
 		left: 0;
 		opacity: 0.9;
 		z-index: -1;
-		background-image: url("./assets/img/ThreeNorthTee.jpg");
+		background-image: url("../img/ThreeNorthTee.jpg");
 		background-size: cover;
 		background-position: center;
 
 		@include media-breakpoint-up(xl) {
-			background-image: url("./assets/img/FourEastSunset.jpg");
+			background-image: url("../img/FourEastSunset.jpg");
 		}
 	}
 }
