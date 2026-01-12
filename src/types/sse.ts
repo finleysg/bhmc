@@ -66,6 +66,6 @@ function transformPlayerToApiFormat(player: z.infer<typeof ServerPlayerApiSchema
 		tee: player.tee,
 		is_member: player.isMember,
 		last_season: player.lastSeason,
-		profile_picture: player.profilePicture,
+		profile_picture: null,
 	}
 }

@@ -9,7 +9,7 @@ import { ErrorDisplay } from "../../components/feedback/error-display"
 import { useAdminPaymentData } from "../../hooks/use-admin-payment-data"
 import { useAuth } from "../../hooks/use-auth"
 import { httpClient } from "../../utils/api-client"
-import { apiUrl } from "../../utils/api-utils"
+import { serverUrl } from "../../utils/api-utils"
 import * as config from "../../utils/app-config"
 import { useAdminPaymentAmount } from "./admin-payment-flow"
 
@@ -45,10 +45,10 @@ export function AdminPaymentScreen() {
 	}
 
 	const createPaymentIntent = async (): Promise<PaymentIntent> => {
-		return httpClient(apiUrl(`payments/${paymentId}/payment_intent/`), {
+		return httpClient(serverUrl(`payments/${paymentId}/payment-intent`), {
 			body: JSON.stringify({
-				event_id: clubEvent?.id,
-				registration_id: registration?.id,
+				eventId: clubEvent?.id,
+				registrationId: registration?.id,
 			}),
 		}) as Promise<PaymentIntent>
 	}

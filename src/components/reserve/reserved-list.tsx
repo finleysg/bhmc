@@ -95,15 +95,17 @@ export function ReservedList({ clubEvent }: ClubEventProps) {
 										className="border-bottom py-2"
 										style={{ backgroundColor: idx % 2 === 0 ? "transparent" : "rgba(0,0,0,.05)" }}
 									>
-										<div className="fw-bold">
+										<div className="fw-bold ps-2">
 											{user.isAuthenticated ? (
 												<a href={`/directory/${row.original.playerId}`}>{row.original.sortName}</a>
 											) : (
 												row.original.sortName
 											)}
 										</div>
-										<div className="text-muted small">{format(row.original.signupDate, "MM/dd/yyyy h:mm aaaa")}</div>
-										<div className="text-muted small">Signed up by: {row.original.signedUpBy}</div>
+										<div className="text-muted small ps-2">
+											{format(row.original.signupDate, "MM/dd/yyyy h:mm aaaa")}
+										</div>
+										<div className="text-muted small ps-2">Signed up by: {row.original.signedUpBy}</div>
 									</div>
 								))}
 							</div>

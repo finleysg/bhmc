@@ -1,9 +1,14 @@
 node_modules
 npm-debug.log
 Dockerfile
+Dockerfile.prod
 .dockerignore
 .git
 .gitignore
+.github
+*.md
+.vscode
+.idea
 .env
-package-lock.json
-dist
+.env.local
+.env.development*

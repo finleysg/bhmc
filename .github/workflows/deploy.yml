@@ -1,0 +1,55 @@
+name: Deploy to CapRover
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test
+
+  deploy:
+    needs: lint-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Inject secrets and version
+        env:
+          STRIPE_KEY: ${{ secrets.VITE_STRIPE_PUBLIC_KEY }}
+          GIPHY_KEY: ${{ secrets.VITE_GIPHY_API_KEY }}
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          sed -i "s|VITE_VERSION=.*|VITE_VERSION=$VERSION|" .env.production
+          sed -i "s|VITE_STRIPE_PUBLIC_KEY=.*|VITE_STRIPE_PUBLIC_KEY=$STRIPE_KEY|" .env.production
+          sed -i "s|VITE_GIPHY_API_KEY=.*|VITE_GIPHY_API_KEY=$GIPHY_KEY|" .env.production
+
+      - name: Build
+        run: npm run build
+
+      - name: Create deploy tarball
+        run: tar -cvf deploy.tar captain-definition dist
+
+      - name: Deploy to CapRover
+        uses: caprover/deploy-from-github@v1.2.0
+        with:
+          server: ${{ vars.CAPROVER_URL }}
+          app: bhmc-web
+          token: ${{ secrets.CAPROVER_APP_TOKEN }}
