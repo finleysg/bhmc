@@ -13,7 +13,7 @@ test("successful reset request", async () => {
 	await userEvent.type(screen.getByRole("textbox", { name: /email/i }), email)
 	await userEvent.click(screen.getByRole("button", { name: /request password reset/i }))
 
-	expect(screen.getByText(/password reset email has been sent/i)).toBeInTheDocument()
+	expect(await screen.findByText(/password reset email has been sent/i)).toBeInTheDocument()
 })
 
 test("submitting the login form without an email fails validation", async () => {
