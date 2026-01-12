@@ -16,7 +16,7 @@ test("successful password reset", async () => {
 	await userEvent.click(screen.getByRole("button", { name: /reset password/i }))
 
 	// Navigation to completed screen
-	expect(screen.getByText(/your password has been updated/i)).toBeInTheDocument()
+	expect(await screen.findByText(/your password has been updated/i)).toBeInTheDocument()
 })
 
 test("submitting the login form with mismatched passwords fails validation", async () => {
