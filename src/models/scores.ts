@@ -15,7 +15,7 @@ export const TeeApiSchema = z.object({
 	id: z.number(),
 	course: z.number(),
 	name: z.string(),
-	gg_id: z.string(),
+	gg_id: z.string().nullable(),
 })
 
 export const HoleScoreApiSchema = z.object({
@@ -31,7 +31,7 @@ export const PlayerRoundApiSchema = z.object({
 	player: z.number(),
 	course: CourseInRoundApiSchema,
 	tee: TeeApiSchema,
-	handicap_index: z.string(),
+	handicap_index: z.string().nullable(),
 	course_handicap: z.number(),
 	scores: z.array(HoleScoreApiSchema),
 })
@@ -57,7 +57,7 @@ export class Tee {
 	id: number
 	courseId: number
 	name: string
-	ggId: string
+	ggId: string | null
 
 	constructor(data: TeeData) {
 		this.id = data.id
@@ -87,7 +87,7 @@ export class PlayerRound {
 	playerId: number
 	course: CourseInRound
 	tee: Tee
-	handicapIndex: string
+	handicapIndex: string | null
 	courseHandicap: number
 	scores: HoleScore[]
 
