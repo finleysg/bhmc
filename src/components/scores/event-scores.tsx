@@ -1,15 +1,20 @@
-import { CourseProps, RoundsProps } from "../../models/common-props"
-import { HoleNumbers, HolePars, RoundScores } from "./score-utils"
+import { RoundsProps } from "../../models/common-props"
+import { CourseInRound } from "../../models/scores"
+import { HoleNumbers, HolePars, HolesProps, RoundScores } from "./score-utils"
+
+interface EventRoundsByCourseProps extends HolesProps, RoundsProps {
+	course: CourseInRound
+}
 
 // TODO: this needs player names and ghins for rendering scores by event
-export function EventRoundsByCourse({ course, rounds }: CourseProps & RoundsProps) {
+export function EventRoundsByCourse({ course, holes, courseName, rounds }: EventRoundsByCourseProps) {
 	return (
 		<div className="card">
 			{rounds.length > 0 ? (
 				<div className="card-body">
 					<h4>{course.name}</h4>
-					<HoleNumbers course={course} />
-					<HolePars course={course} />
+					<HoleNumbers holes={holes} courseName={courseName} />
+					<HolePars holes={holes} courseName={courseName} />
 					{rounds.map((round) => {
 						return <RoundScores key={round.eventDate} round={round} />
 					})}
