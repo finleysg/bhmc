@@ -1,16 +1,16 @@
 import { useClubEvents } from "../../hooks/use-club-events"
-import { useCourses } from "../../hooks/use-courses"
 import { useMyPlayerRecord } from "../../hooks/use-my-player-record"
 import { usePlayerScores } from "../../hooks/use-player-scores"
-import { CourseProps, RoundsProps, SeasonProps } from "../../models/common-props"
-import { Course } from "../../models/course"
-import { LoadRounds, ScoreByHole } from "../../models/scores"
+import { RoundsProps, SeasonProps } from "../../models/common-props"
+import { Hole } from "../../models/course"
+import { CourseInRound, LoadRounds, ScoreByHole } from "../../models/scores"
 import { OverlaySpinner } from "../spinners/overlay-spinner"
 import {
 	AverageScore,
 	HoleNumbers,
 	HolePars,
 	HoleScore,
+	HolesProps,
 	RoundScores,
 	RoundTotal,
 	ScoresByHoleProps,
@@ -48,9 +48,13 @@ function BestBallRound({ scores }: ScoresByHoleProps) {
 	)
 }
 
-function RoundsByCourse({ course, rounds }: CourseProps & RoundsProps) {
+interface RoundsByCourseProps extends HolesProps, RoundsProps {
+	course: CourseInRound
+}
+
+function RoundsByCourse({ course, holes, courseName, rounds }: RoundsByCourseProps) {
 	const averageScores = () => {
-		return course.holes.map((hole) => {
+		return holes.map((hole) => {
 			const scores: ScoreByHole[] = []
 			rounds.forEach((round) => {
 				scores.push(round.scores.find((score) => score.hole.id === hole.id)!)
@@ -65,7 +69,7 @@ function RoundsByCourse({ course, rounds }: CourseProps & RoundsProps) {
 	}
 
 	const bestScores = () => {
-		return course.holes.map((hole) => {
+		return holes.map((hole) => {
 			const scores: ScoreByHole[] = []
 			rounds.forEach((round) => {
 				scores.push(round.scores.find((score) => score.hole.id === hole.id)!)
@@ -79,7 +83,7 @@ function RoundsByCourse({ course, rounds }: CourseProps & RoundsProps) {
 		})
 	}
 
-	const headerClass = (course: Course) => {
+	const headerClass = (course: CourseInRound) => {
 		return `scores-header bg-${course.name.toLowerCase()}`
 	}
 
@@ -90,8 +94,8 @@ function RoundsByCourse({ course, rounds }: CourseProps & RoundsProps) {
 			</div>
 			{rounds.length > 0 ? (
 				<div className="card-body">
-					<HoleNumbers course={course} />
-					<HolePars course={course} />
+					<HoleNumbers holes={holes} courseName={courseName} />
+					<HolePars holes={holes} courseName={courseName} />
 					{rounds.map((round) => {
 						return <RoundScores key={round.eventDate} round={round} />
 					})}
@@ -109,29 +113,53 @@ function RoundsByCourse({ course, rounds }: CourseProps & RoundsProps) {
 interface PlayerScoresProps extends SeasonProps {
 	isNet: boolean
 }
+
 export function PlayerScores({ isNet, season }: PlayerScoresProps) {
 	const { data: player } = useMyPlayerRecord()
 	const { data: events } = useClubEvents(season)
-	const { data: courses } = useCourses()
-	const { data: scores } = usePlayerScores(season, player?.id, isNet)
+	const { data: playerRounds } = usePlayerScores(season, player?.id)
 
-	const rounds = LoadRounds(courses ?? [], events ?? [], scores ?? [])
+	const rounds = LoadRounds(events ?? [], playerRounds ?? [], isNet)
 
-	const busy = !scores || !events || !courses
+	// Derive unique courses from rounds
+	const getUniqueCourses = (): CourseInRound[] => {
+		const courseMap = new Map<number, CourseInRound>()
+		for (const round of rounds) {
+			if (!courseMap.has(round.course.id)) {
+				courseMap.set(round.course.id, round.course)
+			}
+		}
+		return Array.from(courseMap.values())
+	}
+
+	// Get holes for a course from the first round that has it
+	const getHolesForCourse = (courseId: number): Hole[] => {
+		const round = rounds.find((r) => r.course.id === courseId)
+		return round?.holes ?? []
+	}
+
+	const busy = !playerRounds || !events
+
+	const courses = getUniqueCourses().filter((c) => c.numberOfHoles === 9)
 
 	return (
 		<div className="row mt-2">
 			<OverlaySpinner loading={busy} />
 			{!busy &&
-				courses
-					?.filter((c) => c.numberOfHoles === 9)
-					.map((course) => {
-						return (
-							<div key={course.id} className="col-lg-4 col-md-12">
-								<RoundsByCourse course={course} rounds={rounds.filter((r) => r.course.id === course.id)} />
-							</div>
-						)
-					})}
+				courses.map((course) => {
+					const courseRounds = rounds.filter((r) => r.course.id === course.id)
+					const holes = getHolesForCourse(course.id)
+					return (
+						<div key={course.id} className="col-lg-4 col-md-12">
+							<RoundsByCourse
+								course={course}
+								holes={holes}
+								courseName={course.name}
+								rounds={courseRounds}
+							/>
+						</div>
+					)
+				})}
 		</div>
 	)
 }

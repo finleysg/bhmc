@@ -1,4 +1,5 @@
-import { CourseProps, RoundProps } from "../../models/common-props"
+import { RoundProps } from "../../models/common-props"
+import { Hole } from "../../models/course"
 import { ScoreByHole } from "../../models/scores"
 
 export interface ScoreByHoleProps {
@@ -11,6 +12,11 @@ export interface ScoresByHoleProps {
 
 export interface RoundTotalProps extends ScoresByHoleProps {
 	places: number
+}
+
+export interface HolesProps {
+	holes: Hole[]
+	courseName: string
 }
 
 export function HoleScore({ score }: ScoreByHoleProps) {
@@ -32,12 +38,12 @@ export function RoundTotal({ scores, places }: RoundTotalProps) {
 	)
 }
 
-export function HoleNumbers({ course }: CourseProps) {
+export function HoleNumbers({ holes }: HolesProps) {
 	return (
 		<div style={{ display: "flex" }}>
 			<div className="round" style={{ flex: 1 }}></div>
 			<div className="hole-numbers">
-				{course.holes.map((hole) => {
+				{holes.map((hole) => {
 					return <div key={hole.id}>{hole.holeNumber}</div>
 				})}
 				<div className="total"></div>
@@ -46,19 +52,19 @@ export function HoleNumbers({ course }: CourseProps) {
 	)
 }
 
-export function HolePars({ course }: CourseProps) {
+export function HolePars({ holes, courseName }: HolesProps) {
 	return (
 		<div style={{ display: "flex" }}>
 			<div className="round" style={{ flex: 1 }}></div>
 			<div className="scores">
-				{course.holes.map((hole) => {
+				{holes.map((hole) => {
 					return (
-						<div className={`bg-${course.name.toLowerCase()}-pale`} key={hole.id}>
+						<div className={`bg-${courseName.toLowerCase()}-pale`} key={hole.id}>
 							{hole.par}
 						</div>
 					)
 				})}
-				<div className={`total bg-${course.name.toLowerCase()}-pale`}>36</div>
+				<div className={`total bg-${courseName.toLowerCase()}-pale`}>36</div>
 			</div>
 		</div>
 	)

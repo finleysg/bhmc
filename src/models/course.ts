@@ -2,6 +2,7 @@ import { z } from "zod"
 
 export const HoleApiSchema = z.object({
 	id: z.number(),
+	course: z.number().optional(),
 	hole_number: z.number(),
 	par: z.number(),
 })

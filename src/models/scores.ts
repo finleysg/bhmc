@@ -2,34 +2,114 @@ import { z } from "zod"
 
 import { isoDayFormat } from "../utils/date-utils"
 import { ClubEvent } from "./club-event"
-import { Course, Hole, HoleApiSchema } from "./course"
+import { Hole, HoleApiSchema } from "./course"
 
-export const ScoreApiSchema = z.object({
+// Minimal course schema (without holes array) used in round responses
+export const CourseInRoundApiSchema = z.object({
 	id: z.number(),
-	event: z.number(),
-	player: z.number(),
+	name: z.string(),
+	number_of_holes: z.number(),
+})
+
+export const TeeApiSchema = z.object({
+	id: z.number(),
+	course: z.number(),
+	name: z.string(),
+	gg_id: z.string(),
+})
+
+export const HoleScoreApiSchema = z.object({
+	id: z.number(),
 	hole: HoleApiSchema,
 	score: z.number(),
 	is_net: z.boolean(),
 })
 
-export type ScoreApiData = z.infer<typeof ScoreApiSchema>
+export const PlayerRoundApiSchema = z.object({
+	id: z.number(),
+	event: z.number(),
+	player: z.number(),
+	course: CourseInRoundApiSchema,
+	tee: TeeApiSchema,
+	handicap_index: z.string(),
+	course_handicap: z.number(),
+	scores: z.array(HoleScoreApiSchema),
+})
 
-export class Score {
+export type CourseInRoundData = z.infer<typeof CourseInRoundApiSchema>
+export type TeeData = z.infer<typeof TeeApiSchema>
+export type HoleScoreData = z.infer<typeof HoleScoreApiSchema>
+export type PlayerRoundData = z.infer<typeof PlayerRoundApiSchema>
+
+export class CourseInRound {
 	id: number
-	eventId: number
-	playerId: number
+	name: string
+	numberOfHoles: number
+
+	constructor(data: CourseInRoundData) {
+		this.id = data.id
+		this.name = data.name
+		this.numberOfHoles = data.number_of_holes
+	}
+}
+
+export class Tee {
+	id: number
+	courseId: number
+	name: string
+	ggId: string
+
+	constructor(data: TeeData) {
+		this.id = data.id
+		this.courseId = data.course
+		this.name = data.name
+		this.ggId = data.gg_id
+	}
+}
+
+export class HoleScore {
+	id: number
 	hole: Hole
 	score: number
 	isNet: boolean
 
-	constructor(json: ScoreApiData) {
-		this.id = json.id
-		this.eventId = json.event
-		this.playerId = json.player
-		this.hole = new Hole(json.hole)
-		this.score = json.score
-		this.isNet = json.is_net
+	constructor(data: HoleScoreData) {
+		this.id = data.id
+		this.hole = new Hole(data.hole)
+		this.score = data.score
+		this.isNet = data.is_net
+	}
+}
+
+export class PlayerRound {
+	id: number
+	eventId: number
+	playerId: number
+	course: CourseInRound
+	tee: Tee
+	handicapIndex: string
+	courseHandicap: number
+	scores: HoleScore[]
+
+	constructor(data: PlayerRoundData) {
+		this.id = data.id
+		this.eventId = data.event
+		this.playerId = data.player
+		this.course = new CourseInRound(data.course)
+		this.tee = new Tee(data.tee)
+		this.handicapIndex = data.handicap_index
+		this.courseHandicap = data.course_handicap
+		this.scores = data.scores.map((s) => new HoleScore(s))
+	}
+
+	get holes(): Hole[] {
+		const uniqueHoles = new Map<number, Hole>()
+		for (const score of this.scores) {
+			if (!uniqueHoles.has(score.hole.id)) {
+				uniqueHoles.set(score.hole.id, score.hole)
+			}
+		}
+		return Array.from(uniqueHoles.values()).sort((a, b) => a.holeNumber - b.holeNumber)
 	}
 }
 
@@ -70,45 +150,32 @@ export class ScoreByHole {
 }
 
 export class Round {
-	course: Course
+	course: CourseInRound
 	eventName: string
 	eventDate: string
 	scores: ScoreByHole[]
+	holes: Hole[]
 
-	constructor(course: Course, event: ClubEvent, scores: ScoreByHole[]) {
+	constructor(course: CourseInRound, event: ClubEvent, scores: ScoreByHole[], holes: Hole[]) {
 		this.course = course
 		this.eventName = event.name
 		this.eventDate = isoDayFormat(event.startDate)
 		this.scores = scores
+		this.holes = holes
 	}
 }
 
-export const LoadRounds = (courses: Course[], events: ClubEvent[], scores: Score[]) => {
+export const LoadRounds = (events: ClubEvent[], playerRounds: PlayerRound[], isNet: boolean) => {
 	const rounds: Round[] = []
-	const scoresByEvent = scores?.reduce((byEvent, score) => {
-		if (!byEvent.has(score.eventId)) {
-			byEvent.set(score.eventId, [])
-		}
 
-		byEvent.get(score.eventId)!.push(new ScoreByHole(score))
-
-		return byEvent
-	}, new Map<number, ScoreByHole[]>())
-
-	for (const eventId of scoresByEvent.keys()) {
-		const scores = scoresByEvent.get(eventId)
-		if (scores) {
-			const course = getCourse(courses, scores[0].hole)
-			const clubEvent = events.find((e) => e.id === eventId)
-			if (course && clubEvent) {
-				rounds.push(new Round(course, clubEvent, scores))
-			}
+	for (const playerRound of playerRounds) {
+		const clubEvent = events.find((e) => e.id === playerRound.eventId)
+		if (clubEvent) {
+			const filteredScores = playerRound.scores.filter((s) => s.isNet === isNet)
+			const scoresByHole = filteredScores.map((s) => new ScoreByHole(s))
+			rounds.push(new Round(playerRound.course, clubEvent, scoresByHole, playerRound.holes))
 		}
 	}
-	return rounds
-}
 
-// TODO: this can be improved
-const getCourse = (courses: Course[], firstHole: Hole) => {
-	return courses?.find((course) => course.holes.findIndex((hole) => hole.id === firstHole.id) >= 0)
+	return rounds
 }
